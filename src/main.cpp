@@ -1,4 +1,8 @@
+#include "../common/discord.h"
+
 #include <cassert>
+#include <cstdlib>
+#include <iostream>
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
@@ -6,15 +10,12 @@
 #define WINDOW_WIDTH 1920
 #define WINDOW_HEIGHT 1080
 
-#ifdef DEBUG
-#define CHECKFORERR(x) if (!(x))
-#else
-#define CHECKFORERR(x)
-#endif
+Discord::RPC RPC{};
 
 [[gnu::leaf]] void GLFWKeyCallback(GLFWwindow *window, const int key,
-                                   const int scancode, const int action,
-                                   const int mods) {
+                                   [[maybe_unused]] const int scancode,
+                                   const int action,
+                                   [[maybe_unused]] const int mods) {
   if ((key == GLFW_KEY_SPACE && (action == GLFW_PRESS))) {
     glfwSetWindowShouldClose(window, GLFW_TRUE);
   }
@@ -31,6 +32,26 @@ int main([[maybe_unused]] const int argc, [[maybe_unused]] const char *argv[]) {
   GLFWwindow *window{glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT,
                                       "Vk-Enforcer-0.0", NULL, NULL)};
 
-  while (!glfwWindowShouldClose(window)) {
+  if (!window) {
+    std::cerr << "Failed to create GLFW window" << std::endl;
+    glfwTerminate();
+    return EXIT_FAILURE;
   }
+
+  glfwMakeContextCurrent(window);
+  glfwSetKeyCallback(window, GLFWKeyCallback);
+
+  RPC.init();
+
+  while (!glfwWindowShouldClose(window)) {
+    glfwPollEvents();
+
+    glfwSwapBuffers(window);
+  }
+
+  RPC.stop();
+  glfwDestroyWindow(window);
+  glfwTerminate();
+
+  return EXIT_SUCCESS;
 }
