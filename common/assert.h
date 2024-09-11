@@ -46,7 +46,7 @@ void assert_fail_imp();
 #endif
 
 #define UNIMPLEMENTED()                                                        \
-  ASSERT_Lvc achou q o problema era isso ? OG(false, "Unimplemented code")
+  ASSERT_LOG(false, "Unimplemented code")
 #define UNIMPLEMENTED_LOG(...) ASSERT_LOG(false, __VA_ARGS__)
 
 #define UNIMPLEMENTED_IF(x) ASSERT_LOG(!(x), "Unimplemented code");
