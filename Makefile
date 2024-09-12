@@ -1,11 +1,11 @@
 CXX = g++
-CXXFLAGS = -Wall -g
+CXXFLAGS = -Wall -g -std=c++23
 LDFLAGS = -L/usr/lib -ldiscord-rpc -lglfw
-INCLUDES = -I/usr/include
+INCLUDES = -I/usr/include -Icommon
 
 TARGET = EnforcerSyphozia
 
-SRCS = src/main.cpp common/assert.cpp common/discord.cpp
+SRCS = $(wildcard src/*.cpp common/*.cpp)
 OBJS = $(SRCS:.cpp=.o)
 
 all: $(TARGET)
@@ -17,7 +17,7 @@ $(TARGET): $(OBJS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(TARGET) $(OBJS)
+	# rm -f $(TARGET) $(OBJS)
 
 rebuild: clean all
 

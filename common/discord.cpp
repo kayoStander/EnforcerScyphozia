@@ -1,11 +1,11 @@
 #include <ctime>
 
-#include "discord.h"
+#include "discord.hpp"
 
 namespace Discord {
 void RPC::init() {
   DiscordEventHandlers handlers{};
-  Discord_Initialize("1139939140494971051", &handlers, 1, nullptr);
+  Discord_Initialize("1283468042298327131", &handlers, 1, nullptr);
 
   startTimestamp = time(nullptr);
   enabled = true;

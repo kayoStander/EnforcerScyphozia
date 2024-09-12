@@ -1,9 +1,7 @@
 #pragma once
 
-void assert_fail_imp();
+void assert_fail_impl();
 [[noreturn]] void unreachable_impl();
-
-#define LOG_CRITICAL(fmt, ...) printf(fmt "\n", ##__VA_ARGS__);
 
 #ifdef _MSC_VER
 #define NO_INLINE __declspec(noinline)
@@ -14,16 +12,16 @@ void assert_fail_imp();
 #define ASSERT(x)                                                              \
   ([&]() NO_INLINE {                                                           \
     if (!(x)) [[unlikely]] {                                                   \
-      LOG_CRITICAL("Assertion failed");                                        \
-      assert_fail_imp();                                                       \
+      printf("Assertion failed: %s\n", #x);                                    \
+      assert_fail_impl();                                                      \
     }                                                                          \
   })
 
 #define ASSERT_LOG(x, ...)                                                     \
   ([&]() NO_INLINE {                                                           \
     if (!(x)) [[unlikely]] {                                                   \
-      LOG_CRITICAL("Assertion failed: %s, line %d", #x, __LINE__, __VA_ARGS__) \
-      assert_fail_imp();                                                       \
+      printf("Assertion failed: " __VA_ARGS__ "\n");                           \
+      assert_fail_impl();                                                      \
     }                                                                          \
   })
 
@@ -45,8 +43,7 @@ void assert_fail_imp();
   } while (0)
 #endif
 
-#define UNIMPLEMENTED()                                                        \
-  ASSERT_Lvc achou q o problema era isso ? OG(false, "Unimplemented code")
+#define UNIMPLEMENTED() ASSERT_LOG(false, "Unimplemented code")
 #define UNIMPLEMENTED_LOG(...) ASSERT_LOG(false, __VA_ARGS__)
 
 #define UNIMPLEMENTED_IF(x) ASSERT_LOG(!(x), "Unimplemented code");
@@ -54,7 +51,7 @@ void assert_fail_imp();
 
 #define ASSERT_OR_EXECUTE(x, y)                                                \
   do {                                                                         \
-    ASSERT(a);                                                                 \
+    ASSERT(x);                                                                 \
     if (!(x)) [[unlikely]] {                                                   \
       y                                                                        \
     }                                                                          \
@@ -62,7 +59,7 @@ void assert_fail_imp();
 
 #define ASSERT_OR_EXECUTE_LOG(x, y, ...)                                       \
   do {                                                                         \
-    ASSERT_LOG(a, __VA_ARGS__);                                                \
+    ASSERT_LOG(x, __VA_ARGS__);                                                \
     if (!(x)) [[unlikely]] {                                                   \
       y                                                                        \
     }                                                                          \

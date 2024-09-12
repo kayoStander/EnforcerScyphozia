@@ -1,4 +1,4 @@
-#include "assert.h"
+#include "assert.hpp"
 #include <cstdio>
 #include <stdexcept>
 
@@ -9,11 +9,12 @@
 #else
 #define CRASH()                                                                \
   do {                                                                         \
+    fprintf(stderr, "CRASH() not implemented on this architecture");           \
+    std::abort();                                                              \
   } while (0)
-// #error "Missing CRASH() implementation" WARN
 #endif
 
-void assert_fail_imp() {
+void assert_fail_impl() {
   std::fflush(stdout);
   CRASH();
 }

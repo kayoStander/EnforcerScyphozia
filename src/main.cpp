@@ -1,4 +1,6 @@
-#include "../common/discord.h"
+#include "../common/assert.hpp"
+#include "../common/config.hpp"
+#include "../common/discord.hpp"
 
 #include <cassert>
 #include <cstdlib>
@@ -6,9 +8,6 @@
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
-
-#define WINDOW_WIDTH 1920
-#define WINDOW_HEIGHT 1080
 
 Discord::RPC RPC{};
 
@@ -22,15 +21,17 @@ Discord::RPC RPC{};
 }
 
 int main([[maybe_unused]] const int argc, [[maybe_unused]] const char *argv[]) {
-  if (glfwInit()) {
-    return 1;
-  }
 
-  assert(!glfwInit() && "glfwInit returned False");
-  assert(!glfwVulkanSupported() && "glfw doest not support vulkan");
+  // ASSERT(false);
+  // ASSERT(true);
 
-  GLFWwindow *window{glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT,
-                                      "Vk-Enforcer-0.0", NULL, NULL)};
+  assert(glfwInit() && "glfwInit returned False");
+  assert(glfwVulkanSupported() && "glfw does not support vulkan");
+
+  GLFWwindow *window{glfwCreateWindow(Config::GetMainWindowGeometryWidth(),
+                                      Config::GetMainWindowGeometryHeight(),
+                                      Config::GetMainWindowName().c_str(), NULL,
+                                      NULL)};
 
   if (!window) {
     std::cerr << "Failed to create GLFW window" << std::endl;
@@ -45,6 +46,8 @@ int main([[maybe_unused]] const int argc, [[maybe_unused]] const char *argv[]) {
 
   while (!glfwWindowShouldClose(window)) {
     glfwPollEvents();
+
+    RPC.update(Discord::RPCStatus::Playing);
 
     glfwSwapBuffers(window);
   }
