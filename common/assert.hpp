@@ -1,5 +1,9 @@
 #pragma once
 
+/*
+ * VERY BUGGY FILE, ILL FIX IN THE FUTURE.
+ */
+
 void assert_fail_impl();
 [[noreturn]] void unreachable_impl();
 
@@ -27,7 +31,7 @@ void assert_fail_impl();
 
 #define UNREACHABLE()                                                          \
   do {                                                                         \
-    LOG_CRITICAL("Unreachable code: %d", __LINE__)                             \
+    printf("Unreachable code: %d", __LINE__);                                  \
     unreachable_impl();                                                        \
   } while (0)
 

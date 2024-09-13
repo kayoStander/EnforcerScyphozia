@@ -1,6 +1,6 @@
 CXX = g++
 CXXFLAGS = -Wall -g -std=c++23
-LDFLAGS = -L/usr/lib -ldiscord-rpc -lglfw
+LDFLAGS = -L/usr/lib -ldiscord-rpc -lglfw -lfmt
 INCLUDES = -I/usr/include -Icommon
 
 TARGET = EnforcerSyphozia
