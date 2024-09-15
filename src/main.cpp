@@ -2,7 +2,6 @@
 #include "../common/config.hpp"
 #include "../common/discord.hpp"
 #include "../common/logging/log.hpp"
-#include "../common/logging/types.hpp"
 
 #include <cassert>
 
@@ -30,7 +29,9 @@ int main([[maybe_unused]] const int argc, [[maybe_unused]] const char *argv[]) {
   assert(glfwInit() && "glfwInit returned False");
   assert(glfwVulkanSupported() && "glfw does not support vulkan");
 
-  LOG_INFO(Common, "AAAAAAAAAAAAAAAAAAAAAAAAAa");
+  LOG_DEBUG(Common, "{} {}", "Hello", "World");
+  LOG_INFO(Logging, "{}", "This is a logging message");
+  LOG_CRITICAL(Core, "This is a critical message");
 
   GLFWwindow *window{glfwCreateWindow(Config::GetMainWindowGeometryWidth(),
                                       Config::GetMainWindowGeometryHeight(),

@@ -24,6 +24,9 @@ template <typename It> Class GetClassByName(const It begin, const It end) {
 }
 } // namespace
 
+#define ALL_LOG_CLASSES()                                                      \
+  CLS(Logging) CLS(Common) CLS(Core) CLS(Debug) CLS(Config)
+
 const char *GetLogClassName(Class logClass) {
   switch (logClass) {
 #define CLS(x)                                                                 \
@@ -32,6 +35,7 @@ const char *GetLogClassName(Class logClass) {
 #define SUB(x, y)                                                              \
   case Class::x##_##y:                                                         \
     return #x "." #y;
+    ALL_LOG_CLASSES();
 
 #undef CLS
 #undef SUB
@@ -39,7 +43,7 @@ const char *GetLogClassName(Class logClass) {
   default:
     break;
   }
-  return nullptr;
+  return "Unknown class";
 }
 
 const char *GetLevelName(Level logLevel) {
@@ -58,6 +62,6 @@ const char *GetLevelName(Level logLevel) {
     break;
   }
 #undef LVL
-  return nullptr;
+  return "Unknown level";
 }
 } // namespace Common::Logging

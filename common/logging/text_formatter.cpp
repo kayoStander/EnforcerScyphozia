@@ -17,14 +17,16 @@ std::string FormatLogMessage(const Entry &entry) {
   const char *className{GetLogClassName(entry.logClass)};
   const char *levelName{GetLevelName(entry.logLevel)};
 
-  return fmt::format("[{}] - {} - {}:{}:{} -> {}", className, levelName,
+  return fmt::format("[{}:{}] {}:{}:{} -> {}", levelName, className,
                      entry.fileName, entry.function, entry.lineNum,
                      entry.message);
 }
 
 void PrintMessage(const Entry &entry) noexcept {
   const auto str{FormatLogMessage(entry).append(1, '\n')};
-  fputs(str.c_str(), stdout);
+  if (fputs(str.c_str(), stdout) == EOF) {
+    fprintf(stderr, "Failed to write into stdout");
+  }
 }
 
 // fuck you windows

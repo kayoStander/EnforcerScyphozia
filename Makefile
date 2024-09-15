@@ -5,7 +5,7 @@ INCLUDES = -I/usr/include -Icommon
 
 TARGET = EnforcerSyphozia
 
-SRCS = $(wildcard src/*.cpp common/*.cpp)
+SRCS = $(wildcard src/*.cpp common/*.cpp common/logging/*.cpp)
 OBJS = $(SRCS:.cpp=.o)
 
 all: $(TARGET)
@@ -15,7 +15,6 @@ $(TARGET): $(OBJS)
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
-	./$(TARGET)
 
 clean:
 	rm -f $(TARGET) $(OBJS)

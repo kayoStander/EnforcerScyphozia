@@ -10,6 +10,7 @@ enum class Class : u8 {
   Common,  // For common folder
   Core,
   Debug,
+  Config, // For config file
   Count
 };
 } // namespace Common::Logging
