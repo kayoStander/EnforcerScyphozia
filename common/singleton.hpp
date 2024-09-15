@@ -5,6 +5,11 @@
 namespace Common {
 template <typename T> class Singleton {
 public:
+  Singleton(Singleton &&) = delete;
+  Singleton(const Singleton &) = delete;
+  Singleton &operator=(Singleton &&) = delete;
+  Singleton &operator=(const Singleton &) = delete;
+
   static T *Instance() noexcept {
     if (!instance) {
       instance = std::make_unique<T>();
@@ -13,7 +18,7 @@ public:
   }
 
 protected:
-  Singleton();
+  explicit Singleton();
   ~Singleton();
 
 private:

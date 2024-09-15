@@ -4,6 +4,6 @@
 
 namespace Config {
 std::string GetMainWindowName() noexcept;
-u32 GetMainWindowGeometryWidth() noexcept;
-u32 GetMainWindowGeometryHeight() noexcept;
+u16 GetMainWindowGeometryWidth() noexcept;
+u16 GetMainWindowGeometryHeight() noexcept;
 } // namespace Config

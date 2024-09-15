@@ -1,13 +1,19 @@
-#include "../common/assert.hpp"
+// #include "../common/assert.hpp"
 #include "../common/config.hpp"
 #include "../common/discord.hpp"
+#include "../common/logging/log.hpp"
+#include "../common/logging/types.hpp"
 
 #include <cassert>
-#include <cstdlib>
-#include <iostream>
 
+#if __has_include(<GLFW/glfw3.h>)
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
+#else
+#error "How the fuck you ran the code without glfw?"
+#endif
+
+static_assert(__cplusplus >= 202100L, "The required version is C++20 or more.");
 
 Discord::RPC RPC{};
 
@@ -15,18 +21,16 @@ Discord::RPC RPC{};
                                    [[maybe_unused]] const int scancode,
                                    const int action,
                                    [[maybe_unused]] const int mods) {
-  if ((key == GLFW_KEY_SPACE && (action == GLFW_PRESS))) {
+  if (key == GLFW_KEY_SPACE && (action == GLFW_PRESS)) {
     glfwSetWindowShouldClose(window, GLFW_TRUE);
   }
 }
 
 int main([[maybe_unused]] const int argc, [[maybe_unused]] const char *argv[]) {
-
-  // ASSERT(false);
-  // ASSERT(true);
-
   assert(glfwInit() && "glfwInit returned False");
   assert(glfwVulkanSupported() && "glfw does not support vulkan");
+
+  LOG_INFO(Common, "AAAAAAAAAAAAAAAAAAAAAAAAAa");
 
   GLFWwindow *window{glfwCreateWindow(Config::GetMainWindowGeometryWidth(),
                                       Config::GetMainWindowGeometryHeight(),
@@ -34,7 +38,7 @@ int main([[maybe_unused]] const int argc, [[maybe_unused]] const char *argv[]) {
                                       NULL)};
 
   if (!window) {
-    std::cerr << "Failed to create GLFW window" << std::endl;
+    fprintf(stderr, "Failed to create GLFW Window\n");
     glfwTerminate();
     return EXIT_FAILURE;
   }

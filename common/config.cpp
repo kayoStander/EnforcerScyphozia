@@ -9,7 +9,7 @@ u32 MainWindowGeometryWidth{1280};
 u32 MainWindowGeometryHeight{720};
 
 std::string GetMainWindowName() noexcept { return MainWindowName; }
-u32 GetMainWindowGeometryWidth() noexcept { return MainWindowGeometryWidth; }
-u32 GetMainWindowGeometryHeight() noexcept { return MainWindowGeometryHeight; }
+u16 GetMainWindowGeometryWidth() noexcept { return MainWindowGeometryWidth; }
+u16 GetMainWindowGeometryHeight() noexcept { return MainWindowGeometryHeight; }
 
 } // namespace Config

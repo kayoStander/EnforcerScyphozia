@@ -7,7 +7,7 @@ void RPC::init() {
   DiscordEventHandlers handlers{};
   Discord_Initialize("1283468042298327131", &handlers, 1, nullptr);
 
-  startTimestamp = time(nullptr);
+  startTimestamp = static_cast<u64>(time(nullptr));
   enabled = true;
 }
 
@@ -22,7 +22,7 @@ void RPC::update(Discord::RPCStatus status) {
 
   rpc.largeImageKey = "largeImageKey";
   rpc.largeImageText = "largeImageText";
-  rpc.startTimestamp = startTimestamp;
+  rpc.startTimestamp = static_cast<u32>(startTimestamp);
 
   Discord_UpdatePresence(&rpc);
 }

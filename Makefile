@@ -1,6 +1,6 @@
 CXX = g++
-CXXFLAGS = -Wall -g -std=c++23
-LDFLAGS = -L/usr/lib -ldiscord-rpc -lglfw -lfmt
+CXXFLAGS = -Wall -Wextra -Werror -Wsign-conversion -Wstrict-overflow=2 -mcmodel=small -g -std=c++23
+LDFLAGS = -L/usr/lib -ldiscord-rpc -lglfw -lfmt -O3
 INCLUDES = -I/usr/include -Icommon
 
 TARGET = EnforcerSyphozia
@@ -15,9 +15,10 @@ $(TARGET): $(OBJS)
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
+	./$(TARGET)
 
 clean:
-	# rm -f $(TARGET) $(OBJS)
+	rm -f $(TARGET) $(OBJS)
 
 rebuild: clean all
 
