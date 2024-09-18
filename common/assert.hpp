@@ -1,11 +1,12 @@
 #pragma once
+#include "logging/log.hpp"
 
 /*
  * VERY BUGGY FILE, ILL FIX IN THE FUTURE.
  */
 
 void assert_fail_impl();
-[[noreturn]] void unreachable_impl();
+[[noreturn]] inline void unreachable_impl();
 
 #ifdef _MSC_VER
 #define NO_INLINE __declspec(noinline)
@@ -14,24 +15,30 @@ void assert_fail_impl();
 #endif
 
 #define ASSERT(x)                                                              \
-  ([&]() NO_INLINE {                                                           \
+  do {                                                                         \
     if (!(x)) [[unlikely]] {                                                   \
-      printf("Assertion failed: %s\n", #x);                                    \
+      LOG_CRITICAL(Debug, "Assertion failed ");                                \
       assert_fail_impl();                                                      \
     }                                                                          \
-  })
+  } while (0)
 
 #define ASSERT_LOG(x, ...)                                                     \
-  ([&]() NO_INLINE {                                                           \
+  do {                                                                         \
     if (!(x)) [[unlikely]] {                                                   \
-      printf("Assertion failed: " __VA_ARGS__ "\n");                           \
+      LOG_CRITICAL(Debug, "Assertion failed => " __VA_ARGS__);                 \
       assert_fail_impl();                                                      \
     }                                                                          \
-  })
+  } while (0)
 
 #define UNREACHABLE()                                                          \
   do {                                                                         \
-    printf("Unreachable code: %d", __LINE__);                                  \
+    LOG_CRITICAL(Debug, "Unreachable code");                                   \
+    unreachable_impl();                                                        \
+  } while (0)
+
+#define UNREACHABLE_LOG(...)                                                   \
+  do {                                                                         \
+    LOG_CRITICAL(Debug, "Unreachable code => " __VA_ARGS__);                   \
     unreachable_impl();                                                        \
   } while (0)
 
@@ -48,10 +55,12 @@ void assert_fail_impl();
 #endif
 
 #define UNIMPLEMENTED() ASSERT_LOG(false, "Unimplemented code")
-#define UNIMPLEMENTED_LOG(...) ASSERT_LOG(false, __VA_ARGS__)
+#define UNIMPLEMENTED_LOG(...)                                                 \
+  ASSERT_LOG(false, "Unimplemented code => " __VA_ARGS__)
 
 #define UNIMPLEMENTED_IF(x) ASSERT_LOG(!(x), "Unimplemented code");
-#define UNIMPLEMENTED_IF_LOG(x, ...) ASSERT_LOG(!(x), __VA_ARGS__);
+#define UNIMPLEMENTED_IF_LOG(x, ...)                                           \
+  ASSERT_LOG(!(x), "Unimplemented code => " __VA_ARGS__);
 
 #define ASSERT_OR_EXECUTE(x, y)                                                \
   do {                                                                         \

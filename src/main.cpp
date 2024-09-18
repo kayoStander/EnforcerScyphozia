@@ -1,4 +1,4 @@
-// #include "../common/assert.hpp"
+#include "../common/assert.hpp"
 #include "../common/config.hpp"
 #include "../common/discord.hpp"
 #include "../common/logging/log.hpp"
@@ -25,13 +25,20 @@ Discord::RPC RPC{};
   }
 }
 
+[[gnu::leaf]] void glfwErrorCallback(int error, const char *description) {
+  LOG_ERROR(GLFW, "{} {}", error, description);
+};
+
 int main([[maybe_unused]] const int argc, [[maybe_unused]] const char *argv[]) {
-  assert(glfwInit() && "glfwInit returned False");
-  assert(glfwVulkanSupported() && "glfw does not support vulkan");
+
+  ASSERT_LOG(glfwInit(), "glfwInit returned False");
+  ASSERT_LOG(glfwVulkanSupported(), "GLFW does not support vulkan");
 
   LOG_DEBUG(Common, "{} {}", "Hello", "World");
   LOG_INFO(Logging, "{}", "This is a logging message");
   LOG_CRITICAL(Core, "This is a critical message");
+
+  ASSERT_LOG(false, "testing assertion");
 
   GLFWwindow *window{glfwCreateWindow(Config::GetMainWindowGeometryWidth(),
                                       Config::GetMainWindowGeometryHeight(),
@@ -39,13 +46,14 @@ int main([[maybe_unused]] const int argc, [[maybe_unused]] const char *argv[]) {
                                       NULL)};
 
   if (!window) {
-    fprintf(stderr, "Failed to create GLFW Window\n");
+    LOG_ERROR(GLFW, "Window wasn't generated");
     glfwTerminate();
     return EXIT_FAILURE;
   }
 
   glfwMakeContextCurrent(window);
   glfwSetKeyCallback(window, GLFWKeyCallback);
+  glfwSetErrorCallback(glfwErrorCallback);
 
   RPC.init();
 

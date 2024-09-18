@@ -2,7 +2,7 @@
 #include "config.hpp"
 
 namespace Config {
-s32 gpuId{-1};
+s32 gpuId{-1}; // vulkan gpu index negative for auto select
 
 std::string MainWindowName{"Enforcer-Schyphozia-v0-1"};
 u32 MainWindowGeometryWidth{1280};
