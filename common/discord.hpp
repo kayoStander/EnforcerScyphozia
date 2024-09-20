@@ -15,9 +15,9 @@ public:
   RPC &operator=(RPC &&) = delete;
   RPC &operator=(const RPC &) = delete;
 
-  void init();
-  void update(RPCStatus status);
-  void stop();
+  void Init();
+  void Update(RPCStatus status);
+  void Stop();
 
 private:
   u64 startTimestamp;

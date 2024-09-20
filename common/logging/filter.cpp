@@ -26,7 +26,8 @@ template <typename It> Class GetClassByName(const It begin, const It end) {
 
 #define ALL_LOG_CLASSES()                                                      \
   CLS(Logging)                                                                 \
-  CLS(Common) CLS(Core) CLS(Debug) CLS(Config) CLS(GLFW) CLS(Vulkan)
+  CLS(Common)                                                                  \
+  CLS(Core) CLS(Debug) CLS(Discord) CLS(Config) CLS(GLFW) CLS(Vulkan)
 
 const char *GetLogClassName(Class logClass) {
   switch (logClass) {

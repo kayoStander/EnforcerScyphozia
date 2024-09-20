@@ -1,6 +1,5 @@
 #include "assert.hpp"
 #include <cstdio>
-#include <stdexcept>
 
 #ifdef ARCH_X86_64
 #define CRASH() __asm__ __volatile__("int $3")
@@ -18,15 +17,11 @@
 void assert_fail_impl() {
   std::fflush(stdout);
   CRASH();
+  __builtin_unreachable();
 }
 
 [[noreturn]] inline void unreachable_impl() {
   std::fflush(stdout);
   CRASH();
-  throw std::runtime_error("Unreachable code");
+  __builtin_unreachable();
 }
-
-/*void assert_fail_debug_log(const char *__restrict msg) {
-  LOG_CRITICAL("Assertion failed\n{}", msg);
-  assert_fail_imp();
-} FIX */

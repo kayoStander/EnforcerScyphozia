@@ -20,6 +20,7 @@ enum class Class : u8 {
   Common,  // For common folder
   Core,
   Debug,
+  Discord,
   Config, // For config file
   GLFW,   // GLFW related events
   Vulkan, // Vulkan related events

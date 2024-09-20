@@ -5,14 +5,15 @@
 #include "logging/log.hpp"
 
 namespace Discord {
-void RPC::init() {
+void RPC::Init() {
   DiscordEventHandlers handlers{};
   Discord_Initialize("1283468042298327131", &handlers, 1, nullptr);
   startTimestamp = static_cast<u64>(time(nullptr));
   enabled = true;
+  LOG_INFO(Discord, "Discord rpc initialized");
 }
 
-void RPC::update(Discord::RPCStatus status) {
+void RPC::Update(Discord::RPCStatus status) {
   if (!enabled) {
     return;
   }
@@ -32,11 +33,11 @@ void RPC::update(Discord::RPCStatus status) {
   Discord_UpdatePresence(&rpc);
 }
 
-void RPC::stop() {
+void RPC::Stop() {
   if (!enabled) {
     return;
   }
-  LOG_INFO(Common, "Discord rpc stopped");
+  LOG_INFO(Discord, "Discord rpc stopped");
 
   enabled = false;
   Discord_ClearPresence();

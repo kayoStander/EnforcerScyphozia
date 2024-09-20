@@ -22,7 +22,7 @@ std::string FormatLogMessage(const Entry &entry) {
                      entry.message);
 }
 
-inline void PrintMessage(const Entry &entry) noexcept {
+void PrintMessage(const Entry &entry) noexcept {
   const auto str{FormatLogMessage(entry).append(1, '\n')};
   if (fputs(str.c_str(), stdout) == EOF) {
     fprintf(stderr, "Failed to write into stdout");
