@@ -10,7 +10,7 @@ void RPC::Init() {
   Discord_Initialize("1283468042298327131", &handlers, 1, nullptr);
   startTimestamp = static_cast<u64>(time(nullptr));
   enabled = true;
-  LOG_INFO(Discord, "Discord rpc initialized");
+  LOG_INFO(Discord, "Discord RPC initialized");
 }
 
 void RPC::Update(Discord::RPCStatus status) {
@@ -31,13 +31,15 @@ void RPC::Update(Discord::RPCStatus status) {
   rpc.startTimestamp = static_cast<u32>(startTimestamp);
 
   Discord_UpdatePresence(&rpc);
+
+  LOG_TRACE(Discord, "Discord RPC updated");
 }
 
 void RPC::Stop() {
   if (!enabled) {
     return;
   }
-  LOG_INFO(Discord, "Discord rpc stopped");
+  LOG_INFO(Discord, "Discord RPC stopped");
 
   enabled = false;
   Discord_ClearPresence();

@@ -42,17 +42,19 @@ void FmtLogMessage(Class logClass, Level logLevel,
 
 #ifdef DEBUG
 #define LOG_TRACE(logClass, ...)                                               \
-  Common::Log::FmtLogMessage(                                                  \
-      Common::Logging::Class::logClass, Common::Logging::Level::Trace,         \
-      Common::Log::TrimSourcePath(__FILE__), __LINE__, __func__, __VA_ARGS__)
+  Common::Logging::FmtLogMessage(Common::Logging::Class::logClass,             \
+                                 Common::Logging::Level::Trace,                \
+                                 Common::Logging::TrimSourcePath(__FILE__),    \
+                                 __LINE__, __func__, __VA_ARGS__)
 #else
 #define LOG_TRACE(logClass, ...) (void(0))
 #endif
 
-#define LOG_GENERIC(log_class, log_level, ...)                                 \
-  Common::Log::FmtLogMessage(                                                  \
-      Common::Logging::Class::logClass, Common::Logging::Level::logLevel,      \
-      Common::Log::TrimSourcePath(__FILE__), __LINE__, __func__, __VA_ARGS__)
+#define LOG_GENERIC(logClass, logLevel, ...)                                   \
+  Common::Log::FmtLogMessage(Common::Logging::Class::logClass,                 \
+                             Common::Logging::Level::logLevel,                 \
+                             Common::Logging::TrimSourcePath(__FILE__),        \
+                             __LINE__, __func__, __VA_ARGS__)
 
 #define LOG_DEBUG(logClass, ...)                                               \
   Common::Logging::FmtLogMessage(Common::Logging::Class::logClass,             \

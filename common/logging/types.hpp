@@ -24,6 +24,7 @@ enum class Class : u8 {
   Config, // For config file
   GLFW,   // GLFW related events
   Vulkan, // Vulkan related events
-  Count   // total number of classes
+  Shader,
+  Count // total number of classes
 };
 } // namespace Common::Logging

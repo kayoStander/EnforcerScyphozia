@@ -1,4 +1,3 @@
-#include "../common/assert.hpp"
 #include "../common/logging/log.hpp"
 #include "application.hpp"
 
@@ -13,9 +12,11 @@ int main([[maybe_unused]] const int argc, [[maybe_unused]] const char *argv[]) {
   try {
     app.Run();
   } catch (const std::exception &e) {
-    LOG_ERROR(Debug, "Exception ocurred: {}", e.what());
+    LOG_CRITICAL(Core, "Exception ocurred: {}", e.what());
     return EXIT_FAILURE;
   }
+
+  LOG_INFO(Debug, "Ended session!");
 
   return EXIT_SUCCESS;
 }

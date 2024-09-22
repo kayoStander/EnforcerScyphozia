@@ -2,8 +2,6 @@
 #include "../common/assert.hpp"
 #include "../common/config.hpp"
 
-#include <GLFW/glfw3.h>
-
 [[gnu::leaf]] void ErrorCallback(int error, const char *description) {
   LOG_ERROR(GLFW, "{} {}", error, description);
 }
@@ -19,11 +17,19 @@ Window::~Window() {
   glfwTerminate();
 }
 
+void Window::CreateWindowSurface(VkInstance instance, VkSurfaceKHR *surface) {
+  if (glfwCreateWindowSurface(instance, window, nullptr, surface) !=
+      VK_SUCCESS) {
+    throw std::runtime_error("Failed to create window surface");
+    ASSERT_LOG(false, "Failed to create window surface");
+  }
+}
+
 void Window::Init() {
   ASSERT_LOG(glfwInit(), "glfwInit returned False");
   ASSERT_LOG(glfwVulkanSupported(), "GLFW does not support vulkan");
 
-  // glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+  glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
   glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
   window =
@@ -35,7 +41,6 @@ void Window::Init() {
     glfwTerminate();
     throw std::runtime_error("Window wasn't generated");
   }
-  glfwMakeContextCurrent(window);
 
   LOG_INFO(GLFW, "Window created");
 }
