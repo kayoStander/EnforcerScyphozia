@@ -20,6 +20,9 @@ void assert_fail_impl() {
   __builtin_unreachable();
 }
 
+// template <bool B, typename std::enable_if_t<B> *> void static_assert_impl()
+// {}
+
 [[noreturn]] inline void unreachable_impl() {
   std::fflush(stdout);
   CRASH();

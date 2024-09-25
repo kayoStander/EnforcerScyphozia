@@ -3,3 +3,4 @@
 -fdeclspec
 -Wall 
 -Wextra
+-Wvla

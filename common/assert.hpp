@@ -1,11 +1,10 @@
 #pragma once
 #include "logging/log.hpp"
-
-/*
- * VERY BUGGY FILE, ILL FIX IN THE FUTURE.
- */
+#include <type_traits>
 
 void assert_fail_impl();
+// template <bool B, typename std::enable_if_t<B> * = nullptr>
+// void static_assert_impl();
 [[noreturn]] inline void unreachable_impl();
 
 #ifdef _MSC_VER

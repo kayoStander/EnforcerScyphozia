@@ -1,13 +1,19 @@
 #include <ctime>
 
-#include "assert.hpp"
 #include "discord.hpp"
 #include "logging/log.hpp"
 
 namespace Discord {
+RPC::~RPC() {
+  LOG_DEBUG(Discord, "Discord RPC stopped");
+
+  Discord_ClearPresence();
+  Discord_Shutdown();
+}
+
 void RPC::Init() {
   DiscordEventHandlers handlers{};
-  Discord_Initialize("1283468042298327131", &handlers, 1, nullptr);
+  Discord_Initialize("1283468042298327131", &handlers, 1, NULL);
   startTimestamp = static_cast<u64>(time(nullptr));
   enabled = true;
   LOG_INFO(Discord, "Discord RPC initialized");
@@ -15,34 +21,29 @@ void RPC::Init() {
 
 void RPC::Update(Discord::RPCStatus status) {
   if (!enabled) {
+    LOG_ERROR(Discord, "RPC is disabled but it's being updated");
     return;
   }
 
-  DiscordRichPresence rpc{};
+  DiscordRichPresence discordPresence{};
+  memset(&discordPresence, 0, sizeof(discordPresence));
 
   if (status == Discord::RPCStatus::Playing) {
-    rpc.details = "playing testing EnforcerScyphozia";
-    rpc.state = "EnforcerScyphozia";
+    discordPresence.details = "Working at project NULL";
+    discordPresence.state = "Using Enforcer Engine!";
+  } else {
+    discordPresence.details = "Idling";
   }
-  rpc.details = "Idle";
 
-  rpc.largeImageKey = "largeImageKey";
-  rpc.largeImageText = "largeImageText";
-  rpc.startTimestamp = static_cast<u32>(startTimestamp);
+  discordPresence.largeImageKey = "largeImageKey";
+  discordPresence.largeImageText = "largeImageText";
 
-  Discord_UpdatePresence(&rpc);
+  discordPresence.startTimestamp = static_cast<u32>(startTimestamp);
+  // discordPresence.endTimestamp = 1507665886;
+
+  Discord_UpdatePresence(&discordPresence);
 
   LOG_TRACE(Discord, "Discord RPC updated");
 }
 
-void RPC::Stop() {
-  if (!enabled) {
-    return;
-  }
-  LOG_INFO(Discord, "Discord RPC stopped");
-
-  enabled = false;
-  Discord_ClearPresence();
-  Discord_Shutdown();
-}
 } // namespace Discord

@@ -13,6 +13,8 @@ Window::Window() {
   Init();
 }
 Window::~Window() {
+  LOG_DEBUG(GLFW, "Window closed");
+
   glfwDestroyWindow(window);
   glfwTerminate();
 }
@@ -33,8 +35,8 @@ void Window::Init() {
   glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
   window =
-      glfwCreateWindow(Config::GetMainWindowGeometryWidth(),
-                       Config::GetMainWindowGeometryHeight(),
+      glfwCreateWindow(static_cast<int>(Config::GetMainWindowGeometryWidth()),
+                       static_cast<int>(Config::GetMainWindowGeometryHeight()),
                        Config::GetMainWindowName().c_str(), nullptr, nullptr);
 
   if (!window) {

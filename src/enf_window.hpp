@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../common/config.hpp"
+
 #include <vulkan/vulkan_core.h>
 #if __has_include(<GLFW/glfw3.h>)
 #define GLFW_INCLUDE_VULKAN
@@ -15,6 +17,10 @@ public:
   ~Window();
 
   [[gnu::leaf]] inline GLFWwindow *GetWindow() noexcept { return window; }
+  [[gnu::leaf]] VkExtent2D getExtent() noexcept {
+    return {Config::GetMainWindowGeometryWidth(),
+            Config::GetMainWindowGeometryHeight()};
+  }
   [[gnu::hot, gnu::leaf]] inline bool ShouldClose() noexcept {
     return glfwWindowShouldClose(window);
   }

@@ -16,7 +16,7 @@ int main([[maybe_unused]] const int argc, [[maybe_unused]] const char *argv[]) {
     return EXIT_FAILURE;
   }
 
-  LOG_INFO(Debug, "Ended session!");
+  LOG_INFO(Debug, "Session ended!");
 
   return EXIT_SUCCESS;
 }

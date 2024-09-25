@@ -4,10 +4,10 @@
 
 namespace Config {
 std::string GetMainWindowName() noexcept;
-u16 GetMainWindowGeometryWidth() noexcept;
-u16 GetMainWindowGeometryHeight() noexcept;
+u32 GetMainWindowGeometryWidth() noexcept;
+u32 GetMainWindowGeometryHeight() noexcept;
 
-void SetMainWindowGeometryHeight() noexcept;
-void SetMainWindowGeometryWidth() noexcept;
-void SetMainWindowName() noexcept;
+constexpr void SetMainWindowName() noexcept;
+constexpr void SetMainWindowGeometryHeight() noexcept;
+constexpr void SetMainWindowGeometryWidth() noexcept;
 } // namespace Config
