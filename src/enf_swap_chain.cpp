@@ -198,7 +198,7 @@ void SwapChain::createImageViews() {
       throw std::runtime_error("failed to create texture image view!");
     }
   }
-  LOG_INFO(Vulkan, "Number of swap chains image views :: {}",
+  LOG_INFO(Vulkan, "Number of swapChainsImageViews => {}",
            swapChainImageViews.size());
 }
 
@@ -268,7 +268,7 @@ void SwapChain::createRenderPass() {
 
 void SwapChain::createFramebuffers() {
   swapChainFramebuffers.resize(imageCount());
-  for (size_t i = 0; i < imageCount(); i++) {
+  for (size_t i{0}; i < imageCount(); i++) {
     std::array<VkImageView, 2> attachments = {swapChainImageViews[i],
                                               depthImageViews[i]};
 

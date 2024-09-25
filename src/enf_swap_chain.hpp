@@ -8,7 +8,7 @@ namespace Enforcer {
 
 class SwapChain {
 public:
-  static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
+  static constexpr int MAX_FRAMES_IN_FLIGHT{2};
 
   SwapChain(Device &deviceRef, VkExtent2D windowExtent);
   ~SwapChain();
@@ -75,7 +75,7 @@ private:
   std::vector<VkSemaphore> renderFinishedSemaphores;
   std::vector<VkFence> inFlightFences;
   std::vector<VkFence> imagesInFlight;
-  size_t currentFrame = 0;
+  size_t currentFrame{0};
 };
 
 } // namespace Enforcer

@@ -25,6 +25,11 @@ std::vector<char> Pipeline::ReadFile(const std::string &filepath) {
   return buffer;
 }
 
+void Pipeline::bind(VkCommandBuffer commandBuffer) {
+  vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
+                    graphicsPipeline);
+}
+
 void Pipeline::CreateGraphicsPipeline(
     const std::string &vertFilepath, const std::string &fragFilepath,
     [[maybe_unused]] const PipelineConfigInfo &configInfo) {
