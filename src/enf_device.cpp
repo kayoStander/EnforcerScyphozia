@@ -1,4 +1,5 @@
 #include "enf_device.hpp"
+#include "../common/config.hpp"
 #include "../common/logging/log.hpp"
 
 #include <cstring>
@@ -62,6 +63,8 @@ Device::~Device() {
 
   vkDestroySurfaceKHR(instance, surface_, nullptr);
   vkDestroyInstance(instance, nullptr);
+
+  LOG_DEBUG(Vulkan, "Device destroyed");
 }
 
 void Device::createInstance() {
@@ -153,7 +156,28 @@ void Device::createLogicalDevice() {
   }
 
   VkPhysicalDeviceFeatures deviceFeatures = {};
-  deviceFeatures.samplerAnisotropy = VK_TRUE;
+
+#define ALL_PHYSICAL_DEVICE_FEATURES_ENUMS                                     \
+  ENUM(wideLines) ENUM(samplerAnisotropy)
+
+#define ENUM(x)                                                                \
+  case Config::DeviceFeatures::PhysicalDeviceFeatures::x:                      \
+    deviceFeatures.x = VK_TRUE;                                                \
+    LOG_WARNING(Vulkan, "\t{}", #x);                                           \
+    break;
+
+  LOG_DEBUG(Vulkan, "Physical device features: ");
+  for (auto feature : Config::DeviceFeatures::GetPhysicalDeviceFeatures()) {
+    switch (feature) {
+      ALL_PHYSICAL_DEVICE_FEATURES_ENUMS;
+    case Config::DeviceFeatures::PhysicalDeviceFeatures::count:
+      [[fallthrough]];
+    default:
+      break;
+    }
+  }
+#undef ENUM
+#undef ALL_PHYSICAL_DEVICE_FEATURES_ENUMS
 
   VkDeviceCreateInfo createInfo = {};
   createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;

@@ -42,8 +42,6 @@ void RPC::Update(Discord::RPCStatus status) {
   // discordPresence.endTimestamp = 1507665886;
 
   Discord_UpdatePresence(&discordPresence);
-
-  LOG_TRACE(Discord, "Discord RPC updated");
 }
 
 } // namespace Discord

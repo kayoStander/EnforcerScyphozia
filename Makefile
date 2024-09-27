@@ -12,10 +12,11 @@ OBJS = $(SRCS:.cpp=.o)
 all: $(TARGET)
 
 $(TARGET): $(OBJS) 
+	./compile.sh
 	$(CXX) $(DEFINES) $(CXXFLAGS) $(INCLUDES) -o $@ $(OBJS) $(LDFLAGS)
 
 %.o: %.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(DEFINES) $(CXXFLAGS) -c $< -o $@
 
 clean:
 	rm -f $(TARGET) $(OBJS)

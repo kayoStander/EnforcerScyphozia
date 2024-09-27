@@ -1,6 +1,7 @@
 #include "application.hpp"
 #include "../common/discord.hpp"
 #include "../common/logging/log.hpp"
+#include "enf_model.hpp"
 #include "enf_pipeline.hpp"
 
 #include <array>
@@ -12,6 +13,7 @@ Discord::RPC RPC{};
 
 namespace Enforcer {
 Application::Application() {
+  LoadModels();
   CreatePipelineLayout();
   CreatePipeline();
   CreateCommandBuffers();
@@ -36,6 +38,21 @@ void Application::Run() {
 
   LOG_DEBUG(GLFW, "Loop ended");
 }
+// #define VERTEX_CREATE(x, y, z) {x, y, z};
+void Application::LoadModels() {
+  const std::vector<Model::Vertex> vertices{{{0.f, -.5f}, {1.f, 0.f, 0.f}},
+                                            {{.5f, .5f}, {0.f, 1.f, 0.f}},
+                                            {{-.5f, .5f}, {0.f, 0.f, 1.f}}};
+
+#ifdef DEBUG
+  for (const Model::Vertex i : vertices) {
+    LOG_TRACE(Vulkan, "Vertices => {}:{}", i.position.x, i.position.y);
+  }
+#endif
+
+  model = std::make_unique<Model>(device, vertices);
+}
+// #undef VERTEX_CREATE
 
 void Application::CreatePipelineLayout() {
   VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
@@ -100,7 +117,8 @@ void Application::CreateCommandBuffers() {
                          VK_SUBPASS_CONTENTS_INLINE);
 
     pipeline->bind(commandBuffers[i]);
-    vkCmdDraw(commandBuffers[i], 3, 1, 0, 0);
+    model->Bind(commandBuffers[i]);
+    model->Draw(commandBuffers[i]);
 
     vkCmdEndRenderPass(commandBuffers[i]);
     if (vkEndCommandBuffer(commandBuffers[i]) != VK_SUCCESS) {

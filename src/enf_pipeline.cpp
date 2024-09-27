@@ -1,6 +1,7 @@
 #include "enf_pipeline.hpp"
 #include "../common/assert.hpp"
 #include "../common/logging/log.hpp"
+#include "enf_model.hpp"
 
 #include <fstream>
 #include <stdexcept>
@@ -64,13 +65,18 @@ void Pipeline::CreateGraphicsPipeline(
   shaderStages[1].flags = 0;
   shaderStages[1].pNext = nullptr;
 
+  auto bindingDescriptions = Model::Vertex::GetBindingDescriptions();
+  auto attributeDescriptions = Model::Vertex::GetAttributeDescriptions();
+
   VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
   vertexInputInfo.sType =
       VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-  vertexInputInfo.vertexAttributeDescriptionCount = 0;
-  vertexInputInfo.vertexBindingDescriptionCount = 0;
-  vertexInputInfo.pVertexAttributeDescriptions = nullptr;
-  vertexInputInfo.pVertexBindingDescriptions = nullptr;
+  vertexInputInfo.vertexAttributeDescriptionCount =
+      static_cast<u32>(attributeDescriptions.size());
+  vertexInputInfo.vertexBindingDescriptionCount =
+      static_cast<u32>(bindingDescriptions.size());
+  vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
+  vertexInputInfo.pVertexBindingDescriptions = bindingDescriptions.data();
 
   VkPipelineViewportStateCreateInfo viewportInfo{};
   viewportInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -139,7 +145,7 @@ PipelineConfigInfo Pipeline::DefaultPipelineConfigInfo(u32 width, u32 height) {
   configInfo.viewport.minDepth = 0.0f;
   configInfo.viewport.maxDepth = 1.0f;
 
-  configInfo.scissor.offset = {0, 0};
+  configInfo.scissor.offset = Config::Scissors::GetScissorsOffset();
   configInfo.scissor.extent = {width, height};
 
   configInfo.rasterizationInfo.sType =
@@ -147,7 +153,7 @@ PipelineConfigInfo Pipeline::DefaultPipelineConfigInfo(u32 width, u32 height) {
   configInfo.rasterizationInfo.depthClampEnable = VK_FALSE;
   configInfo.rasterizationInfo.rasterizerDiscardEnable = VK_FALSE;
   configInfo.rasterizationInfo.polygonMode = VK_POLYGON_MODE_FILL;
-  configInfo.rasterizationInfo.lineWidth = 1.0f;
+  configInfo.rasterizationInfo.lineWidth = 1.f; // 50.0f;
   configInfo.rasterizationInfo.cullMode = VK_CULL_MODE_NONE;
   configInfo.rasterizationInfo.frontFace = VK_FRONT_FACE_CLOCKWISE;
   configInfo.rasterizationInfo.depthBiasEnable = VK_FALSE;
@@ -202,6 +208,8 @@ PipelineConfigInfo Pipeline::DefaultPipelineConfigInfo(u32 width, u32 height) {
   configInfo.depthStencilInfo.front = {}; // Optional
   configInfo.depthStencilInfo.back = {};  // Optional
 
+  LOG_INFO(Vulkan, "DefaultPipelineConfigInfo returned");
+
   return configInfo;
 }
 
@@ -215,5 +223,7 @@ Pipeline::~Pipeline() noexcept {
   vkDestroyShaderModule(device.device(), vertShaderModule, nullptr);
   vkDestroyShaderModule(device.device(), fragShaderModule, nullptr);
   vkDestroyPipeline(device.device(), graphicsPipeline, nullptr);
+
+  LOG_DEBUG(Vulkan, "Pipeline destroyed");
 }
 } // namespace Enforcer
