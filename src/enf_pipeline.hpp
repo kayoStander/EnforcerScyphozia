@@ -10,6 +10,9 @@
 namespace Enforcer {
 
 struct PipelineConfigInfo {
+  // PipelineConfigInfo(const PipelineConfigInfo&)=delete;
+  // PipelineConfigInfo &operator=(const PipelineConfigInfo&)=delete;
+
   VkViewport viewport;
   VkRect2D scissor;
   VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
@@ -20,7 +23,7 @@ struct PipelineConfigInfo {
   VkPipelineDepthStencilStateCreateInfo depthStencilInfo;
   VkPipelineLayout pipelineLayout = nullptr;
   VkRenderPass renderPass = nullptr;
-  uint32_t subpass{0};
+  u32 subpass{0};
 };
 
 class Pipeline {

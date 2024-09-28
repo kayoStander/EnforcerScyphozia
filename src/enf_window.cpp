@@ -7,11 +7,7 @@
 }
 
 namespace Enforcer {
-Window::Window() {
-  glfwSetErrorCallback(ErrorCallback);
-
-  Init();
-}
+Window::Window(int width, int height) : width{width}, height{height} { Init(); }
 Window::~Window() {
   LOG_DEBUG(GLFW, "Window closed");
 
@@ -32,18 +28,34 @@ void Window::Init() {
   ASSERT_LOG(glfwVulkanSupported(), "GLFW does not support vulkan");
 
   glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-  glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+  glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-  window =
-      glfwCreateWindow(static_cast<int>(Config::GetMainWindowGeometryWidth()),
-                       static_cast<int>(Config::GetMainWindowGeometryHeight()),
-                       Config::GetMainWindowName().c_str(), nullptr, nullptr);
+  window = glfwCreateWindow(width, height, Config::GetMainWindowName().c_str(),
+                            nullptr, nullptr);
 
   if (!window) {
     glfwTerminate();
     throw std::runtime_error("Window wasn't generated");
   }
 
+  glfwSetWindowUserPointer(window, this);
+  glfwSetFramebufferSizeCallback(window, FramebufferResizedCallback);
+  // glfwSetErrorCallback(ErrorCallback);
+
   LOG_INFO(GLFW, "Window created");
+}
+
+void Window::FramebufferResizedCallback(GLFWwindow *window_, int width,
+                                        int height) {
+  auto window = reinterpret_cast<Window *>(glfwGetWindowUserPointer(window_));
+
+  if (window) {
+    window->frameBufferResized = true;
+    window->width = width;
+    window->height = height;
+    LOG_WARNING(GLFW, "{}x : {}y", width, height);
+    return;
+  }
+  LOG_ERROR(GLFW, "Failed to resize window");
 }
 } // namespace Enforcer

@@ -145,7 +145,7 @@ PipelineConfigInfo Pipeline::DefaultPipelineConfigInfo(u32 width, u32 height) {
   configInfo.viewport.minDepth = 0.0f;
   configInfo.viewport.maxDepth = 1.0f;
 
-  configInfo.scissor.offset = Config::Scissors::GetScissorsOffset();
+  configInfo.scissor.offset = {0, 0};
   configInfo.scissor.extent = {width, height};
 
   configInfo.rasterizationInfo.sType =

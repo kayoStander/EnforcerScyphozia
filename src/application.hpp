@@ -9,6 +9,9 @@
 #include <memory>
 #include <vector>
 
+#define WIDTH 800
+#define HEIGHT 600
+
 namespace Enforcer {
 class Application {
 public:
@@ -26,10 +29,12 @@ private:
   void CreatePipeline();
   void CreateCommandBuffers();
   void DrawFrame();
+  void RecreateSwapChain();
+  void RecordCommandBuffer(u32 imageIndex);
 
-  Window window{};
+  Window window{WIDTH, HEIGHT};
   Device device{window};
-  SwapChain swapChain{device, window.getExtent()};
+  std::unique_ptr<SwapChain> swapChain;
   std::unique_ptr<Pipeline> pipeline;
   VkPipelineLayout pipelineLayout;
   std::vector<VkCommandBuffer> commandBuffers;

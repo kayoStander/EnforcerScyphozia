@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../common/config.hpp"
+#include "../common/types.hpp"
 
 #include <vulkan/vulkan_core.h>
 #if __has_include(<GLFW/glfw3.h>)
@@ -13,22 +13,31 @@
 namespace Enforcer {
 class Window {
 public:
-  Window();
+  Window(int width, int height);
   ~Window();
 
-  [[gnu::leaf]] inline GLFWwindow *GetWindow() noexcept { return window; }
+  [[gnu::pure]] inline GLFWwindow *GetWindow() noexcept { return window; }
   [[gnu::leaf]] VkExtent2D getExtent() noexcept {
-    return {Config::GetMainWindowGeometryWidth(),
-            Config::GetMainWindowGeometryHeight()};
+    return {static_cast<u32>(width), static_cast<u32>(height)};
   }
-  [[gnu::hot, gnu::leaf]] inline bool ShouldClose() noexcept {
+  [[gnu::hot, gnu::pure]] inline bool ShouldClose() noexcept {
     return glfwWindowShouldClose(window);
   }
+  [[gnu::pure]] bool inline WasWindowResized() noexcept {
+    return frameBufferResized;
+  }
+
+  void inline ResetWindowResizedFlag() noexcept { frameBufferResized = false; }
 
   void CreateWindowSurface(VkInstance instance, VkSurfaceKHR *surface);
 
 private:
+  static void FramebufferResizedCallback(GLFWwindow *window, int width,
+                                         int height);
   void Init();
+
+  int width, height;
+  bool frameBufferResized{false};
 
   GLFWwindow *window;
 };
