@@ -65,7 +65,7 @@ Model::Vertex::GetAttributeDescriptions() {
   attributeDescriptions[0].offset = 0;*/
   return {{.location = 0,
            .binding = 0,
-           .format = VK_FORMAT_R32G32_SFLOAT,
+           .format = VK_FORMAT_R32G32B32_SFLOAT,
            .offset = offsetof(Vertex, position)},
           {.location = 1,
            .binding = 0,

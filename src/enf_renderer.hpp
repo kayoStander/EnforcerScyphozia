@@ -27,8 +27,10 @@ public:
     return swapChain->getRenderPass();
   }
   bool IsFrameInProgress() const noexcept { return isFrameStarted; }
-
-  VkCommandBuffer getCurrentCommandBuffer() const {
+  float GetAspectRatio() const noexcept {
+    return swapChain->extentAspectRatio();
+  }
+  VkCommandBuffer GetCurrentCommandBuffer() const {
     ASSERT_LOG(isFrameStarted,
                "Cannot get command buffer while frame not in progress");
     return commandBuffers[static_cast<u32>(currentFrameIndex)];

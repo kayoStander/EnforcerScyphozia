@@ -1,5 +1,6 @@
 #pragma once
 
+#include "enf_camera.hpp"
 #include "enf_device.hpp"
 #include "enf_game_object.hpp"
 #include "enf_pipeline.hpp"
@@ -27,7 +28,7 @@ private:
   void LoadGameObjects();
   void CreatePipelineLayout();
   void CreatePipeline();
-  void RenderGameObjects(VkCommandBuffer commandBuffer);
+  void RenderGameObjects(VkCommandBuffer commandBuffer, const Camera &camera);
 
   Window window{WIDTH, HEIGHT};
   Device device{window};

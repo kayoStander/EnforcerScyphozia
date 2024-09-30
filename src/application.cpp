@@ -20,8 +20,7 @@ Discord::RPC RPC{};
 namespace Enforcer {
 
 struct SimplePushConstantData {
-  glm::mat2 transform{1.f}; // 1 0 0 1 // mat2{1.f} * v = v
-  glm::vec2 offset;
+  glm::mat4 transform{1.f}; // 1 0 0 1 // mat2{1.f} * v = v
   alignas(16) glm::vec3 color;
 };
 
@@ -38,15 +37,22 @@ Application::~Application() {
 void Application::Run() {
   RPC.Init();
 
+  Camera camera{};
+
   LOG_DEBUG(GLFW, "Loop started");
   LOG_DEBUG(Vulkan, "maxPushCostantsSize => {}",
             device.properties.limits.maxPushConstantsSize);
 
   while (!window.ShouldClose()) {
     glfwPollEvents();
+    const float aspect{renderer.GetAspectRatio()};
+    const float FOV{50.f};
+    // camera.SetOrthographicProjection(-aspect, aspect, -1, 1, -1, 1);
+    camera.SetPerspectiveProjection(glm::radians(FOV), aspect, .1f, 10.f);
+
     if (VkCommandBuffer commandBuffer = renderer.BeginFrame()) {
       renderer.BeginSwapChainRenderPass(commandBuffer);
-      RenderGameObjects(commandBuffer);
+      RenderGameObjects(commandBuffer, camera);
       renderer.EndSwapChainRenderPass(commandBuffer);
       renderer.EndFrame();
     }
@@ -57,27 +63,81 @@ void Application::Run() {
 
   LOG_DEBUG(GLFW, "Loop ended");
 }
-void Application::LoadGameObjects() {
-  const std::vector<Model::Vertex> vertices{{{0.f, -.5f}, {1.f, 0.f, 0.f}},
-                                            {{.5f, .5f}, {0.f, 1.f, 0.f}},
-                                            {{-.5f, .5f}, {0.f, 0.f, 1.f}}};
 
+std::unique_ptr<Model> createCubeModel(Device &device, glm::vec3 offset) {
+  std::vector<Model::Vertex> vertices{
+
+      // left face (white)
+      {{-.5f, -.5f, -.5f}, {.9f, .9f, .9f}},
+      {{-.5f, .5f, .5f}, {.9f, .9f, .9f}},
+      {{-.5f, -.5f, .5f}, {.9f, .9f, .9f}},
+      {{-.5f, -.5f, -.5f}, {.9f, .9f, .9f}},
+      {{-.5f, .5f, -.5f}, {.9f, .9f, .9f}},
+      {{-.5f, .5f, .5f}, {.9f, .9f, .9f}},
+
+      // right face (yellow)
+      {{.5f, -.5f, -.5f}, {.8f, .8f, .1f}},
+      {{.5f, .5f, .5f}, {.8f, .8f, .1f}},
+      {{.5f, -.5f, .5f}, {.8f, .8f, .1f}},
+      {{.5f, -.5f, -.5f}, {.8f, .8f, .1f}},
+      {{.5f, .5f, -.5f}, {.8f, .8f, .1f}},
+      {{.5f, .5f, .5f}, {.8f, .8f, .1f}},
+
+      // top face (orange, remember y axis points down)
+      {{-.5f, -.5f, -.5f}, {.9f, .6f, .1f}},
+      {{.5f, -.5f, .5f}, {.9f, .6f, .1f}},
+      {{-.5f, -.5f, .5f}, {.9f, .6f, .1f}},
+      {{-.5f, -.5f, -.5f}, {.9f, .6f, .1f}},
+      {{.5f, -.5f, -.5f}, {.9f, .6f, .1f}},
+      {{.5f, -.5f, .5f}, {.9f, .6f, .1f}},
+
+      // bottom face (red)
+      {{-.5f, .5f, -.5f}, {.8f, .1f, .1f}},
+      {{.5f, .5f, .5f}, {.8f, .1f, .1f}},
+      {{-.5f, .5f, .5f}, {.8f, .1f, .1f}},
+      {{-.5f, .5f, -.5f}, {.8f, .1f, .1f}},
+      {{.5f, .5f, -.5f}, {.8f, .1f, .1f}},
+      {{.5f, .5f, .5f}, {.8f, .1f, .1f}},
+
+      // nose face (blue)
+      {{-.5f, -.5f, 0.5f}, {.1f, .1f, .8f}},
+      {{.5f, .5f, 0.5f}, {.1f, .1f, .8f}},
+      {{-.5f, .5f, 0.5f}, {.1f, .1f, .8f}},
+      {{-.5f, -.5f, 0.5f}, {.1f, .1f, .8f}},
+      {{.5f, -.5f, 0.5f}, {.1f, .1f, .8f}},
+      {{.5f, .5f, 0.5f}, {.1f, .1f, .8f}},
+
+      // tail face (green)
+      {{-.5f, -.5f, -0.5f}, {.1f, .8f, .1f}},
+      {{.5f, .5f, -0.5f}, {.1f, .8f, .1f}},
+      {{-.5f, .5f, -0.5f}, {.1f, .8f, .1f}},
+      {{-.5f, -.5f, -0.5f}, {.1f, .8f, .1f}},
+      {{.5f, -.5f, -0.5f}, {.1f, .8f, .1f}},
+      {{.5f, .5f, -0.5f}, {.1f, .8f, .1f}},
+
+  };
+  for (auto &v : vertices) {
+    v.position += offset;
+  }
+// temp
 #ifdef DEBUG
   for (const Model::Vertex i : vertices) {
-    LOG_TRACE(Vulkan, "Vertices => {}x:{}y", i.position.x, i.position.y);
+    LOG_TRACE(Vulkan, "Vertices => {}x:{}y:{}z", i.position.x, i.position.y,
+              i.position.z);
   }
 #endif
 
-  std::shared_ptr<Model> model = std::make_shared<Model>(device, vertices);
+  return std::make_unique<Model>(device, vertices);
+}
 
-  GameObject triangle = GameObject::CreateGameObject();
-  triangle.model = model;
-  triangle.color = {.1f, .8f, .1f};
-  triangle.transform2D.translation.x = .2f;
-  triangle.transform2D.scale = {2.f, .5f};
-  triangle.transform2D.rotation = .25f * -glm::two_pi<float>(); // rad
+void Application::LoadGameObjects() {
+  std::shared_ptr<Model> model = createCubeModel(device, {.0f, .0f, .0f});
+  auto cube = GameObject::CreateGameObject();
+  cube.model = model;
+  cube.transform.translation = {0.f, 0.f, 2.5f};
+  cube.transform.scale = {.5f, .5f, .5f};
 
-  gameObjects.push_back(std::move(triangle));
+  gameObjects.push_back(std::move(cube));
 }
 
 void Application::CreatePipelineLayout() {
@@ -112,19 +172,21 @@ void Application::CreatePipeline() {
       "src/shaders/fragment.frag.glsl.spv", pipelineConfig);
 }
 
-void Application::RenderGameObjects(VkCommandBuffer commandBuffer) {
+void Application::RenderGameObjects(VkCommandBuffer commandBuffer,
+                                    const Camera &camera) {
   // atualized every frame
 
   pipeline->bind(commandBuffer);
 
-  for (auto &obj : gameObjects) {
-    obj.transform2D.rotation =
-        glm::mod(obj.transform2D.rotation + .01f, glm::two_pi<float>());
+  for (GameObject &obj : gameObjects) {
+    obj.transform.rotation.y =
+        glm::mod(obj.transform.rotation.y + .01f, glm::two_pi<float>());
+    obj.transform.rotation.z =
+        glm::mod(obj.transform.rotation.z + .005f, glm::two_pi<float>());
 
     SimplePushConstantData push{};
-    push.offset = obj.transform2D.translation;
     push.color = obj.color;
-    push.transform = obj.transform2D.mat2();
+    push.transform = camera.GetProjection() * obj.transform.mat4(); // temp
 
     vkCmdPushConstants(commandBuffer, pipelineLayout,
                        VK_SHADER_STAGE_VERTEX_BIT |

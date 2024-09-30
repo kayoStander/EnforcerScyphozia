@@ -6,6 +6,7 @@
 #include <iostream>
 #include <set>
 #include <unordered_set>
+#include <vulkan/vulkan_core.h>
 
 namespace Enforcer {
 
@@ -123,7 +124,7 @@ void Device::pickPhysicalDevice() {
   std::vector<VkPhysicalDevice> devices(deviceCount);
   vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
 
-  for (const auto &device : devices) {
+  for (const VkPhysicalDevice &device : devices) {
     if (isDeviceSuitable(device)) {
       physicalDevice = device;
       break;
@@ -279,7 +280,7 @@ bool Device::checkValidationLayerSupport() {
   for (const char *layerName : validationLayers) {
     bool layerFound{false};
 
-    for (const auto &layerProperties : availableLayers) {
+    for (const VkLayerProperties &layerProperties : availableLayers) {
       if (strcmp(layerName, layerProperties.layerName) == 0) {
         layerFound = true;
         break;
@@ -318,14 +319,14 @@ void Device::hasGflwRequiredInstanceExtensions() {
 
   LOG_DEBUG(Vulkan, "Available extensions: ");
   std::unordered_set<std::string> available;
-  for (const auto &extension : extensions) {
+  for (const VkExtensionProperties &extension : extensions) {
     LOG_WARNING(Vulkan, "\t{}", extension.extensionName);
     available.insert(extension.extensionName);
   }
 
   LOG_DEBUG(Vulkan, "Required extensions: ");
-  auto requiredExtensions = getRequiredExtensions();
-  for (const auto &required : requiredExtensions) {
+  std::vector<const char *> requiredExtensions = getRequiredExtensions();
+  for (const char *&required : requiredExtensions) {
     LOG_WARNING(Vulkan, "\t{}", required);
     if (available.find(required) == available.end()) {
       throw std::runtime_error("Missing required glfw extension");
@@ -345,7 +346,7 @@ bool Device::checkDeviceExtensionSupport(VkPhysicalDevice device) {
   std::set<std::string> requiredExtensions(deviceExtensions.begin(),
                                            deviceExtensions.end());
 
-  for (const auto &extension : availableExtensions) {
+  for (const VkExtensionProperties &extension : availableExtensions) {
     requiredExtensions.erase(extension.extensionName);
   }
 
@@ -363,7 +364,7 @@ QueueFamilyIndices Device::findQueueFamilies(VkPhysicalDevice device) {
                                            queueFamilies.data());
 
   int i{0};
-  for (const auto &queueFamily : queueFamilies) {
+  for (const VkQueueFamilyProperties &queueFamily : queueFamilies) {
     if (queueFamily.queueCount > 0 &&
         queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
       indices.graphicsFamily = static_cast<u32>(i);

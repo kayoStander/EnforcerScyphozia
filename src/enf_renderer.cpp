@@ -83,7 +83,7 @@ VkCommandBuffer Renderer::BeginFrame() {
 
   isFrameStarted = true;
 
-  auto commandBuffer = getCurrentCommandBuffer();
+  auto commandBuffer = GetCurrentCommandBuffer();
 
   VkCommandBufferBeginInfo beginInfo{};
   beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -97,7 +97,7 @@ void Renderer::EndFrame() {
   ASSERT_LOG(isFrameStarted,
              "Can't call EndFrame() while frame is not in progress");
 
-  auto commandBuffer = getCurrentCommandBuffer();
+  auto commandBuffer = GetCurrentCommandBuffer();
 
   if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
     throw std::runtime_error("failed to record command buffer");
@@ -120,11 +120,12 @@ void Renderer::EndFrame() {
   isFrameStarted = false;
   currentFrameIndex = (currentFrameIndex + 1) % SwapChain::MAX_FRAMES_IN_FLIGHT;
 }
+
 void Renderer::BeginSwapChainRenderPass(VkCommandBuffer commandBuffer) {
   ASSERT_LOG(
       isFrameStarted,
       "Can't call BeginSwapChainRenderPass() if frame is not in progress");
-  ASSERT_LOG(commandBuffer == getCurrentCommandBuffer(),
+  ASSERT_LOG(commandBuffer == GetCurrentCommandBuffer(),
              "Can't begin render pass on command buffer in a different frame");
 
   VkRenderPassBeginInfo renderPassInfo{};
@@ -158,7 +159,7 @@ void Renderer::BeginSwapChainRenderPass(VkCommandBuffer commandBuffer) {
 void Renderer::EndSwapChainRenderPass(VkCommandBuffer commandBuffer) {
   ASSERT_LOG(isFrameStarted,
              "Can't call EndSwapChainRenderPass() if frame is not in progress");
-  ASSERT_LOG(commandBuffer == getCurrentCommandBuffer(),
+  ASSERT_LOG(commandBuffer == GetCurrentCommandBuffer(),
              "Can't end render pass on command buffer in a different frame");
   vkCmdEndRenderPass(commandBuffer);
 }
