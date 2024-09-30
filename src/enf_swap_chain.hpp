@@ -2,6 +2,7 @@
 
 #include "enf_device.hpp"
 
+#include <memory>
 #include <vulkan/vulkan.h>
 
 namespace Enforcer {
@@ -11,6 +12,9 @@ public:
   static constexpr int MAX_FRAMES_IN_FLIGHT{2};
 
   SwapChain(Device &deviceRef, VkExtent2D windowExtent);
+  SwapChain(Device &deviceRef, VkExtent2D windowExtent,
+            std::shared_ptr<SwapChain> previous);
+
   ~SwapChain();
 
   SwapChain(const SwapChain &) = delete;
@@ -23,11 +27,11 @@ public:
   VkImageView getImageView(const size_t index) {
     return swapChainImageViews[index];
   }
-  size_t imageCount() { return swapChainImages.size(); }
-  VkFormat getSwapChainImageFormat() { return swapChainImageFormat; }
-  VkExtent2D getSwapChainExtent() { return swapChainExtent; }
-  uint32_t width() { return swapChainExtent.width; }
-  uint32_t height() { return swapChainExtent.height; }
+  size_t imageCount() noexcept { return swapChainImages.size(); }
+  VkFormat getSwapChainImageFormat() noexcept { return swapChainImageFormat; }
+  VkExtent2D getSwapChainExtent() noexcept { return swapChainExtent; }
+  u32 width() noexcept { return swapChainExtent.width; }
+  u32 height() noexcept { return swapChainExtent.height; }
 
   float extentAspectRatio() {
     return static_cast<float>(swapChainExtent.width) /
@@ -39,7 +43,13 @@ public:
   VkResult submitCommandBuffers(const VkCommandBuffer *buffers,
                                 uint32_t *imageIndex);
 
+  bool CompareSwapFormats(const SwapChain &swapChain) const noexcept {
+    return swapChain.swapChainDepthFormat == swapChainDepthFormat &&
+           swapChain.swapChainImageFormat == swapChainImageFormat;
+  }
+
 private:
+  void Init();
   void createSwapChain();
   void createImageViews();
   void createDepthResources();
@@ -55,6 +65,7 @@ private:
   VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities);
 
   VkFormat swapChainImageFormat;
+  VkFormat swapChainDepthFormat;
   VkExtent2D swapChainExtent;
 
   std::vector<VkFramebuffer> swapChainFramebuffers;
@@ -70,6 +81,7 @@ private:
   VkExtent2D windowExtent;
 
   VkSwapchainKHR swapChain;
+  std::shared_ptr<SwapChain> oldSwapChain;
 
   std::vector<VkSemaphore> imageAvailableSemaphores;
   std::vector<VkSemaphore> renderFinishedSemaphores;

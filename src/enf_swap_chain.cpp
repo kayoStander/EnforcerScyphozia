@@ -6,11 +6,26 @@
 #include <cstdlib>
 #include <cstring>
 #include <stdexcept>
+#include <vulkan/vulkan_core.h>
 
 namespace Enforcer {
 
-SwapChain::SwapChain(Device &deviceRef, VkExtent2D extent)
-    : device{deviceRef}, windowExtent{extent} {
+SwapChain::SwapChain(Device &deviceRef, VkExtent2D windowExtent)
+    : device{deviceRef}, windowExtent{windowExtent} {
+  Init();
+  LOG_DEBUG(Vulkan, "Swapchain created");
+}
+
+SwapChain::SwapChain(Device &deviceRef, VkExtent2D windowExtent,
+                     std::shared_ptr<SwapChain> previous)
+    : device{deviceRef}, windowExtent{windowExtent}, oldSwapChain{previous} {
+  Init();
+
+  oldSwapChain = nullptr;
+  LOG_DEBUG(Vulkan, "Swapchain recreated");
+}
+
+void SwapChain::Init() {
   createSwapChain();
   createImageViews();
   createRenderPass();
@@ -30,7 +45,7 @@ SwapChain::~SwapChain() {
     swapChain = nullptr;
   }
 
-  for (size_t i{0}; i < depthImages.size(); i++) {
+  for (size_t i{0}; i < depthImages.size(); ++i) {
     vkDestroyImageView(device.device(), depthImageViews[i], nullptr);
     vkDestroyImage(device.device(), depthImages[i], nullptr);
     vkFreeMemory(device.device(), depthImageMemorys[i], nullptr);
@@ -49,7 +64,7 @@ SwapChain::~SwapChain() {
     vkDestroyFence(device.device(), inFlightFences[i], nullptr);
   }
 
-  LOG_DEBUG(Vulkan, "swapChain destroyed");
+  LOG_INFO(Vulkan, "swapchain destroyed");
 }
 
 VkResult SwapChain::acquireNextImage(uint32_t *imageIndex) {
@@ -160,7 +175,8 @@ void SwapChain::createSwapChain() {
   createInfo.presentMode = presentMode;
   createInfo.clipped = VK_TRUE;
 
-  createInfo.oldSwapchain = VK_NULL_HANDLE;
+  createInfo.oldSwapchain =
+      oldSwapChain == nullptr ? VK_NULL_HANDLE : oldSwapChain->swapChain;
 
   if (vkCreateSwapchainKHR(device.device(), &createInfo, nullptr, &swapChain) !=
       VK_SUCCESS) {
@@ -293,6 +309,7 @@ void SwapChain::createFramebuffers() {
 
 void SwapChain::createDepthResources() {
   VkFormat depthFormat = findDepthFormat();
+  swapChainDepthFormat = depthFormat;
   VkExtent2D swapChainExtent = getSwapChainExtent();
 
   depthImages.resize(imageCount());

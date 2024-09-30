@@ -10,17 +10,19 @@
 namespace Enforcer {
 
 struct PipelineConfigInfo {
-  // PipelineConfigInfo(const PipelineConfigInfo&)=delete;
-  // PipelineConfigInfo &operator=(const PipelineConfigInfo&)=delete;
+  explicit PipelineConfigInfo() = default;
+  PipelineConfigInfo(const PipelineConfigInfo &) = delete;
+  PipelineConfigInfo &operator=(const PipelineConfigInfo &) = delete;
 
-  VkViewport viewport;
-  VkRect2D scissor;
+  VkPipelineViewportStateCreateInfo viewportInfo;
   VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
   VkPipelineRasterizationStateCreateInfo rasterizationInfo;
   VkPipelineMultisampleStateCreateInfo multisampleInfo;
   VkPipelineColorBlendAttachmentState colorBlendAttachment;
   VkPipelineColorBlendStateCreateInfo colorBlendInfo;
   VkPipelineDepthStencilStateCreateInfo depthStencilInfo;
+  std::vector<VkDynamicState> dynamicStateEnables;
+  VkPipelineDynamicStateCreateInfo dynamicStateInfo;
   VkPipelineLayout pipelineLayout = nullptr;
   VkRenderPass renderPass = nullptr;
   u32 subpass{0};
@@ -37,7 +39,7 @@ public:
   Pipeline &operator=(const Pipeline &) = delete;
 
   void bind(VkCommandBuffer commandBuffer);
-  static PipelineConfigInfo DefaultPipelineConfigInfo(u32 width, u32 height);
+  static void DefaultPipelineConfigInfo(PipelineConfigInfo &configInfo);
 
 private:
   static std::vector<char> ReadFile(const std::string &filepath);
