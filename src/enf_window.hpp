@@ -16,7 +16,9 @@ public:
   Window(int width, int height);
   ~Window();
 
-  [[gnu::pure]] inline GLFWwindow *GetWindow() noexcept { return window; }
+  [[gnu::pure]] inline GLFWwindow *GetGLFWWindow() const noexcept {
+    return window;
+  }
   [[gnu::leaf]] VkExtent2D getExtent() noexcept {
     return {static_cast<u32>(width), static_cast<u32>(height)};
   }

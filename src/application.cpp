@@ -3,6 +3,8 @@
 #include "enf_game_object.hpp"
 #include "enf_model.hpp"
 #include "enf_pipeline.hpp"
+#include "keyboard.hpp"
+#include <glm/common.hpp>
 
 #if __has_include(<glm/glm.hpp>)
 #define GLM_FORCE_RADIANS
@@ -13,6 +15,7 @@
 #error "No GLM recognized in the system"
 #endif
 
+#include <chrono>
 #include <memory>
 
 Discord::RPC RPC{};
@@ -38,6 +41,16 @@ void Application::Run() {
   RPC.Init();
 
   Camera camera{};
+  const float FOV{50.f};
+  const float FAR{100.f};
+  // camera.SetViewDirection(glm::vec3(0.f), glm::vec3(.5f, 0.f, 1.f));
+  camera.SetViewTarget(glm::vec3(-1.f, -2.f, 20.f), glm::vec3(0.f, 0.f, 2.5f));
+
+  auto viewerObject = GameObject::CreateGameObject();
+  Keyboard cameraController{};
+
+  std::chrono::time_point currentTime{
+      std::chrono::high_resolution_clock::now()};
 
   LOG_DEBUG(GLFW, "Loop started");
   LOG_DEBUG(Vulkan, "maxPushCostantsSize => {}",
@@ -45,10 +58,28 @@ void Application::Run() {
 
   while (!window.ShouldClose()) {
     glfwPollEvents();
+
+    const std::chrono::time_point newTime{
+        std::chrono::high_resolution_clock::now()};
+    [[maybe_unused]] const float frameTime =
+        std::chrono::duration<float, std::chrono::seconds::period>(newTime -
+                                                                   currentTime)
+            .count();
+    currentTime = newTime;
+
+    // frameTime =
+    //     glm::min(frameTime, 10); // to make when holding the screen and
+    //     pressing
+    //  a button dont make the camera jump
+
+    cameraController.MoveInPlaneXZ(window.GetGLFWWindow(), frameTime,
+                                   viewerObject);
+    camera.SetViewYXZ(viewerObject.transform.translation,
+                      viewerObject.transform.rotation);
+
     const float aspect{renderer.GetAspectRatio()};
-    const float FOV{50.f};
     // camera.SetOrthographicProjection(-aspect, aspect, -1, 1, -1, 1);
-    camera.SetPerspectiveProjection(glm::radians(FOV), aspect, .1f, 10.f);
+    camera.SetPerspectiveProjection(glm::radians(FOV), aspect, .1f, FAR);
 
     if (VkCommandBuffer commandBuffer = renderer.BeginFrame()) {
       renderer.BeginSwapChainRenderPass(commandBuffer);
@@ -178,15 +209,13 @@ void Application::RenderGameObjects(VkCommandBuffer commandBuffer,
 
   pipeline->bind(commandBuffer);
 
+  glm::mat4 projectionView = camera.GetProjection() * camera.GetView();
+
   for (GameObject &obj : gameObjects) {
-    obj.transform.rotation.y =
-        glm::mod(obj.transform.rotation.y + .01f, glm::two_pi<float>());
-    obj.transform.rotation.z =
-        glm::mod(obj.transform.rotation.z + .005f, glm::two_pi<float>());
 
     SimplePushConstantData push{};
     push.color = obj.color;
-    push.transform = camera.GetProjection() * obj.transform.mat4(); // temp
+    push.transform = projectionView * obj.transform.mat4(); // temp
 
     vkCmdPushConstants(commandBuffer, pipelineLayout,
                        VK_SHADER_STAGE_VERTEX_BIT |

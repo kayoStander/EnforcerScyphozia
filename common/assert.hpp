@@ -1,6 +1,5 @@
 #pragma once
 #include "logging/log.hpp"
-#include <type_traits>
 
 void assert_fail_impl();
 // template <bool B, typename std::enable_if_t<B> * = nullptr>
