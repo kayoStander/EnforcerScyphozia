@@ -64,7 +64,7 @@ SwapChain::~SwapChain() {
     vkDestroyFence(device.device(), inFlightFences[i], nullptr);
   }
 
-  LOG_INFO(Vulkan, "swapchain destroyed");
+  LOG_DEBUG(Vulkan, "Swapchain destroyed");
 }
 
 VkResult SwapChain::acquireNextImage(uint32_t *imageIndex) {

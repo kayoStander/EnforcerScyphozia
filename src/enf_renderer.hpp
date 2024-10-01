@@ -33,10 +33,10 @@ public:
   VkCommandBuffer GetCurrentCommandBuffer() const {
     ASSERT_LOG(isFrameStarted,
                "Cannot get command buffer while frame not in progress");
-    return commandBuffers[static_cast<u32>(currentFrameIndex)];
+    return commandBuffers[currentFrameIndex];
   }
 
-  int GetFrameIndex() const {
+  u32 GetFrameIndex() const {
     ASSERT_LOG(isFrameStarted,
                "Cannot get frame index when frame not in progress");
     return currentFrameIndex;
@@ -53,7 +53,7 @@ private:
   std::vector<VkCommandBuffer> commandBuffers;
 
   u32 currentImageIndex;
-  int currentFrameIndex;
+  u32 currentFrameIndex{0};
   bool isFrameStarted{false};
 };
 } // namespace Enforcer

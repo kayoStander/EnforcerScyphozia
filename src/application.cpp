@@ -1,10 +1,10 @@
 #include "application.hpp"
 #include "../common/discord.hpp"
+#include "enf_camera.hpp"
 #include "enf_game_object.hpp"
 #include "enf_model.hpp"
-#include "enf_pipeline.hpp"
+#include "enf_render_system.hpp"
 #include "keyboard.hpp"
-#include <glm/common.hpp>
 
 #if __has_include(<glm/glm.hpp>)
 #define GLM_FORCE_RADIANS
@@ -27,26 +27,23 @@ struct SimplePushConstantData {
   alignas(16) glm::vec3 color;
 };
 
-Application::Application() {
-  LoadGameObjects();
-  CreatePipelineLayout();
-  CreatePipeline();
-}
+Application::Application() { LoadGameObjects(); }
 
-Application::~Application() {
-  vkDestroyPipelineLayout(device.device(), pipelineLayout, nullptr);
-}
+Application::~Application() {}
 
 void Application::Run() {
   RPC.Init();
+
+  RenderSystem renderSystem{device, renderer.GetSwapChainRenderPass()};
 
   Camera camera{};
   const float FOV{50.f};
   const float FAR{100.f};
   // camera.SetViewDirection(glm::vec3(0.f), glm::vec3(.5f, 0.f, 1.f));
-  camera.SetViewTarget(glm::vec3(-1.f, -2.f, 20.f), glm::vec3(0.f, 0.f, 2.5f));
+  // camera.SetViewTarget(glm::vec3(-1.f, -2.f, 20.f), glm::vec3(0.f,
+  // 0.f, 2.5f));
 
-  auto viewerObject = GameObject::CreateGameObject();
+  GameObject viewerObject = GameObject::CreateGameObject();
   Keyboard cameraController{};
 
   std::chrono::time_point currentTime{
@@ -83,7 +80,7 @@ void Application::Run() {
 
     if (VkCommandBuffer commandBuffer = renderer.BeginFrame()) {
       renderer.BeginSwapChainRenderPass(commandBuffer);
-      RenderGameObjects(commandBuffer, camera);
+      renderSystem.RenderGameObjects(commandBuffer, gameObjects, camera);
       renderer.EndSwapChainRenderPass(commandBuffer);
       renderer.EndFrame();
     }
@@ -95,135 +92,23 @@ void Application::Run() {
   LOG_DEBUG(GLFW, "Loop ended");
 }
 
-std::unique_ptr<Model> createCubeModel(Device &device, glm::vec3 offset) {
-  std::vector<Model::Vertex> vertices{
-
-      // left face (white)
-      {{-.5f, -.5f, -.5f}, {.9f, .9f, .9f}},
-      {{-.5f, .5f, .5f}, {.9f, .9f, .9f}},
-      {{-.5f, -.5f, .5f}, {.9f, .9f, .9f}},
-      {{-.5f, -.5f, -.5f}, {.9f, .9f, .9f}},
-      {{-.5f, .5f, -.5f}, {.9f, .9f, .9f}},
-      {{-.5f, .5f, .5f}, {.9f, .9f, .9f}},
-
-      // right face (yellow)
-      {{.5f, -.5f, -.5f}, {.8f, .8f, .1f}},
-      {{.5f, .5f, .5f}, {.8f, .8f, .1f}},
-      {{.5f, -.5f, .5f}, {.8f, .8f, .1f}},
-      {{.5f, -.5f, -.5f}, {.8f, .8f, .1f}},
-      {{.5f, .5f, -.5f}, {.8f, .8f, .1f}},
-      {{.5f, .5f, .5f}, {.8f, .8f, .1f}},
-
-      // top face (orange, remember y axis points down)
-      {{-.5f, -.5f, -.5f}, {.9f, .6f, .1f}},
-      {{.5f, -.5f, .5f}, {.9f, .6f, .1f}},
-      {{-.5f, -.5f, .5f}, {.9f, .6f, .1f}},
-      {{-.5f, -.5f, -.5f}, {.9f, .6f, .1f}},
-      {{.5f, -.5f, -.5f}, {.9f, .6f, .1f}},
-      {{.5f, -.5f, .5f}, {.9f, .6f, .1f}},
-
-      // bottom face (red)
-      {{-.5f, .5f, -.5f}, {.8f, .1f, .1f}},
-      {{.5f, .5f, .5f}, {.8f, .1f, .1f}},
-      {{-.5f, .5f, .5f}, {.8f, .1f, .1f}},
-      {{-.5f, .5f, -.5f}, {.8f, .1f, .1f}},
-      {{.5f, .5f, -.5f}, {.8f, .1f, .1f}},
-      {{.5f, .5f, .5f}, {.8f, .1f, .1f}},
-
-      // nose face (blue)
-      {{-.5f, -.5f, 0.5f}, {.1f, .1f, .8f}},
-      {{.5f, .5f, 0.5f}, {.1f, .1f, .8f}},
-      {{-.5f, .5f, 0.5f}, {.1f, .1f, .8f}},
-      {{-.5f, -.5f, 0.5f}, {.1f, .1f, .8f}},
-      {{.5f, -.5f, 0.5f}, {.1f, .1f, .8f}},
-      {{.5f, .5f, 0.5f}, {.1f, .1f, .8f}},
-
-      // tail face (green)
-      {{-.5f, -.5f, -0.5f}, {.1f, .8f, .1f}},
-      {{.5f, .5f, -0.5f}, {.1f, .8f, .1f}},
-      {{-.5f, .5f, -0.5f}, {.1f, .8f, .1f}},
-      {{-.5f, -.5f, -0.5f}, {.1f, .8f, .1f}},
-      {{.5f, -.5f, -0.5f}, {.1f, .8f, .1f}},
-      {{.5f, .5f, -0.5f}, {.1f, .8f, .1f}},
-
-  };
-  for (auto &v : vertices) {
-    v.position += offset;
-  }
-// temp
-#ifdef DEBUG
-  for (const Model::Vertex i : vertices) {
-    LOG_TRACE(Vulkan, "Vertices => {}x:{}y:{}z", i.position.x, i.position.y,
-              i.position.z);
-  }
-#endif
-
-  return std::make_unique<Model>(device, vertices);
-}
-
 void Application::LoadGameObjects() {
-  std::shared_ptr<Model> model = createCubeModel(device, {.0f, .0f, .0f});
-  auto cube = GameObject::CreateGameObject();
-  cube.model = model;
-  cube.transform.translation = {0.f, 0.f, 2.5f};
+  std::shared_ptr<Model> coloredCube =
+      Model::CreateModelFromFile(device, "model/colored_cube.obj");
+  GameObject cube = GameObject::CreateGameObject();
+  cube.model = coloredCube;
+  cube.transform.translation = {.0f, .0f, 2.5f};
   cube.transform.scale = {.5f, .5f, .5f};
 
+  std::shared_ptr<Model> smoothVase =
+      Model::CreateModelFromFile(device, "model/smooth_vase.obj");
+  GameObject vase = GameObject::CreateGameObject();
+  vase.model = smoothVase;
+  vase.transform.translation = {.0f, -.5f, 2.5f};
+  vase.transform.scale = {3.f, 3.f, 3.f};
+
   gameObjects.push_back(std::move(cube));
+  gameObjects.push_back(std::move(vase));
 }
 
-void Application::CreatePipelineLayout() {
-  // swapchain"); ASSERT_LOG(pipelineLayout != nullptr, "Cannot create pipeline
-  // before layout");
-
-  VkPushConstantRange pushCostantRange{};
-  pushCostantRange.stageFlags =
-      VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
-  pushCostantRange.offset = 0;
-  pushCostantRange.size = sizeof(SimplePushConstantData);
-
-  VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
-  pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-  pipelineLayoutInfo.setLayoutCount = 0;
-  pipelineLayoutInfo.pSetLayouts = nullptr;
-  pipelineLayoutInfo.pushConstantRangeCount = 1;
-  pipelineLayoutInfo.pPushConstantRanges = &pushCostantRange;
-  if (vkCreatePipelineLayout(device.device(), &pipelineLayoutInfo, nullptr,
-                             &pipelineLayout) != VK_SUCCESS) {
-    throw std::runtime_error("Failed to create pipelineLayout.");
-  }
-}
-
-void Application::CreatePipeline() {
-  PipelineConfigInfo pipelineConfig{};
-  Pipeline::DefaultPipelineConfigInfo(pipelineConfig);
-  pipelineConfig.renderPass = renderer.GetSwapChainRenderPass();
-  pipelineConfig.pipelineLayout = pipelineLayout;
-  pipeline = std::make_unique<Pipeline>(
-      device, "src/shaders/vertex.vert.glsl.spv",
-      "src/shaders/fragment.frag.glsl.spv", pipelineConfig);
-}
-
-void Application::RenderGameObjects(VkCommandBuffer commandBuffer,
-                                    const Camera &camera) {
-  // atualized every frame
-
-  pipeline->bind(commandBuffer);
-
-  glm::mat4 projectionView = camera.GetProjection() * camera.GetView();
-
-  for (GameObject &obj : gameObjects) {
-
-    SimplePushConstantData push{};
-    push.color = obj.color;
-    push.transform = projectionView * obj.transform.mat4(); // temp
-
-    vkCmdPushConstants(commandBuffer, pipelineLayout,
-                       VK_SHADER_STAGE_VERTEX_BIT |
-                           VK_SHADER_STAGE_FRAGMENT_BIT,
-                       0, sizeof(SimplePushConstantData), &push);
-
-    obj.model->Bind(commandBuffer);
-    obj.model->Draw(commandBuffer);
-  }
-}
 } // namespace Enforcer

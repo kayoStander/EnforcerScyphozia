@@ -10,11 +10,16 @@ Renderer::Renderer(Window &window, Device &device)
     : window{window}, device{device} {
   vkDeviceWaitIdle(device.device());
 
+  LOG_DEBUG(Vulkan, "Renderer created");
+
   RecreateSwapChain();
   CreateCommandBuffers();
 }
 
-Renderer::~Renderer() { FreeCommandBuffers(); }
+Renderer::~Renderer() {
+  LOG_DEBUG(Vulkan, "Renderer destroyed");
+  FreeCommandBuffers();
+}
 
 void Renderer::RecreateSwapChain() {
   LOG_INFO(Vulkan, "SwapChain recreated");
@@ -71,9 +76,11 @@ VkCommandBuffer Renderer::BeginFrame() {
   auto result = swapChain->acquireNextImage(&currentImageIndex);
 
   if (result == VK_ERROR_OUT_OF_DATE_KHR) {
+
     vkDeviceWaitIdle(device.device());
 
     RecreateSwapChain();
+
     return nullptr;
   }
 
@@ -91,6 +98,7 @@ VkCommandBuffer Renderer::BeginFrame() {
   if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS) {
     throw std::runtime_error("failed to begin recording command buffer");
   }
+
   return commandBuffer;
 }
 void Renderer::EndFrame() {
@@ -109,6 +117,7 @@ void Renderer::EndFrame() {
       window.WasWindowResized()) {
     window.ResetWindowResizedFlag();
     RecreateSwapChain();
+
     isFrameStarted = false;
 
     return;

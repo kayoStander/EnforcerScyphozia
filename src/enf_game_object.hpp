@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../common/logging/log.hpp"
 #include "../common/types.hpp"
 #include "enf_model.hpp"
 
@@ -54,6 +55,7 @@ class GameObject {
 public:
   static GameObject CreateGameObject() {
     static u32 currentId{0};
+    LOG_DEBUG(Vulkan, "GameObject{} created", currentId);
     return GameObject{currentId++};
   }
 
