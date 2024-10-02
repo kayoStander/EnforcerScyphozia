@@ -1,5 +1,5 @@
 #include "enf_render_system.hpp"
-#include "../common/logging/log.hpp"
+#include "../../common/logging/log.hpp"
 
 #if __has_include(<glm/glm.hpp>)
 #define GLM_FORCE_RADIANS

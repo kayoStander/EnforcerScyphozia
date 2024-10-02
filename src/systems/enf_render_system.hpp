@@ -1,8 +1,8 @@
 #pragma once
 
-#include "enf_device.hpp"
-#include "enf_frame_info.hpp"
-#include "enf_pipeline.hpp"
+#include "../enf_device.hpp"
+#include "../enf_frame_info.hpp"
+#include "../enf_pipeline.hpp"
 
 #include <memory>
 

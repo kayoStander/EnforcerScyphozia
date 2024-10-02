@@ -7,9 +7,11 @@
 #include <stdexcept>
 #include <vulkan/vulkan_core.h>
 
+#define ROOT ""
+
 namespace Enforcer {
 std::vector<char> Pipeline::ReadFile(const std::string &filepath) {
-  std::ifstream file{filepath, std::ios::ate | std::ios::binary};
+  std::ifstream file{ROOT + filepath, std::ios::ate | std::ios::binary};
 
   if (!file.is_open()) {
     throw std::runtime_error("Failed to open file: " + filepath);
@@ -65,8 +67,8 @@ void Pipeline::CreateGraphicsPipeline(
   shaderStages[1].flags = 0;
   shaderStages[1].pNext = nullptr;
 
-  auto bindingDescriptions = Model::Vertex::GetBindingDescriptions();
-  auto attributeDescriptions = Model::Vertex::GetAttributeDescriptions();
+  auto &bindingDescriptions = configInfo.bindingDescriptions;
+  auto &attributeDescriptions = configInfo.attributeDescriptions;
 
   VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
   vertexInputInfo.sType =
@@ -206,6 +208,9 @@ void Pipeline::DefaultPipelineConfigInfo(PipelineConfigInfo &configInfo) {
   configInfo.dynamicStateInfo.dynamicStateCount =
       static_cast<u32>(configInfo.dynamicStateEnables.size());
   configInfo.dynamicStateInfo.flags = 0;
+
+  configInfo.bindingDescriptions = Model::Vertex::GetBindingDescriptions();
+  configInfo.attributeDescriptions = Model::Vertex::GetAttributeDescriptions();
 }
 
 Pipeline::Pipeline(Device &device, const std::string &vertFilepath,

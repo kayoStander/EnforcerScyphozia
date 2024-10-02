@@ -6,12 +6,16 @@ layout(location = 0) in vec3 fragColor;
 layout(location = 1) in vec3 fragPositionWorld;
 layout(location = 2) in vec3 fragNormalWorld;
 
-
+struct PointLight {
+  vec4 position;
+  vec4 color;
+};
 layout(set = 0, binding = 0) uniform GlobalUniformBufferObject{
-  mat4 projectionViewMatrix;
+  mat4 projection;
+  mat4 view;
   vec4 ambientLightColor;
-  vec3 lightPosition;
-  vec4 lightColor;
+  PointLight pointLights[10];
+  int numLights;
 } uniformBufferObject;
 layout(push_constant) uniform Push {
   mat4 modelMatrix; 
@@ -19,13 +23,18 @@ layout(push_constant) uniform Push {
 } push;
 
 void main(){
+  vec3 diffuseLight = uniformBufferObject.ambientLightColor.xyz * uniformBufferObject.ambientLightColor.w;
+  vec3 surfaceNormal = normalize(fragNormalWorld);
 
-  vec3 directionToLight = uniformBufferObject.lightPosition - fragPositionWorld;
-  float attenuation = 1./dot(directionToLight,directionToLight); // distance squared
+  for (int i = 0; i < uniformBufferObject.numLights; i++){
+    PointLight light = uniformBufferObject.pointLights[i];
+    vec3 directionToLight = light.position.xyz - fragPositionWorld;
+    float attenuation = 1./dot(directionToLight,directionToLight); // distance squared
+    float cosAngIncidence = max(dot(surfaceNormal,normalize(directionToLight)),0); 
+    vec3 intensity = light.color.xyz * light.color.w * attenuation;
+  
+    diffuseLight += intensity * cosAngIncidence;
+  }
 
-  vec3 lightColor = uniformBufferObject.lightColor.xyz * uniformBufferObject.lightColor.w * attenuation;
-  vec3 ambientLight = uniformBufferObject.ambientLightColor.xyz * uniformBufferObject.ambientLightColor.w;
-  vec3 diffuseLight = lightColor * max(dot(normalize(fragNormalWorld),normalize(directionToLight)),0);
-
-  outColor = vec4((diffuseLight + ambientLight) * fragColor, 1.);  
+  outColor = vec4(diffuseLight * fragColor, 1.);  
 }

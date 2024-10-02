@@ -25,8 +25,16 @@ struct TransformComponent {
   glm::mat4 mat4();
   glm::mat3 normalMatrix();
 };
+
+struct PointLightComponent {
+  float lightIntensity{1.f};
+};
+
 class GameObject {
 public:
+  static GameObject MakePointLight(float intensity = 10.f, float radius = .1f,
+                                   glm::vec3 color = glm::vec3{1.f});
+
   static GameObject CreateGameObject() {
     static u32 currentId{0};
     LOG_DEBUG(Vulkan, "GameObject{} created", currentId);
@@ -40,12 +48,14 @@ public:
 
   u32 GetId() const noexcept { return id; };
 
-  const u32 id;
-  std::shared_ptr<Model> model;
   glm::vec3 color;
   TransformComponent transform;
 
+  std::shared_ptr<Model> model{};
+  std::unique_ptr<PointLightComponent> pointLight{nullptr};
+
 private:
   explicit GameObject(u32 id) : id{id} {}
+  const u32 id;
 };
 } // namespace Enforcer

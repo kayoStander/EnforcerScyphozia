@@ -50,4 +50,15 @@ glm::mat3 TransformComponent::normalMatrix() {
                    {inverseScale.z * (c2 * s1), inverseScale.z * (-s2),
                     inverseScale.z * (c1 * c2)}};
 }
+
+GameObject GameObject::MakePointLight(float intensity, float radius,
+                                      glm::vec3 color) {
+  GameObject obj{GameObject::CreateGameObject()};
+  obj.color = color;
+  obj.transform.scale.x = radius;
+  obj.pointLight = std::make_unique<PointLightComponent>();
+  obj.pointLight->lightIntensity = intensity;
+  return obj;
+}
+
 } // namespace Enforcer

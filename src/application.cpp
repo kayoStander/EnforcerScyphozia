@@ -5,8 +5,9 @@
 #include "enf_descriptors.hpp"
 #include "enf_game_object.hpp"
 #include "enf_model.hpp"
-#include "enf_render_system.hpp"
 #include "keyboard.hpp"
+#include "systems/enf_point_light_system.hpp"
+#include "systems/enf_render_system.hpp"
 
 #if __has_include(<glm/glm.hpp>)
 #define GLM_FORCE_RADIANS
@@ -23,13 +24,6 @@
 Discord::RPC RPC{};
 
 namespace Enforcer {
-
-struct GlobalUniformBufferObject {
-  glm::mat4 projectionView{1.f};
-  glm::vec4 ambientLightColor{1.f, 1.f, 1.f, .02f};
-  glm::vec3 lightPosition{-1.f}; // ignore w
-  alignas(16) glm::vec4 lightColor{1.f};
-};
 
 Application::Application() {
   globalPool = DescriptorPool::Builder(device)
@@ -71,6 +65,9 @@ void Application::Run() {
 
   RenderSystem renderSystem{device, renderer.GetSwapChainRenderPass(),
                             globalSetLayout->getDescriptorSetLayout()};
+
+  PointLightSystem pointLightSystem{device, renderer.GetSwapChainRenderPass(),
+                                    globalSetLayout->getDescriptorSetLayout()};
 
   Camera camera{};
   const float FOV{100.f};
@@ -120,8 +117,10 @@ void Application::Run() {
                           gameObjects};
       // update
       GlobalUniformBufferObject uniformBufferObject{};
-      uniformBufferObject.projectionView =
-          camera.GetProjection() * camera.GetView();
+      uniformBufferObject.projection = camera.GetProjection();
+      uniformBufferObject.view = camera.GetView();
+
+      pointLightSystem.Update(frameInfo, uniformBufferObject);
       uniformBufferObjectBuffers[static_cast<u32>(frameIndex)]->writeToBuffer(
           &uniformBufferObject);
       uniformBufferObjectBuffers[static_cast<u32>(frameIndex)]->flush();
@@ -129,6 +128,7 @@ void Application::Run() {
       // render
       renderer.BeginSwapChainRenderPass(commandBuffer);
       renderSystem.RenderGameObjects(frameInfo);
+      pointLightSystem.Render(frameInfo);
       renderer.EndSwapChainRenderPass(commandBuffer);
       renderer.EndFrame();
     }
@@ -161,6 +161,23 @@ void Application::LoadGameObjects() {
   quad.model = quadModel;
   quad.transform.translation = {.0f, .0f, 0.f};
   quad.transform.scale = {10.f, 10.f, 10.f};
+
+  std::vector<glm::vec3> lightColors{
+      {1.f, .1f, .1f}, {.1f, .1f, 1.f}, {.1f, 1.f, .1f},
+      {1.f, 1.f, .1f}, {.1f, 1.f, 1.f}, {1.f, 1.f, 1.f} //
+  };
+
+  for (u32 i{0}; i < lightColors.size(); ++i) {
+    GameObject pointLight{GameObject::MakePointLight(.45f)};
+    pointLight.color = lightColors[i];
+    glm::mat4 rotateLight{glm::rotate(
+        glm::mat4{1.f}, (i * glm::two_pi<float>()) / lightColors.size(),
+        {0.f, -1.f, 0.f})};
+    pointLight.transform.translation =
+        glm::vec3(rotateLight * glm::vec4{-1.f, -2.f, -1.f, 1.f});
+
+    gameObjects.emplace(pointLight.GetId(), std::move(pointLight));
+  }
 
   gameObjects.emplace(cube.GetId(), std::move(cube));
   gameObjects.emplace(vase.GetId(), std::move(vase));

@@ -6,7 +6,7 @@ INCLUDES = -I/usr/include -Icommon -Icommon/tiny_obj_loader.hpp
 
 TARGET = EnforcerSyphozia
 
-SRCS = $(wildcard src/*.cpp common/*.cpp common/logging/*.cpp)
+SRCS = $(wildcard src/*.cpp src/systems/*.cpp common/*.cpp common/logging/*.cpp)
 OBJS = $(SRCS:.cpp=.o)
 
 all: $(TARGET)

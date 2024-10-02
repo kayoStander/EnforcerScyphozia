@@ -4,7 +4,7 @@
 #include <memory>
 
 #define TINYOBJLOADER_IMPLEMENTATION
-#include "../common/tiny_obj_loader.hpp"
+#include "../external/tiny_obj_loader.hpp"
 
 #if __has_include(<glm/glm.hpp>)
 #define GLM_ENABLE_EXPERIMENTAL
@@ -12,6 +12,8 @@
 #else
 #error "No GLM recognized in the system"
 #endif
+
+#define ROOT ""
 
 #include <stdexcept>
 #include <unordered_map>
@@ -161,7 +163,7 @@ void Model::Data::LoadModel(const std::string &filepath) {
   std::string warn, err;
 
   if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err,
-                        filepath.c_str())) {
+                        (ROOT + filepath).c_str())) {
     throw std::runtime_error(warn + err);
   }
 
