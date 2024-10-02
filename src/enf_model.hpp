@@ -1,6 +1,8 @@
 #pragma once
 
+#include "enf_buffer.hpp"
 #include "enf_device.hpp"
+
 #include <memory>
 #include <vector>
 #include <vulkan/vulkan_core.h>
@@ -58,13 +60,11 @@ private:
 
   Device &device;
 
-  VkBuffer vertexBuffer;
-  VkDeviceMemory vertexBufferMemory;
+  std::unique_ptr<Buffer> vertexBuffer;
   u32 vertexCount;
 
   bool hasIndexBuffer{false};
-  VkBuffer indexBuffer;
-  VkDeviceMemory indexBufferMemory;
+  std::unique_ptr<Buffer> indexBuffer;
   u32 indexCount;
 };
 } // namespace Enforcer

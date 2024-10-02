@@ -1,8 +1,7 @@
 #pragma once
 
-#include "enf_camera.hpp"
 #include "enf_device.hpp"
-#include "enf_game_object.hpp"
+#include "enf_frame_info.hpp"
 #include "enf_pipeline.hpp"
 
 #include <memory>
@@ -10,18 +9,17 @@
 namespace Enforcer {
 class RenderSystem {
 public:
-  explicit RenderSystem(Device &device, VkRenderPass renderPass);
+  explicit RenderSystem(Device &device, VkRenderPass renderPass,
+                        VkDescriptorSetLayout globalSetLayout);
   ~RenderSystem();
 
   RenderSystem(const RenderSystem &) = delete;
   RenderSystem &operator=(const RenderSystem &) = delete;
 
-  void RenderGameObjects(VkCommandBuffer commandBuffer,
-                         std::vector<GameObject> &gameObjects,
-                         const Camera &camera);
+  void RenderGameObjects(FrameInfo &frameInfo);
 
 private:
-  void CreatePipelineLayout();
+  void CreatePipelineLayout(VkDescriptorSetLayout globalSetLayout);
   void CreatePipeline(VkRenderPass renderPass);
 
   Device &device;

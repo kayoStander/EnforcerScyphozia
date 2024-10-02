@@ -1,6 +1,7 @@
 #include "enf_model.hpp"
 #include "../common/assert.hpp"
 #include "../common/utils.hpp"
+#include <memory>
 
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "../common/tiny_obj_loader.hpp"
@@ -33,44 +34,29 @@ Model::Model(Device &device, const Model::Data &data) : device{device} {
   CreateIndexBuffers(data.indices);
 }
 
-Model::~Model() {
-  vkDestroyBuffer(device.device(), vertexBuffer, nullptr);
-  vkFreeMemory(device.device(), vertexBufferMemory, nullptr);
-
-  if (hasIndexBuffer) {
-    vkDestroyBuffer(device.device(), indexBuffer, nullptr);
-    vkFreeMemory(device.device(), indexBufferMemory, nullptr);
-  }
-}
+Model::~Model() {}
 
 void Model::CreateVertexBuffers(const std::vector<Vertex> &vertices) {
   vertexCount = static_cast<u32>(vertices.size());
   ASSERT_LOG(vertexCount >= 3, "Vertex count must be atleast 3");
   VkDeviceSize bufferSize = sizeof(vertices[0]) * vertexCount;
+  u32 vertexSize = sizeof(vertices[0]);
 
-  VkBuffer stagingBuffer;
-  VkDeviceMemory stagingBufferMemory;
-  device.createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-                      VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
-                          VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-                      stagingBuffer,
-                      stagingBufferMemory); // host -> cpu / device -> gpu
+  Buffer stagingBuffer{device, vertexSize, vertexCount,
+                       VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+                       VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+                           VK_MEMORY_PROPERTY_HOST_COHERENT_BIT};
 
-  void *data;
-  vkMapMemory(device.device(), stagingBufferMemory, 0, bufferSize, 0, &data);
-  memcpy(data, vertices.data(), static_cast<size_t>(bufferSize));
-  vkUnmapMemory(device.device(), stagingBufferMemory);
+  stagingBuffer.map();
+  stagingBuffer.writeToBuffer((void *)vertices.data());
 
-  device.createBuffer(bufferSize,
-                      VK_BUFFER_USAGE_VERTEX_BUFFER_BIT |
-                          VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-                      VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer,
-                      vertexBufferMemory); // host -> cpu / device -> gpu
+  vertexBuffer = std::make_unique<Buffer>(device, vertexSize, vertexCount,
+                                          VK_BUFFER_USAGE_VERTEX_BUFFER_BIT |
+                                              VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+                                          VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
-  device.copyBuffer(stagingBuffer, vertexBuffer, bufferSize);
-
-  vkDestroyBuffer(device.device(), stagingBuffer, nullptr);
-  vkFreeMemory(device.device(), stagingBufferMemory, nullptr);
+  device.copyBuffer(stagingBuffer.getBuffer(), vertexBuffer->getBuffer(),
+                    bufferSize);
 }
 
 void Model::CreateIndexBuffers(const std::vector<u32> &indices) {
@@ -82,30 +68,23 @@ void Model::CreateIndexBuffers(const std::vector<u32> &indices) {
   }
 
   VkDeviceSize bufferSize = sizeof(indices[0]) * indexCount;
+  u32 indexSize = sizeof(indices[0]);
 
-  VkBuffer stagingBuffer;
-  VkDeviceMemory stagingBufferMemory;
-  device.createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-                      VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
-                          VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-                      stagingBuffer,
-                      stagingBufferMemory); // host -> cpu / device -> gpu
+  Buffer stagingBuffer{device, indexSize, indexCount,
+                       VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+                       VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+                           VK_MEMORY_PROPERTY_HOST_COHERENT_BIT};
 
-  void *data;
-  vkMapMemory(device.device(), stagingBufferMemory, 0, bufferSize, 0, &data);
-  memcpy(data, indices.data(), static_cast<size_t>(bufferSize));
-  vkUnmapMemory(device.device(), stagingBufferMemory);
+  stagingBuffer.map();
+  stagingBuffer.writeToBuffer((void *)indices.data());
 
-  device.createBuffer(bufferSize,
-                      VK_BUFFER_USAGE_INDEX_BUFFER_BIT |
-                          VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-                      VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indexBuffer,
-                      indexBufferMemory); // host -> cpu / device -> gpu
+  indexBuffer = std::make_unique<Buffer>(device, indexSize, indexCount,
+                                         VK_BUFFER_USAGE_INDEX_BUFFER_BIT |
+                                             VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+                                         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
-  device.copyBuffer(stagingBuffer, indexBuffer, bufferSize);
-
-  vkDestroyBuffer(device.device(), stagingBuffer, nullptr);
-  vkFreeMemory(device.device(), stagingBufferMemory, nullptr);
+  device.copyBuffer(stagingBuffer.getBuffer(), indexBuffer->getBuffer(),
+                    bufferSize);
 }
 
 std::unique_ptr<Model> Model::CreateModelFromFile(Device &device,
@@ -125,12 +104,13 @@ void Model::Draw(VkCommandBuffer commandBuffer) {
 }
 
 void Model::Bind(VkCommandBuffer commandBuffer) {
-  VkBuffer buffers[]{vertexBuffer};
+  VkBuffer buffers[]{vertexBuffer->getBuffer()};
   VkDeviceSize offsets[]{0};
   vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
 
   if (hasIndexBuffer) {
-    vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+    vkCmdBindIndexBuffer(commandBuffer, indexBuffer->getBuffer(), 0,
+                         VK_INDEX_TYPE_UINT32);
   }
 }
 
@@ -163,7 +143,15 @@ Model::Vertex::GetAttributeDescriptions() {
           {.location = 1,
            .binding = 0,
            .format = VK_FORMAT_R32G32B32_SFLOAT,
-           .offset = offsetof(Vertex, color)}};
+           .offset = offsetof(Vertex, color)},
+          {.location = 2,
+           .binding = 0,
+           .format = VK_FORMAT_R32G32B32_SFLOAT,
+           .offset = offsetof(Vertex, normal)},
+          {.location = 3,
+           .binding = 0,
+           .format = VK_FORMAT_R32G32_SFLOAT,
+           .offset = offsetof(Vertex, uv)}};
 }
 
 void Model::Data::LoadModel(const std::string &filepath) {
@@ -192,16 +180,11 @@ void Model::Data::LoadModel(const std::string &filepath) {
             attrib.vertices[static_cast<u32>(3 * index.vertex_index + 2)],
         };
 
-        int colorIndex{3 * index.vertex_index + 2};
-        if (colorIndex < static_cast<int>(attrib.colors.size())) {
-          vertex.color = {
-              attrib.colors[static_cast<u32>(colorIndex - 2)],
-              attrib.colors[static_cast<u32>(colorIndex - 1)],
-              attrib.colors[static_cast<u32>(colorIndex - 0)],
-          };
-        } else {
-          vertex.color = {1.f, 1.f, 1.f};
-        }
+        vertex.color = {
+            attrib.colors[static_cast<u32>(3 * index.vertex_index + 0)],
+            attrib.colors[static_cast<u32>(3 * index.vertex_index + 1)],
+            attrib.colors[static_cast<u32>(3 * index.vertex_index + 2)],
+        };
       }
 
       if (index.normal_index >= 0) {

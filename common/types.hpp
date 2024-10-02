@@ -24,10 +24,14 @@ using u64 = std::uint64_t;
 
 using f32 = float;
 using f64 = double;
-
+/*
 using rot = glm::vec3;
 using pos = glm::vec3;
 
+using mat2 = glm::mat2;
+using mat3 = glm::mat3;
+using mat4 = glm::mat4;
+*/
 template <typename T>
 concept Arithmetic = std::is_arithmetic_v<T>;
 
