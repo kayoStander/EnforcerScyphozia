@@ -76,7 +76,7 @@ void Application::Run() {
   // camera.SetViewTarget(glm::vec3(-1.f, -2.f, 20.f), glm::vec3(0.f,
   // 0.f, 2.5f));
 
-  GameObject viewerObject = GameObject::CreateGameObject();
+  GameObject viewerObject{GameObject::CreateGameObject()};
   viewerObject.transform.translation = {.0f, -1.f, -2.5f};
   Keyboard cameraController{};
 
@@ -92,10 +92,10 @@ void Application::Run() {
 
     const std::chrono::time_point newTime{
         std::chrono::high_resolution_clock::now()};
-    const float frameTime =
+    const float frameTime{
         std::chrono::duration<float, std::chrono::seconds::period>(newTime -
                                                                    currentTime)
-            .count();
+            .count()};
     currentTime = newTime;
 
     cameraController.MoveInPlaneXZ(window.GetGLFWWindow(), frameTime,
@@ -107,7 +107,7 @@ void Application::Run() {
     // camera.SetOrthographicProjection(-aspect, aspect, -1, 1, -1, 1);
     camera.SetPerspectiveProjection(glm::radians(FOV), aspect, .1f, FAR);
 
-    if (VkCommandBuffer commandBuffer = renderer.BeginFrame()) {
+    if (VkCommandBuffer commandBuffer{renderer.BeginFrame()}) {
       const int frameIndex{static_cast<int>(renderer.GetFrameIndex())};
       FrameInfo frameInfo{frameIndex,
                           frameTime,
@@ -119,6 +119,7 @@ void Application::Run() {
       GlobalUniformBufferObject uniformBufferObject{};
       uniformBufferObject.projection = camera.GetProjection();
       uniformBufferObject.view = camera.GetView();
+      uniformBufferObject.inverseView = camera.GetInverseView();
 
       pointLightSystem.Update(frameInfo, uniformBufferObject);
       uniformBufferObjectBuffers[static_cast<u32>(frameIndex)]->writeToBuffer(
@@ -127,8 +128,11 @@ void Application::Run() {
 
       // render
       renderer.BeginSwapChainRenderPass(commandBuffer);
+
+      // order maters
       renderSystem.RenderGameObjects(frameInfo);
       pointLightSystem.Render(frameInfo);
+
       renderer.EndSwapChainRenderPass(commandBuffer);
       renderer.EndFrame();
     }
@@ -141,22 +145,22 @@ void Application::Run() {
 }
 
 void Application::LoadGameObjects() {
-  std::shared_ptr<Model> coloredCubeModel =
-      Model::CreateModelFromFile(device, "model/smooth_vase.obj");
+  std::shared_ptr<Model> coloredCubeModel{
+      Model::CreateModelFromFile(device, "model/smooth_vase.obj")};
   GameObject cube = GameObject::CreateGameObject();
   cube.model = coloredCubeModel;
   cube.transform.translation = {-1.0f, .0f, 0.f};
   cube.transform.scale = {3.f, 3.f, 3.f};
 
-  std::shared_ptr<Model> smoothVaseModel =
-      Model::CreateModelFromFile(device, "model/flat_vase.obj");
+  std::shared_ptr<Model> smoothVaseModel{
+      Model::CreateModelFromFile(device, "model/flat_vase.obj")};
   GameObject vase = GameObject::CreateGameObject();
   vase.model = smoothVaseModel;
   vase.transform.translation = {1.0f, .0f, 0.f};
   vase.transform.scale = {3.f, 3.f, 3.f};
 
-  std::shared_ptr<Model> quadModel =
-      Model::CreateModelFromFile(device, "model/quad.obj");
+  std::shared_ptr<Model> quadModel{
+      Model::CreateModelFromFile(device, "model/quad.obj")};
   GameObject quad = GameObject::CreateGameObject();
   quad.model = quadModel;
   quad.transform.translation = {.0f, .0f, 0.f};

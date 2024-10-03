@@ -1,6 +1,7 @@
 #include "enf_point_light_system.hpp"
 #include "../../common/assert.hpp"
 #include "../../common/logging/log.hpp"
+#include <map>
 
 #if __has_include(<glm/glm.hpp>)
 #define GLM_FORCE_RADIANS
@@ -62,6 +63,7 @@ void PointLightSystem::CreatePipelineLayout(
 void PointLightSystem::CreatePipeline(VkRenderPass renderPass) {
   PipelineConfigInfo pipelineConfig{};
   Pipeline::DefaultPipelineConfigInfo(pipelineConfig);
+  Pipeline::EnableAlphaBlending(pipelineConfig);
   pipelineConfig.attributeDescriptions.clear();
   pipelineConfig.bindingDescriptions.clear();
   pipelineConfig.renderPass = renderPass;
@@ -101,6 +103,17 @@ void PointLightSystem::Update(FrameInfo &frameInfo,
 }
 
 void PointLightSystem::Render(FrameInfo &frameInfo) {
+  std::map<float, u32> sorted;
+  for (auto &keyValue : frameInfo.gameObjects) {
+    GameObject &obj{keyValue.second};
+    if (obj.pointLight == nullptr) {
+      continue;
+    }
+    glm::vec3 offset{frameInfo.camera.getPosition() -
+                     obj.transform.translation};
+    float distanceSquared{glm::dot(offset, offset)};
+    sorted[distanceSquared] = obj.GetId();
+  }
 
   pipeline->bind(frameInfo.commandBuffer);
 
@@ -108,11 +121,8 @@ void PointLightSystem::Render(FrameInfo &frameInfo) {
                           VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1,
                           &frameInfo.globalDescriptorSet, 0, nullptr);
 
-  for (auto &keyValue : frameInfo.gameObjects) {
-    GameObject &obj{keyValue.second};
-    if (obj.pointLight == nullptr) {
-      continue;
-    }
+  for (std::reverse_iterator it = sorted.rbegin(); it != sorted.rend(); ++it) {
+    GameObject &obj{frameInfo.gameObjects.at(it->second)};
 
     PointLightPushConstants push{};
     push.position = glm::vec4(obj.transform.translation, 1.f);

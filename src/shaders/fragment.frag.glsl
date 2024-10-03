@@ -13,6 +13,7 @@ struct PointLight {
 layout(set = 0, binding = 0) uniform GlobalUniformBufferObject{
   mat4 projection;
   mat4 view;
+  mat4 inverseView;
   vec4 ambientLightColor;
   PointLight pointLights[10];
   int numLights;
@@ -24,17 +25,30 @@ layout(push_constant) uniform Push {
 
 void main(){
   vec3 diffuseLight = uniformBufferObject.ambientLightColor.xyz * uniformBufferObject.ambientLightColor.w;
+  vec3 specularLight = vec3(0.);
   vec3 surfaceNormal = normalize(fragNormalWorld);
+
+  vec3 cameraPositionWorld = uniformBufferObject.inverseView[3].xyz;
+  vec3 viewDirection = normalize(cameraPositionWorld - fragPositionWorld);
 
   for (int i = 0; i < uniformBufferObject.numLights; i++){
     PointLight light = uniformBufferObject.pointLights[i];
     vec3 directionToLight = light.position.xyz - fragPositionWorld;
     float attenuation = 1./dot(directionToLight,directionToLight); // distance squared
-    float cosAngIncidence = max(dot(surfaceNormal,normalize(directionToLight)),0); 
+    directionToLight = normalize(directionToLight);
+
+    float cosAngIncidence = max(dot(surfaceNormal,directionToLight),0); 
     vec3 intensity = light.color.xyz * light.color.w * attenuation;
   
     diffuseLight += intensity * cosAngIncidence;
+
+    // specular
+    vec3 halfAngle = normalize(directionToLight + viewDirection);
+    float blinnTerm = dot(surfaceNormal, halfAngle);
+    blinnTerm = clamp(blinnTerm,0,1);
+    blinnTerm = pow(blinnTerm, 512.); // higher value -> higher sharpness / also make it changable by pointlight
+    specularLight += intensity * blinnTerm;
   }
 
-  outColor = vec4(diffuseLight * fragColor, 1.);  
+  outColor = vec4(diffuseLight * fragColor + specularLight * fragColor, 1.);  
 }

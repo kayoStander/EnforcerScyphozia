@@ -29,9 +29,14 @@ public:
 
   const glm::mat4 &GetProjection() const noexcept { return projectionMatrix; }
   const glm::mat4 &GetView() const noexcept { return viewMatrix; }
+  const glm::mat4 &GetInverseView() const noexcept { return inverseViewMatrix; }
+  const glm::vec3 getPosition() const noexcept {
+    return glm::vec3{inverseViewMatrix[3]};
+  }
 
 private:
   glm::mat4 projectionMatrix{1.f};
   glm::mat4 viewMatrix{1.f};
+  glm::mat4 inverseViewMatrix{1.f};
 };
 } // namespace Enforcer

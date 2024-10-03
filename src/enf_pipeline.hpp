@@ -10,6 +10,7 @@
 namespace Enforcer {
 
 struct PipelineConfigInfo {
+
   explicit PipelineConfigInfo() = default;
   PipelineConfigInfo(const PipelineConfigInfo &) = delete;
   PipelineConfigInfo &operator=(const PipelineConfigInfo &) = delete;
@@ -42,6 +43,7 @@ public:
 
   void bind(VkCommandBuffer commandBuffer);
   static void DefaultPipelineConfigInfo(PipelineConfigInfo &configInfo);
+  static void EnableAlphaBlending(PipelineConfigInfo &configInfo);
 
 private:
   static std::vector<char> ReadFile(const std::string &filepath);

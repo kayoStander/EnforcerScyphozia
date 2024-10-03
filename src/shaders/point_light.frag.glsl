@@ -10,6 +10,7 @@ struct PointLight {
 layout(set = 0, binding = 0) uniform GlobalUniformBufferObject{
   mat4 projection;
   mat4 view;
+  mat4 inverseView;
   vec4 ambientLightColor;
   PointLight pointLights[10];
   int numLights;
@@ -20,10 +21,13 @@ layout(push_constant) uniform Push{
   float radius;
 } push;
 
+const float PI = 3.1415926538;
 void main(){
   float distance = sqrt(dot(fragOffset,fragOffset));
   if (distance >= 1.){
     discard;
   }
-  outColor = vec4(push.color.xyz, 1.); 
+
+  float cosDistance = .25 * (cos(distance * PI) + 1);
+  outColor = vec4(push.color.xyz+cosDistance,cosDistance); 
 }
