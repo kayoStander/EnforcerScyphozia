@@ -4,6 +4,7 @@
 #include "enf_device.hpp"
 #include "enf_game_object.hpp"
 #include "enf_renderer.hpp"
+#include "enf_texture.hpp"
 #include "enf_window.hpp"
 
 #include <memory>
@@ -32,6 +33,7 @@ private:
 
   // order of declaration matters
   std::unique_ptr<DescriptorPool> globalPool{};
+  std::unique_ptr<Texture> texture{};
   std::unordered_map<u32, GameObject> gameObjects;
 };
 } // namespace Enforcer

@@ -5,6 +5,7 @@
 #include "enf_descriptors.hpp"
 #include "enf_game_object.hpp"
 #include "enf_model.hpp"
+#include "enf_texture.hpp"
 #include "keyboard.hpp"
 #include "systems/enf_point_light_system.hpp"
 #include "systems/enf_render_system.hpp"
@@ -30,6 +31,8 @@ Application::Application() {
                    .setMaxSets(SwapChain::MAX_FRAMES_IN_FLIGHT)
                    .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
                                 SwapChain::MAX_FRAMES_IN_FLIGHT)
+                   .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                                SwapChain::MAX_FRAMES_IN_FLIGHT)
                    .build();
   LoadGameObjects();
 }
@@ -49,10 +52,20 @@ void Application::Run() {
     uniformBufferObjectBuffers[i]->map();
   }
 
-  auto globalSetLayout{DescriptorSetLayout::Builder(device)
-                           .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-                                       VK_SHADER_STAGE_ALL_GRAPHICS)
-                           .build()};
+  auto globalSetLayout{
+      DescriptorSetLayout::Builder(device)
+          .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+                      VK_SHADER_STAGE_ALL_GRAPHICS)
+          .addBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                      VK_SHADER_STAGE_FRAGMENT_BIT)
+          .build()};
+
+  texture = std::make_unique<Texture>(device, "textures/image.png");
+
+  VkDescriptorImageInfo imageInfo{};
+  imageInfo.sampler = texture->GetSampler();
+  imageInfo.imageView = texture->GetImageView();
+  imageInfo.imageLayout = texture->GetImageLayout();
 
   std::vector<VkDescriptorSet> globalDescriptorSets(
       SwapChain::MAX_FRAMES_IN_FLIGHT);
@@ -60,6 +73,7 @@ void Application::Run() {
     auto bufferInfo{uniformBufferObjectBuffers[i]->descriptorInfo()};
     DescriptorWriter(*globalSetLayout, *globalPool)
         .writeBuffer(0, &bufferInfo)
+        .writeImage(1, &imageInfo)
         .build(globalDescriptorSets[i]);
   }
 

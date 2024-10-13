@@ -2,7 +2,7 @@ CXX = g++
 DEFINES = -DDEBUG
 CXXFLAGS = -Wall -Wextra -Werror -Wsign-conversion -Wstrict-overflow=2 -mcmodel=small -Wvla -O3 -std=c++23 
 LDFLAGS = -L/usr/lib -ldiscord-rpc -lglfw -lfmt -lvulkan 
-INCLUDES = -I/usr/include -Icommon -Icommon/tiny_obj_loader.hpp
+INCLUDES = -I/usr/include -Icommon -Iexternal
 
 TARGET = EnforcerSyphozia
 
