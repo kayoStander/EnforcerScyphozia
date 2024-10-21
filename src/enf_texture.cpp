@@ -2,6 +2,9 @@
 #include "../common/assert.hpp"
 #include "../common/logging/log.hpp"
 #include "enf_buffer.hpp"
+// #include <algorithm>
+//  #include <span>
+#include <vulkan/vulkan_core.h>
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wsign-conversion"
@@ -12,13 +15,23 @@
 
 namespace Enforcer {
 Texture::Texture(Device &device, const std::string &filepath) : device{device} {
-  int width, height;
+  int width{};
+  int height{};
+  int bytesPerPixel{};
   [[maybe_unused]] int channels{};
-  int bytesPerPixel;
 
   stbi_uc *data =
       stbi_load(filepath.c_str(), &width, &height, &bytesPerPixel, 4);
   ASSERT_LOG(data, "Failed to load texture {}", filepath);
+  LOG_INFO(Vulkan, "Loaded texture {} (W:{},H:{},CH:{},BPP:{})", filepath,
+           width, height, channels, bytesPerPixel);
+
+  /*std::ranges::for_each(
+      std::span<stbi_uc>{data, static_cast<u32>(width * height * 4)},
+      [filepath](const stbi_uc i) noexcept {
+        LOG_ERROR(Vulkan, "Texture {} at pixel x is {}", filepath, i);
+      });
+*/
 
   Buffer stagingBuffer{device, 4, static_cast<u32>(width * height),
                        VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
@@ -27,7 +40,9 @@ Texture::Texture(Device &device, const std::string &filepath) : device{device} {
   stagingBuffer.map();
   stagingBuffer.writeToBuffer(data);
 
-  imageFormat = VK_FORMAT_R8G8B8A8_SRGB;
+  imageFormat = VK_FORMAT_R8G8B8A8_SRGB; /* SNORM inverts ig?*/
+
+  vkDeviceWaitIdle(device.device());
 
   VkImageCreateInfo imageInfo{};
   imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -141,7 +156,7 @@ void Texture::TransitionImageLayout(VkImageLayout oldLayout,
 
   vkCmdPipelineBarrier(commandBuffer, sourceStage, destinationStage, 0, 0,
                        nullptr, 0, nullptr, 1, &barrier);
-
+  vkDeviceWaitIdle(device.device());
   device.endSingleTimeCommands(commandBuffer);
 }
 } // namespace Enforcer

@@ -4,6 +4,7 @@
 #include "enf_window.hpp"
 
 #include <vector>
+#include <vulkan/vulkan_core.h>
 
 namespace Enforcer {
 

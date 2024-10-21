@@ -199,8 +199,8 @@ void Model::Data::LoadModel(const std::string &filepath) {
 
       if (index.normal_index >= 0) {
         vertex.uv = {
-            attrib.texcoords[static_cast<u32>(3 * index.texcoord_index + 0)],
-            attrib.texcoords[static_cast<u32>(3 * index.texcoord_index + 1)],
+            attrib.texcoords[static_cast<u32>(2 * index.texcoord_index + 0)],
+            attrib.texcoords[static_cast<u32>(2 * index.texcoord_index + 1)],
         };
       }
 
