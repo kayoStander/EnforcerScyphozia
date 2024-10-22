@@ -39,11 +39,12 @@ public:
   Device(Device &&) = delete;
   Device &operator=(Device &&) = delete;
 
-  VkCommandPool getCommandPool() { return commandPool; }
-  VkDevice device() { return device_; }
-  VkSurfaceKHR surface() { return surface_; }
-  VkQueue graphicsQueue() { return graphicsQueue_; }
-  VkQueue presentQueue() { return presentQueue_; }
+  VkCommandPool getCommandPool() const noexcept { return commandPool; }
+  VkDevice device() const noexcept { return device_; }
+  VkPhysicalDevice getPhysicalDevice() const noexcept { return physicalDevice; }
+  VkSurfaceKHR surface() const noexcept { return surface_; }
+  VkQueue graphicsQueue() const noexcept { return graphicsQueue_; }
+  VkQueue presentQueue() const noexcept { return presentQueue_; }
 
   SwapChainSupportDetails getSwapChainSupport() {
     return querySwapChainSupport(physicalDevice);

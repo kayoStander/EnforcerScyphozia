@@ -2,6 +2,7 @@
 
 #include "enf_buffer.hpp"
 #include "enf_device.hpp"
+#include "enf_texture.hpp"
 
 #include <memory>
 #include <vector>
@@ -42,14 +43,16 @@ public:
     void LoadModel(const std::string &filepath);
   };
 
-  explicit Model(Device &device, const Model::Data &data);
+  explicit Model(Device &device, const Model::Data &data,
+                 std::shared_ptr<Texture> texture = nullptr);
   ~Model();
 
   Model(const Model &) = delete;
   Model &operator=(const Model &) = delete;
 
   static std::unique_ptr<Model>
-  CreateModelFromFile(Device &device, const std::string &filepath);
+  CreateModelFromFile(Device &device, const std::string &modelFilepath,
+                      std::shared_ptr<Texture> texture = nullptr);
 
   void Bind(VkCommandBuffer commandBuffer);
   void Draw(VkCommandBuffer commandBuffer);
@@ -59,6 +62,7 @@ private:
   void CreateIndexBuffers(const std::vector<u32> &indices);
 
   Device &device;
+  std::shared_ptr<Texture> texture;
 
   std::unique_ptr<Buffer> vertexBuffer;
   u32 vertexCount;

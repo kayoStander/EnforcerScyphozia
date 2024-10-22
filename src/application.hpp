@@ -33,7 +33,9 @@ private:
 
   // order of declaration matters
   std::unique_ptr<DescriptorPool> globalPool{};
-  std::unique_ptr<Texture> texture{};
+  std::unique_ptr<Texture> texture;
+  std::unique_ptr<Texture> texture2; // TEMPORARY
+  std::vector<std::unique_ptr<Texture>> textures{};
   std::unordered_map<u32, GameObject> gameObjects;
 };
 } // namespace Enforcer

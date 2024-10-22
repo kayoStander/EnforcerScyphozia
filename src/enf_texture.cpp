@@ -15,8 +15,10 @@
 
 namespace Enforcer {
 Texture::Texture(Device &device, const std::string &filepath) : device{device} {
-  int width{};
-  int height{};
+  if (filepath.empty()) {
+    LOG_WARNING(Vulkan, "Texture loaded as empty so it will be ignored");
+    return;
+  }
   int bytesPerPixel{};
   [[maybe_unused]] int channels{};
 

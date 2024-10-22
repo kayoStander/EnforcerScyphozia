@@ -19,21 +19,28 @@
 #error "No GLM recognized in the system"
 #endif
 
+#include <algorithm>
 #include <chrono>
+#include <cstdio>
+#include <iostream>
 #include <memory>
+#include <numeric>
+#include <ostream>
+#include <ranges>
 
 Discord::RPC RPC{};
 
 namespace Enforcer {
 
 Application::Application() {
-  globalPool = DescriptorPool::Builder(device)
-                   .setMaxSets(SwapChain::MAX_FRAMES_IN_FLIGHT)
-                   .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-                                SwapChain::MAX_FRAMES_IN_FLIGHT)
-                   .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                                SwapChain::MAX_FRAMES_IN_FLIGHT)
-                   .build();
+  globalPool =
+      DescriptorPool::Builder(device)
+          .setMaxSets(SwapChain::MAX_FRAMES_IN_FLIGHT)
+          .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+                       SwapChain::MAX_FRAMES_IN_FLIGHT)
+          .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                       2 * SwapChain::MAX_FRAMES_IN_FLIGHT) // 2 is texture amt
+          .build();
   LoadGameObjects();
 }
 
@@ -57,23 +64,29 @@ void Application::Run() {
           .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
                       VK_SHADER_STAGE_ALL_GRAPHICS)
           .addBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                      VK_SHADER_STAGE_FRAGMENT_BIT)
+                      VK_SHADER_STAGE_FRAGMENT_BIT, 2)
           .build()};
 
-  texture = std::make_unique<Texture>(device, "textures/image.png");
+  textures.push_back(std::make_unique<Texture>(device, "textures/image.png"));
+  textures.push_back(std::make_unique<Texture>(
+      device, "textures/image3.png")); // not recognized for some reason
 
-  VkDescriptorImageInfo imageInfo{};
-  imageInfo.sampler = texture->GetSampler();
-  imageInfo.imageView = texture->GetImageView();
-  imageInfo.imageLayout = texture->GetImageLayout();
+  std::vector<VkDescriptorImageInfo> imageInfos{{}, {}};
+
+  for (u64 i{0}; i < textures.size(); ++i) {
+    imageInfos[i].sampler = textures[i]->GetSampler();
+    imageInfos[i].imageView = textures[i]->GetImageView();
+    imageInfos[i].imageLayout = textures[i]->GetImageLayout();
+  }
 
   std::vector<VkDescriptorSet> globalDescriptorSets(
       SwapChain::MAX_FRAMES_IN_FLIGHT);
   for (u32 i{0}; i < globalDescriptorSets.size(); ++i) {
-    auto bufferInfo{uniformBufferObjectBuffers[i]->descriptorInfo()};
+    VkDescriptorBufferInfo bufferInfo{
+        uniformBufferObjectBuffers[i]->descriptorInfo()};
     DescriptorWriter(*globalSetLayout, *globalPool)
         .writeBuffer(0, &bufferInfo)
-        .writeImage(1, &imageInfo)
+        .writeImageArray(1, imageInfos.data(), imageInfos.size())
         .build(globalDescriptorSets[i]);
   }
 
@@ -151,6 +164,9 @@ void Application::Run() {
       renderer.EndFrame();
     }
     RPC.Update(Discord::RPCStatus::Playing);
+
+    std::cout << "\r\033[KFPS => " << 1.f / frameTime << std::flush;
+    // LOG_WARNING(Core, "\r\033[KFPS => {}", 1.f / frameTime);
   }
 
   vkDeviceWaitIdle(device.device());
@@ -159,22 +175,24 @@ void Application::Run() {
 }
 
 void Application::LoadGameObjects() {
-  std::shared_ptr<Model> coloredCubeModel{
-      Model::CreateModelFromFile(device, "model/smooth_vase.obj")};
+  std::shared_ptr<Texture> simpleTexture{std::make_shared<Texture>(device, "")};
+
+  std::shared_ptr<Model> coloredCubeModel{Model::CreateModelFromFile(
+      device, "model/smooth_vase.obj", simpleTexture)};
   GameObject cube = GameObject::CreateGameObject();
   cube.model = coloredCubeModel;
   cube.transform.translation = {-1.0f, .0f, 0.f};
   cube.transform.scale = {3.f, 3.f, 3.f};
 
   std::shared_ptr<Model> smoothVaseModel{
-      Model::CreateModelFromFile(device, "model/flat_vase.obj")};
+      Model::CreateModelFromFile(device, "model/flat_vase.obj", simpleTexture)};
   GameObject vase = GameObject::CreateGameObject();
   vase.model = smoothVaseModel;
   vase.transform.translation = {1.0f, .0f, 0.f};
   vase.transform.scale = {3.f, 3.f, 3.f};
 
   std::shared_ptr<Model> quadModel{
-      Model::CreateModelFromFile(device, "model/quad.obj")};
+      Model::CreateModelFromFile(device, "model/quad.obj", simpleTexture)};
   GameObject quad = GameObject::CreateGameObject();
   quad.model = quadModel;
   quad.transform.translation = {.0f, .0f, 0.f};

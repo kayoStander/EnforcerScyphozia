@@ -51,8 +51,8 @@ glm::mat3 TransformComponent::normalMatrix() {
                     inverseScale.z * (c1 * c2)}};
 }
 
-GameObject GameObject::MakePointLight(float intensity, float radius,
-                                      glm::vec3 color) {
+GameObject GameObject::MakePointLight(const float intensity, const float radius,
+                                      const glm::vec3 color) {
   GameObject obj{GameObject::CreateGameObject()};
   obj.color = color;
   obj.transform.scale.x = radius;

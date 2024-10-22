@@ -13,6 +13,7 @@ struct PointLight {
   glm::vec4 color{};
 };
 struct GlobalUniformBufferObject {
+  // VkSampler image;
   glm::mat4 projection{1.f};
   glm::mat4 view{1.f};
   glm::mat4 inverseView{1.f};
