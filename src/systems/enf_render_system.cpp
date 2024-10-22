@@ -18,6 +18,7 @@ namespace Enforcer {
 struct SimplePushConstantData {
   glm::mat4 modelMatrix{1.f};
   glm::mat4 normalMatrix{1.f};
+  int imageBind;
 };
 
 RenderSystem::RenderSystem(Device &device, VkRenderPass renderPass,
@@ -82,6 +83,7 @@ void RenderSystem::RenderGameObjects(FrameInfo &frameInfo) {
     SimplePushConstantData push{};
     push.modelMatrix = obj.transform.mat4();
     push.normalMatrix = obj.transform.normalMatrix();
+    push.imageBind = static_cast<s32>(obj.imageBind);
 
     vkCmdPushConstants(frameInfo.commandBuffer, pipelineLayout,
                        VK_SHADER_STAGE_VERTEX_BIT |

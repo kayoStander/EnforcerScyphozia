@@ -16,7 +16,8 @@
 namespace Enforcer {
 Texture::Texture(Device &device, const std::string &filepath) : device{device} {
   if (filepath.empty()) {
-    LOG_WARNING(Vulkan, "Texture loaded as empty so it will be ignored");
+    LOG_WARNING(Vulkan, "Texture {}loaded as empty so it will be ignored",
+                filepath);
     return;
   }
   int bytesPerPixel{};
@@ -27,13 +28,6 @@ Texture::Texture(Device &device, const std::string &filepath) : device{device} {
   ASSERT_LOG(data, "Failed to load texture {}", filepath);
   LOG_INFO(Vulkan, "Loaded texture {} (W:{},H:{},CH:{},BPP:{})", filepath,
            width, height, channels, bytesPerPixel);
-
-  /*std::ranges::for_each(
-      std::span<stbi_uc>{data, static_cast<u32>(width * height * 4)},
-      [filepath](const stbi_uc i) noexcept {
-        LOG_ERROR(Vulkan, "Texture {} at pixel x is {}", filepath, i);
-      });
-*/
 
   Buffer stagingBuffer{device, 4, static_cast<u32>(width * height),
                        VK_BUFFER_USAGE_TRANSFER_SRC_BIT,

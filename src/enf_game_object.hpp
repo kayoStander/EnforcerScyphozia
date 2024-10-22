@@ -54,6 +54,8 @@ public:
   std::shared_ptr<Model> model{};
   std::unique_ptr<PointLightComponent> pointLight{nullptr};
 
+  u32 imageBind{0};
+
 private:
   explicit GameObject(u32 id) : id{id} {}
   const u32 id;

@@ -31,9 +31,7 @@ template <> struct hash<Enforcer::Model::Vertex> {
 } // namespace std
 
 namespace Enforcer {
-Model::Model(Device &device, const Model::Data &data,
-             std::shared_ptr<Texture> texture)
-    : device{device}, texture{texture} {
+Model::Model(Device &device, const Model::Data &data) : device{device} {
   CreateVertexBuffers(data.vertices);
   CreateIndexBuffers(data.indices);
 }
@@ -92,12 +90,11 @@ void Model::CreateIndexBuffers(const std::vector<u32> &indices) {
 }
 
 std::unique_ptr<Model>
-Model::CreateModelFromFile(Device &device, const std::string &modelFilepath,
-                           std::shared_ptr<Texture> texture) {
+Model::CreateModelFromFile(Device &device, const std::string &modelFilepath) {
   Data data{};
   data.LoadModel(modelFilepath);
   LOG_INFO(Vulkan, "Vertex count => {}", data.vertices.size());
-  return std::make_unique<Model>(device, data, texture);
+  return std::make_unique<Model>(device, data);
 }
 
 void Model::Draw(VkCommandBuffer commandBuffer) {

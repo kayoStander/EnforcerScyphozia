@@ -3,6 +3,7 @@
 #include "enf_buffer.hpp"
 #include "enf_camera.hpp"
 #include "enf_descriptors.hpp"
+#include "enf_frame_info.hpp"
 #include "enf_game_object.hpp"
 #include "enf_model.hpp"
 #include "enf_texture.hpp"
@@ -19,27 +20,23 @@
 #error "No GLM recognized in the system"
 #endif
 
-#include <algorithm>
 #include <chrono>
-#include <cstdio>
-#include <iostream>
-#include <memory>
-#include <numeric>
-#include <ostream>
-#include <ranges>
+
+#define TEXTURE_AMOUNT 3
 
 Discord::RPC RPC{};
 
 namespace Enforcer {
 
 Application::Application() {
+
   globalPool =
       DescriptorPool::Builder(device)
           .setMaxSets(SwapChain::MAX_FRAMES_IN_FLIGHT)
           .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
                        SwapChain::MAX_FRAMES_IN_FLIGHT)
           .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                       2 * SwapChain::MAX_FRAMES_IN_FLIGHT) // 2 is texture amt
+                       TEXTURE_AMOUNT * SwapChain::MAX_FRAMES_IN_FLIGHT)
           .build();
   LoadGameObjects();
 }
@@ -64,14 +61,14 @@ void Application::Run() {
           .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
                       VK_SHADER_STAGE_ALL_GRAPHICS)
           .addBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                      VK_SHADER_STAGE_FRAGMENT_BIT, 2)
+                      VK_SHADER_STAGE_FRAGMENT_BIT, TEXTURE_AMOUNT)
           .build()};
 
   textures.push_back(std::make_unique<Texture>(device, "textures/image.png"));
-  textures.push_back(std::make_unique<Texture>(
-      device, "textures/image3.png")); // not recognized for some reason
+  textures.push_back(std::make_unique<Texture>(device, "textures/image2.png"));
+  textures.push_back(std::make_unique<Texture>(device, "textures/image3.png"));
 
-  std::vector<VkDescriptorImageInfo> imageInfos{{}, {}};
+  std::vector<VkDescriptorImageInfo> imageInfos{textures.size()};
 
   for (u64 i{0}; i < textures.size(); ++i) {
     imageInfos[i].sampler = textures[i]->GetSampler();
@@ -111,8 +108,9 @@ void Application::Run() {
       std::chrono::high_resolution_clock::now()};
 
   LOG_DEBUG(GLFW, "Loop started");
-  LOG_DEBUG(Vulkan, "maxPushCostantsSize => {}",
-            device.properties.limits.maxPushConstantsSize);
+  LOG_DEBUG(Vulkan, "maxPushCostantsSize => {}, UBO size => {}",
+            device.properties.limits.maxPushConstantsSize,
+            sizeof(GlobalUniformBufferObject));
 
   while (!window.ShouldClose()) {
     glfwPollEvents();
@@ -143,10 +141,9 @@ void Application::Run() {
                           globalDescriptorSets[static_cast<u32>(frameIndex)],
                           gameObjects};
       // update
-      GlobalUniformBufferObject uniformBufferObject{};
       uniformBufferObject.projection = camera.GetProjection();
       uniformBufferObject.view = camera.GetView();
-      uniformBufferObject.inverseView = camera.GetInverseView();
+      uniformBufferObject.inverseView = camera.GetInverseView(); // here
 
       pointLightSystem.Update(frameInfo, uniformBufferObject);
       uniformBufferObjectBuffers[static_cast<u32>(frameIndex)]->writeToBuffer(
@@ -156,7 +153,11 @@ void Application::Run() {
       // render
       renderer.BeginSwapChainRenderPass(commandBuffer);
 
-      // order maters
+      uniformBufferObjectBuffers[static_cast<u32>(renderer.GetFrameIndex())]
+          ->writeToBuffer(&uniformBufferObject);
+      uniformBufferObjectBuffers[static_cast<u32>(frameIndex)]->flush();
+
+      // order between rendergameobject matters
       renderSystem.RenderGameObjects(frameInfo);
       pointLightSystem.Render(frameInfo);
 
@@ -175,28 +176,30 @@ void Application::Run() {
 }
 
 void Application::LoadGameObjects() {
-  std::shared_ptr<Texture> simpleTexture{std::make_shared<Texture>(device, "")};
 
-  std::shared_ptr<Model> coloredCubeModel{Model::CreateModelFromFile(
-      device, "model/smooth_vase.obj", simpleTexture)};
+  std::shared_ptr<Model> coloredCubeModel{
+      Model::CreateModelFromFile(device, "model/smooth_vase.obj")};
   GameObject cube = GameObject::CreateGameObject();
   cube.model = coloredCubeModel;
   cube.transform.translation = {-1.0f, .0f, 0.f};
   cube.transform.scale = {3.f, 3.f, 3.f};
+  cube.imageBind = 0;
 
   std::shared_ptr<Model> smoothVaseModel{
-      Model::CreateModelFromFile(device, "model/flat_vase.obj", simpleTexture)};
+      Model::CreateModelFromFile(device, "model/flat_vase.obj")};
   GameObject vase = GameObject::CreateGameObject();
   vase.model = smoothVaseModel;
   vase.transform.translation = {1.0f, .0f, 0.f};
   vase.transform.scale = {3.f, 3.f, 3.f};
+  vase.imageBind = 1;
 
   std::shared_ptr<Model> quadModel{
-      Model::CreateModelFromFile(device, "model/quad.obj", simpleTexture)};
+      Model::CreateModelFromFile(device, "model/quad.obj")};
   GameObject quad = GameObject::CreateGameObject();
   quad.model = quadModel;
   quad.transform.translation = {.0f, .0f, 0.f};
   quad.transform.scale = {10.f, 10.f, 10.f};
+  quad.imageBind = 2;
 
   std::vector<glm::vec3> lightColors{
       {1.f, .1f, .1f}, {.1f, .1f, 1.f}, {.1f, 1.f, .1f},

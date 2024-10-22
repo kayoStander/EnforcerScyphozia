@@ -18,9 +18,7 @@ public:
   Texture(const Texture &&) = delete;
   Texture &operator=(Texture &&) = delete;
 
-  void SetImageFormat(VkFormat format) noexcept {
-    imageFormat = format;
-  } // doenst work as expected yet
+  void SetImageFormat(VkFormat format) noexcept { imageFormat = format; }
 
 private:
   void TransitionImageLayout(VkImageLayout oldLayout, VkImageLayout newLayout);

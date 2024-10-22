@@ -13,7 +13,6 @@ struct PointLight {
   vec4 color;
 };
 layout(set = 0, binding = 0) uniform GlobalUniformBufferObject{
-  //sampler2D image;
   mat4 projection;
   mat4 view;
   mat4 inverseView;
@@ -21,10 +20,11 @@ layout(set = 0, binding = 0) uniform GlobalUniformBufferObject{
   PointLight pointLights[10];
   int numLights;
 } uniformBufferObject;
-layout(set = 0, binding = 1) uniform sampler2D image;
+layout(set = 0, binding = 1) uniform sampler2D image[3];
 layout(push_constant) uniform Push {
   mat4 modelMatrix; 
   mat4 normalMatrix; 
+  int imageBind; 
 } push;
 
 void main(){
@@ -54,7 +54,7 @@ void main(){
     specularLight += intensity * blinnTerm;
   }
 
-  vec3 imageColor = texture(image,fragUV).rgb;
+  vec3 imageColor = texture(image[push.imageBind],fragUV).rgb;
 
   outColor = vec4((diffuseLight * fragColor + specularLight * fragColor) * imageColor, 1.0);  
 }
