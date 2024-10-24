@@ -1,4 +1,5 @@
 #include "assert.hpp"
+
 #include <cstdio>
 
 #ifdef ARCH_X86_64

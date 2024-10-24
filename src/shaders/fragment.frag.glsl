@@ -20,7 +20,7 @@ layout(set = 0, binding = 0) uniform GlobalUniformBufferObject{
   PointLight pointLights[10];
   int numLights;
 } uniformBufferObject;
-layout(set = 0, binding = 1) uniform sampler2D image[3];
+layout(set = 0, binding = 1) uniform sampler2D/*Array*/ image[5];
 layout(push_constant) uniform Push {
   mat4 modelMatrix; 
   mat4 normalMatrix; 
@@ -30,10 +30,10 @@ layout(push_constant) uniform Push {
 void main(){
   vec3 diffuseLight = uniformBufferObject.ambientLightColor.xyz * uniformBufferObject.ambientLightColor.w;
   vec3 specularLight = vec3(0.);
-  vec3 surfaceNormal = normalize(fragNormalWorld);
+  const vec3 surfaceNormal = normalize(fragNormalWorld);
 
-  vec3 cameraPositionWorld = uniformBufferObject.inverseView[3].xyz;
-  vec3 viewDirection = normalize(cameraPositionWorld - fragPositionWorld);
+  const vec3 cameraPositionWorld = uniformBufferObject.inverseView[3].xyz;
+  const vec3 viewDirection = normalize(cameraPositionWorld - fragPositionWorld);
 
   for (int i = 0; i < uniformBufferObject.numLights; i++){
     PointLight light = uniformBufferObject.pointLights[i];
@@ -56,5 +56,29 @@ void main(){
 
   vec3 imageColor = texture(image[push.imageBind],fragUV).rgb;
 
-  outColor = vec4((diffuseLight * fragColor + specularLight * fragColor) * imageColor, 1.0);  
+  /*vec3 sunDirection = normalize(vec3(-1.f,-1.f,-1.f)); // make dynamic later
+  float sunCosAngIncidence = max(dot(surfaceNormal,sunDirection),0.);
+  diffuseLight += sunCosAngIncidence * vec3(25.,6.,0.);
+
+  vec3 halfAngle = normalize(sunDirection + viewDirection);
+  float blinnTerm = dot(surfaceNormal,halfAngle);
+  blinnTerm = clamp(blinnTerm,0.,1.);
+  blinnTerm = pow(blinnTerm,512.);
+  specularLight += vec3(25.,6.,0.) * blinnTerm;*/
+
+  // fog
+  float fogStart = 1.;
+  float fogEnd = 100.;
+
+  float distance = length(cameraPositionWorld - fragPositionWorld);
+  float fogFactor = clamp((fogEnd - distance) / (fogEnd - fogStart),0.,1.);
+
+  vec3 hdrColor = mix(vec3(.1,.1,.1),(diffuseLight * fragColor + specularLight * fragColor) * imageColor,fogFactor);
+
+  // bloom
+  float brightnessThreshold = .1;
+  float brightness = dot(hdrColor,vec3(0.2126, 0.7152, 0.0722));
+  vec3 brightColor = (brightness > brightnessThreshold) ? hdrColor : vec3(0.0);
+
+  outColor = vec4(hdrColor + brightColor * .25, 1.0);  
 }

@@ -89,7 +89,7 @@ Texture::Texture(Device &device, const std::string &filepath) : device{device} {
 
   VkImageViewCreateInfo imageViewInfo{};
   imageViewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-  imageViewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+  imageViewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D /*_ARRAY*/;
   imageViewInfo.format = imageFormat;
   imageViewInfo.components = {VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G,
                               VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A};

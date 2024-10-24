@@ -1,6 +1,8 @@
 #pragma once
 #include "logging/log.hpp"
 
+#include <vulkan/vulkan.h>
+
 void assert_fail_impl();
 // template <bool B, typename std::enable_if_t<B> * = nullptr>
 // void static_assert_impl();
@@ -75,3 +77,9 @@ void assert_fail_impl();
       y                                                                        \
     }                                                                          \
   } while (0);
+
+#define VK_CHECK_RESULT_LOG(call, ...)                                         \
+  do {                                                                         \
+    VkResult x{(call)};                                                        \
+    ASSERT_LOG(x == VK_SUCCESS, __VA_ARGS__);                                  \
+  } while (0)

@@ -29,5 +29,7 @@ void main(){
   }
 
   float cosDistance = .25 * (cos(distance * PI) + 1);
-  outColor = vec4(push.color.xyz+cosDistance,cosDistance); 
+  vec3 hdrColor = vec3(push.color.xyz+cosDistance);
+
+  outColor = vec4(hdrColor,cosDistance); 
 }

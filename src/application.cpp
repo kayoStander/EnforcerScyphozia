@@ -10,6 +10,8 @@
 #include "keyboard.hpp"
 #include "systems/enf_point_light_system.hpp"
 #include "systems/enf_render_system.hpp"
+#include "systems/enf_skybox_system.hpp"
+#include <memory>
 
 #if __has_include(<glm/glm.hpp>)
 #define GLM_FORCE_RADIANS
@@ -22,7 +24,11 @@
 
 #include <chrono>
 
-#define TEXTURE_AMOUNT 3
+#define TEXTURE_AMOUNT 5
+
+// FIX: for some reason the objects are being doubled? see this later
+// TODO: Bloom
+// TODO: Skybox
 
 Discord::RPC RPC{};
 
@@ -64,9 +70,11 @@ void Application::Run() {
                       VK_SHADER_STAGE_FRAGMENT_BIT, TEXTURE_AMOUNT)
           .build()};
 
-  textures.push_back(std::make_unique<Texture>(device, "textures/image.png"));
-  textures.push_back(std::make_unique<Texture>(device, "textures/image2.png"));
-  textures.push_back(std::make_unique<Texture>(device, "textures/image3.png"));
+  textures.push_back(std::make_unique<Texture>(device, "textures/image.jpg"));
+  textures.push_back(std::make_unique<Texture>(device, "textures/image2.jpg"));
+  textures.push_back(std::make_unique<Texture>(device, "textures/image3.jpg"));
+  textures.push_back(std::make_unique<Texture>(device, "textures/image.jpg"));
+  textures.push_back(std::make_unique<Texture>(device, "textures/image3.jpg"));
 
   std::vector<VkDescriptorImageInfo> imageInfos{textures.size()};
 
@@ -88,6 +96,9 @@ void Application::Run() {
   }
 
   RenderSystem renderSystem{device, renderer.GetSwapChainRenderPass(),
+                            globalSetLayout->getDescriptorSetLayout()};
+
+  SkyboxSystem skyboxSystem{device, renderer.GetSwapChainRenderPass(),
                             globalSetLayout->getDescriptorSetLayout()};
 
   PointLightSystem pointLightSystem{device, renderer.GetSwapChainRenderPass(),
@@ -143,7 +154,7 @@ void Application::Run() {
       // update
       uniformBufferObject.projection = camera.GetProjection();
       uniformBufferObject.view = camera.GetView();
-      uniformBufferObject.inverseView = camera.GetInverseView(); // here
+      uniformBufferObject.inverseView = camera.GetInverseView();
 
       pointLightSystem.Update(frameInfo, uniformBufferObject);
       uniformBufferObjectBuffers[static_cast<u32>(frameIndex)]->writeToBuffer(
@@ -159,6 +170,7 @@ void Application::Run() {
 
       // order between rendergameobject matters
       renderSystem.RenderGameObjects(frameInfo);
+      skyboxSystem.RenderSkybox(frameInfo);
       pointLightSystem.Render(frameInfo);
 
       renderer.EndSwapChainRenderPass(commandBuffer);
@@ -167,7 +179,6 @@ void Application::Run() {
     RPC.Update(Discord::RPCStatus::Playing);
 
     std::cout << "\r\033[KFPS => " << 1.f / frameTime << std::flush;
-    // LOG_WARNING(Core, "\r\033[KFPS => {}", 1.f / frameTime);
   }
 
   vkDeviceWaitIdle(device.device());
@@ -198,7 +209,7 @@ void Application::LoadGameObjects() {
   GameObject quad = GameObject::CreateGameObject();
   quad.model = quadModel;
   quad.transform.translation = {.0f, .0f, 0.f};
-  quad.transform.scale = {10.f, 10.f, 10.f};
+  quad.transform.scale = {15.f, 10.f, 15.f};
   quad.imageBind = 2;
 
   std::vector<glm::vec3> lightColors{
