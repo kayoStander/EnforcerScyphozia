@@ -37,13 +37,15 @@ Texture::Texture(Device &device, const std::string &filepath, u32 layerCount)
                            VK_MEMORY_PROPERTY_HOST_COHERENT_BIT};
   stagingBuffer.map();
   stagingBuffer.writeToBuffer(data);
+  stbi_image_free(data);
 
   imageFormat = VK_FORMAT_R8G8B8A8_SRGB; /* SNORM inverts ig?*/
 
-  vkDeviceWaitIdle(device.device());
-
   VkImageCreateInfo imageInfo{};
   imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+  if (layerCount == 6) {
+    imageInfo.flags = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT;
+  }
   imageInfo.imageType = VK_IMAGE_TYPE_2D;
   imageInfo.format = imageFormat;
   imageInfo.mipLevels = 1;
@@ -55,16 +57,13 @@ Texture::Texture(Device &device, const std::string &filepath, u32 layerCount)
   imageInfo.extent = {static_cast<u32>(width), static_cast<u32>(height), 1};
   imageInfo.usage =
       VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
-  if (layerCount > 1) {
-    imageInfo.flags = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT;
-  }
 
   device.createImageWithInfo(imageInfo, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                              image, imageMemory);
 
   TransitionImageLayout(VK_IMAGE_LAYOUT_UNDEFINED,
                         VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, layerCount);
-
+  LOG_WARNING(Vulkan, "{}", layerCount);
   device.copyBufferToImage(stagingBuffer.getBuffer(), image,
                            static_cast<u32>(width), static_cast<u32>(height),
                            1);
@@ -94,8 +93,8 @@ Texture::Texture(Device &device, const std::string &filepath, u32 layerCount)
 
   VkImageViewCreateInfo imageViewInfo{};
   imageViewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-  imageViewInfo.viewType = layerCount > 1 ? VK_IMAGE_VIEW_TYPE_CUBE
-                                          : VK_IMAGE_VIEW_TYPE_2D /*_ARRAY*/;
+  imageViewInfo.viewType = layerCount == 6 ? VK_IMAGE_VIEW_TYPE_CUBE
+                                           : VK_IMAGE_VIEW_TYPE_2D /*_ARRAY*/;
   imageViewInfo.format = imageFormat;
   imageViewInfo.components = {VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G,
                               VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A};
@@ -107,8 +106,6 @@ Texture::Texture(Device &device, const std::string &filepath, u32 layerCount)
   imageViewInfo.image = image;
 
   vkCreateImageView(device.device(), &imageViewInfo, nullptr, &imageView);
-
-  stbi_image_free(data);
 }
 
 Texture::~Texture() {
@@ -158,7 +155,6 @@ void Texture::TransitionImageLayout(VkImageLayout oldLayout,
 
   vkCmdPipelineBarrier(commandBuffer, sourceStage, destinationStage, 0, 0,
                        nullptr, 0, nullptr, 1, &barrier);
-  vkDeviceWaitIdle(device.device());
   device.endSingleTimeCommands(commandBuffer);
 }
 } // namespace Enforcer

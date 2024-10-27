@@ -43,7 +43,7 @@ Application::Application() {
           .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
                        TEXTURE_AMOUNT * SwapChain::MAX_FRAMES_IN_FLIGHT)
           .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, // cube
-                       SwapChain::MAX_FRAMES_IN_FLIGHT)
+                       6 * SwapChain::MAX_FRAMES_IN_FLIGHT)
           .build();
   LoadGameObjects();
 }
@@ -70,7 +70,7 @@ void Application::Run() {
           .addBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
                       VK_SHADER_STAGE_FRAGMENT_BIT, TEXTURE_AMOUNT)
           .addBinding(2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                      VK_SHADER_STAGE_FRAGMENT_BIT) // cube
+                      VK_SHADER_STAGE_FRAGMENT_BIT, 6) // cube
           .build()};
 
   AddTexture("image.jpg");
@@ -79,6 +79,11 @@ void Application::Run() {
   AddTexture("yale.png");
   AddTexture("sky.jpg");
 
+  AddTextureCube("sky.jpg");
+  AddTextureCube("sky.jpg");
+  AddTextureCube("sky.jpg");
+  AddTextureCube("sky.jpg");
+  AddTextureCube("sky.jpg");
   AddTextureCube("sky.jpg");
 
   std::vector<VkDescriptorImageInfo> imageInfos{textures.size()};

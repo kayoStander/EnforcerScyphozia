@@ -68,9 +68,10 @@ void main(){
   specularLight += vec3(25.,6.,0.) * blinnTerm;*/
 
   // reflection
-  vec3 reflectionDirection = reflect(-viewDirection,surfaceNormal);
-  vec3 reflectionColor = texture(enviromentMap,reflectionDirection).rgb;
-  float reflectionIntensity = .5;
+  vec3 reflectionDirection = reflect(viewDirection,surfaceNormal);
+  vec2 reflectionCoordinates = normalize(reflectionDirection).xy * .5 + .5;
+  vec3 reflectionColor = texture(image[4],reflectionCoordinates).rgb;
+  float reflectionIntensity = .03;
 
   // fog
   float fogStart = 1.;

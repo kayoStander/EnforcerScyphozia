@@ -26,11 +26,13 @@ vec3 positions[8] = vec3[](
     vec3(-100.0,  100.0, -100.0)  // Back-top-left
 );
 
-vec2 uvs[4] = vec2[](
+vec2 uvs[6] = vec2[](
     vec2(0.0, 0.0), // Bottom-left
     vec2(1.0, 0.0), // Bottom-right
     vec2(1.0, 1.0), // Top-right
-    vec2(0.0, 1.0)  // Top-left
+    vec2(1.0, 1.0), // Top-right
+    vec2(0.0, 1.0), // Top-left
+    vec2(0.0, 0.0)  // Bottom-left
 );
 
 int indices[36] = int[](
@@ -44,5 +46,5 @@ int indices[36] = int[](
 
 void main(){
   gl_Position = uniformBufferObject.projection * mat4(mat3(uniformBufferObject.view)) * vec4(positions[indices[gl_VertexIndex]],1.);
-  fragUV = uvs[gl_VertexIndex % 4];
+  fragUV = uvs[gl_VertexIndex % 6];
 }
