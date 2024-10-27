@@ -23,6 +23,8 @@ public:
   void BeginSwapChainRenderPass(VkCommandBuffer commandBuffer);
   void EndSwapChainRenderPass(VkCommandBuffer commandBuffer);
 
+  VkCommandBuffer GetSecondaryCommandBuffer();
+
   VkRenderPass GetSwapChainRenderPass() const {
     return swapChain->getRenderPass();
   }
@@ -51,6 +53,7 @@ private:
   Device &device;
   std::unique_ptr<SwapChain> swapChain;
   std::vector<VkCommandBuffer> commandBuffers;
+  VkCommandBuffer secondaryCommandBuffer;
 
   u32 currentImageIndex;
   u32 currentFrameIndex{0};

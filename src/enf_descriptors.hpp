@@ -93,6 +93,8 @@ public:
   DescriptorWriter &writeImageArray(u32 binding,
                                     VkDescriptorImageInfo *imageInfo,
                                     u32 imageCount);
+  DescriptorWriter &writeImageCube(uint32_t binding,
+                                   VkDescriptorImageInfo *imageInfo);
 
   bool build(VkDescriptorSet &set);
   void overwrite(VkDescriptorSet &set);

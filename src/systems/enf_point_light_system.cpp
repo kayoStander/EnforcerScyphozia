@@ -13,7 +13,6 @@
 #endif
 
 #include <cassert>
-#include <stdexcept>
 
 namespace Enforcer {
 
@@ -54,10 +53,10 @@ void PointLightSystem::CreatePipelineLayout(
   pipelineLayoutInfo.pSetLayouts = descriptorSetLayouts.data();
   pipelineLayoutInfo.pushConstantRangeCount = 1;
   pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
-  if (vkCreatePipelineLayout(device.device(), &pipelineLayoutInfo, nullptr,
-                             &pipelineLayout) != VK_SUCCESS) {
-    throw std::runtime_error("failed to create pipeline layout!");
-  }
+  VK_CHECK_RESULT_LOG(vkCreatePipelineLayout(device.device(),
+                                             &pipelineLayoutInfo, nullptr,
+                                             &pipelineLayout),
+                      "Failed to create pipeline layout!");
 }
 
 void PointLightSystem::CreatePipeline(VkRenderPass renderPass) {
@@ -74,11 +73,9 @@ void PointLightSystem::CreatePipeline(VkRenderPass renderPass) {
 }
 
 void PointLightSystem::Update(FrameInfo &frameInfo,
-                              GlobalUniformBufferObject &uniformBufferObject) {
-  // TODO: DELETE LATER
+                              DefaultUniformBufferObject &uniformBufferObject) {
   glm::mat4 rotateLight{
       glm::rotate(glm::mat4{1.f}, frameInfo.frameTime, {0.f, -1.f, 0.f})};
-  // TODO: TILLHERE
 
   int lightIndex{0};
   for (auto &keyValue : frameInfo.gameObjects) {

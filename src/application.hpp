@@ -28,15 +28,51 @@ public:
 private:
   void LoadGameObjects();
 
+  void AddTexture(const std::string &filepath) noexcept {
+    textures.push_back(
+        std::make_unique<Texture>(device, "textures/" + filepath));
+  }
+  void AddTextureCube(const std::string &filepath) noexcept {
+    texturesCube.push_back(
+        std::make_unique<Texture>(device, "textures/" + filepath, 6));
+  }
+
+  [[deprecated("wip")]] void
+  AddObject([[maybe_unused]] const std::string &filepath) noexcept {}
+
+  [[nodiscard]] [[deprecated(
+      "not working as expected yet")]] VkDescriptorImageInfo
+  GetTextureDescriptorImageInfo(std::unique_ptr<Texture> texture) noexcept {
+    VkDescriptorImageInfo textureDescriptorImageInfo{};
+    textureDescriptorImageInfo.sampler = texture->GetSampler();
+    textureDescriptorImageInfo.imageView = texture->GetImageView();
+    textureDescriptorImageInfo.imageLayout = texture->GetImageLayout();
+    return textureDescriptorImageInfo;
+  }
+
+  template <typename T>
+  void UpdateUniformBufferObject(
+      const std::vector<std::unique_ptr<Buffer>> &uniformBufferObjectBuffers,
+      T &uniformBufferObject) noexcept {
+    uniformBufferObjectBuffers[static_cast<u32>(renderer.GetFrameIndex())]
+        ->writeToBuffer(&uniformBufferObject);
+    uniformBufferObjectBuffers[static_cast<u32>(renderer.GetFrameIndex())]
+        ->flush();
+  };
+
   Window window{WIDTH, HEIGHT};
   Device device{window};
   Renderer renderer{window, device};
 
   // order of declaration matters
-  GlobalUniformBufferObject uniformBufferObject;
+  DefaultUniformBufferObject uniformBufferObject;
 
-  std::unique_ptr<DescriptorPool> globalPool{};
+  std::unique_ptr<DescriptorPool> defaultPool{};
+  std::unique_ptr<DescriptorPool> skyboxPool{};
+
   std::vector<std::unique_ptr<Texture>> textures{};
+  std::vector<std::unique_ptr<Texture>> texturesCube{};
+
   std::unordered_map<u32, GameObject> gameObjects{};
 };
 } // namespace Enforcer

@@ -4,7 +4,8 @@ layout(location = 0) in vec2 fragUV;
 
 layout(location = 0) out vec4 outColor;
 
-layout(set=0, binding=1) uniform sampler2D image[5]; /*4->scenetexture, 5->depthtexture*/
+layout(set=0, binding=1) uniform sampler2D images[5]; /*4->scenetexture, 5->depthtexture*/
+layout(set = 0, binding = 2) uniform samplerCube environmentMap;
 
 struct PointLight {
   vec4 position;
@@ -25,10 +26,13 @@ layout(push_constant) uniform Push {
 } push;
 
 void main() {
-    vec3 sceneColor = texture(image[3], fragUV).rgb;
-    float depth = texture(image[4], fragUV).r;
-    float fogFactor = clamp((push.fogEnd - depth) / (push.fogEnd - push.fogStart), 0.0, 1.0);
-    vec3 finalColor = mix(push.fogColor, sceneColor, fogFactor);
 
-    outColor = vec4(depth,depth,depth, 1.0);
+  vec2 uv = fragUV * 2. - 1.;
+  vec3 viewDirection = normalize(vec3(uv, 1.));
+
+  vec3 worldDirection = normalize((mat4(mat3(uniformBufferObject.inverseView)) * vec4(viewDirection, 0.)).xyz);
+
+  vec3 skyColor = texture(environmentMap,worldDirection).rgb;
+
+  outColor = vec4(texture(images[4],uv).rgb, 1.0);
 }

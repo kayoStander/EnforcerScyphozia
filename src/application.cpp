@@ -12,6 +12,7 @@
 #include "systems/enf_render_system.hpp"
 #include "systems/enf_skybox_system.hpp"
 #include <memory>
+#include <vulkan/vulkan_core.h>
 
 #if __has_include(<glm/glm.hpp>)
 #define GLM_FORCE_RADIANS
@@ -26,8 +27,6 @@
 
 #define TEXTURE_AMOUNT 5
 
-// FIX: for some reason the objects are being doubled? see this later
-// TODO: Bloom
 // TODO: Skybox
 
 Discord::RPC RPC{};
@@ -36,13 +35,15 @@ namespace Enforcer {
 
 Application::Application() {
 
-  globalPool =
+  defaultPool =
       DescriptorPool::Builder(device)
           .setMaxSets(SwapChain::MAX_FRAMES_IN_FLIGHT)
           .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
                        SwapChain::MAX_FRAMES_IN_FLIGHT)
           .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
                        TEXTURE_AMOUNT * SwapChain::MAX_FRAMES_IN_FLIGHT)
+          .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, // cube
+                       SwapChain::MAX_FRAMES_IN_FLIGHT)
           .build();
   LoadGameObjects();
 }
@@ -56,25 +57,29 @@ void Application::Run() {
       SwapChain::MAX_FRAMES_IN_FLIGHT);
   for (u32 i{0}; i < uniformBufferObjectBuffers.size(); ++i) {
     uniformBufferObjectBuffers[i] =
-        std::make_unique<Buffer>(device, sizeof(GlobalUniformBufferObject), 1,
+        std::make_unique<Buffer>(device, sizeof(DefaultUniformBufferObject), 1,
                                  VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                                  VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
     uniformBufferObjectBuffers[i]->map();
   }
 
-  auto globalSetLayout{
+  auto defaultSetLayout{
       DescriptorSetLayout::Builder(device)
           .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
                       VK_SHADER_STAGE_ALL_GRAPHICS)
           .addBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
                       VK_SHADER_STAGE_FRAGMENT_BIT, TEXTURE_AMOUNT)
+          .addBinding(2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                      VK_SHADER_STAGE_FRAGMENT_BIT) // cube
           .build()};
 
-  textures.push_back(std::make_unique<Texture>(device, "textures/image.jpg"));
-  textures.push_back(std::make_unique<Texture>(device, "textures/image2.jpg"));
-  textures.push_back(std::make_unique<Texture>(device, "textures/image3.jpg"));
-  textures.push_back(std::make_unique<Texture>(device, "textures/image.jpg"));
-  textures.push_back(std::make_unique<Texture>(device, "textures/image3.jpg"));
+  AddTexture("image.jpg");
+  AddTexture("image2.jpg");
+  AddTexture("image3.jpg");
+  AddTexture("yale.png");
+  AddTexture("sky.jpg");
+
+  AddTextureCube("sky.jpg");
 
   std::vector<VkDescriptorImageInfo> imageInfos{textures.size()};
 
@@ -84,29 +89,39 @@ void Application::Run() {
     imageInfos[i].imageLayout = textures[i]->GetImageLayout();
   }
 
-  std::vector<VkDescriptorSet> globalDescriptorSets(
+  std::vector<VkDescriptorImageInfo> cubeImageInfos{texturesCube.size()};
+
+  for (u64 i{0}; i < texturesCube.size(); ++i) {
+    cubeImageInfos[i].sampler = texturesCube[i]->GetSampler();
+    cubeImageInfos[i].imageView = texturesCube[i]->GetImageView();
+    cubeImageInfos[i].imageLayout = texturesCube[i]->GetImageLayout();
+  }
+
+  std::vector<VkDescriptorSet> defaultDescriptorSets(
       SwapChain::MAX_FRAMES_IN_FLIGHT);
-  for (u32 i{0}; i < globalDescriptorSets.size(); ++i) {
+
+  for (u32 i{0}; i < defaultDescriptorSets.size(); ++i) {
     VkDescriptorBufferInfo bufferInfo{
         uniformBufferObjectBuffers[i]->descriptorInfo()};
-    DescriptorWriter(*globalSetLayout, *globalPool)
+    DescriptorWriter(*defaultSetLayout, *defaultPool)
         .writeBuffer(0, &bufferInfo)
         .writeImageArray(1, imageInfos.data(), imageInfos.size())
-        .build(globalDescriptorSets[i]);
+        .writeImageCube(2, cubeImageInfos.data())
+        .build(defaultDescriptorSets[i]);
   }
 
   RenderSystem renderSystem{device, renderer.GetSwapChainRenderPass(),
-                            globalSetLayout->getDescriptorSetLayout()};
+                            defaultSetLayout->getDescriptorSetLayout()};
 
   SkyboxSystem skyboxSystem{device, renderer.GetSwapChainRenderPass(),
-                            globalSetLayout->getDescriptorSetLayout()};
+                            defaultSetLayout->getDescriptorSetLayout()};
 
   PointLightSystem pointLightSystem{device, renderer.GetSwapChainRenderPass(),
-                                    globalSetLayout->getDescriptorSetLayout()};
+                                    defaultSetLayout->getDescriptorSetLayout()};
 
   Camera camera{};
   const float FOV{100.f};
-  const float FAR{100.f};
+  const float FAR{175.f};
   // camera.SetViewDirection(glm::vec3(0.f), glm::vec3(.5f, 0.f, 1.f));
   // camera.SetViewTarget(glm::vec3(-1.f, -2.f, 20.f), glm::vec3(0.f,
   // 0.f, 2.5f));
@@ -121,7 +136,7 @@ void Application::Run() {
   LOG_DEBUG(GLFW, "Loop started");
   LOG_DEBUG(Vulkan, "maxPushCostantsSize => {}, UBO size => {}",
             device.properties.limits.maxPushConstantsSize,
-            sizeof(GlobalUniformBufferObject));
+            sizeof(DefaultUniformBufferObject));
 
   while (!window.ShouldClose()) {
     glfwPollEvents();
@@ -149,26 +164,22 @@ void Application::Run() {
                           frameTime,
                           commandBuffer,
                           camera,
-                          globalDescriptorSets[static_cast<u32>(frameIndex)],
+                          defaultDescriptorSets[static_cast<u32>(frameIndex)],
                           gameObjects};
+
       // update
       uniformBufferObject.projection = camera.GetProjection();
       uniformBufferObject.view = camera.GetView();
       uniformBufferObject.inverseView = camera.GetInverseView();
 
       pointLightSystem.Update(frameInfo, uniformBufferObject);
-      uniformBufferObjectBuffers[static_cast<u32>(frameIndex)]->writeToBuffer(
-          &uniformBufferObject);
-      uniformBufferObjectBuffers[static_cast<u32>(frameIndex)]->flush();
-
       // render
       renderer.BeginSwapChainRenderPass(commandBuffer);
 
-      uniformBufferObjectBuffers[static_cast<u32>(renderer.GetFrameIndex())]
-          ->writeToBuffer(&uniformBufferObject);
-      uniformBufferObjectBuffers[static_cast<u32>(frameIndex)]->flush();
+      UpdateUniformBufferObject(uniformBufferObjectBuffers,
+                                uniformBufferObject);
 
-      // order between rendergameobject matters
+      // order between render matters
       renderSystem.RenderGameObjects(frameInfo);
       skyboxSystem.RenderSkybox(frameInfo);
       pointLightSystem.Render(frameInfo);
@@ -176,6 +187,7 @@ void Application::Run() {
       renderer.EndSwapChainRenderPass(commandBuffer);
       renderer.EndFrame();
     }
+
     RPC.Update(Discord::RPCStatus::Playing);
 
     std::cout << "\r\033[KFPS => " << 1.f / frameTime << std::flush;

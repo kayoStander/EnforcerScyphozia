@@ -59,6 +59,8 @@ void SkyboxSystem::CreatePipelineLayout(VkDescriptorSetLayout globalSetLayout) {
 void SkyboxSystem::CreatePipeline(VkRenderPass renderPass) {
   PipelineConfigInfo pipelineConfig{};
   Pipeline::DefaultPipelineConfigInfo(pipelineConfig);
+  pipelineConfig.attributeDescriptions.clear();
+  pipelineConfig.bindingDescriptions.clear();
   pipelineConfig.renderPass = renderPass;
   pipelineConfig.pipelineLayout = pipelineLayout;
   pipeline = std::make_unique<Pipeline>(
@@ -82,6 +84,7 @@ void SkyboxSystem::RenderSkybox(FrameInfo &frameInfo) {
   vkCmdPushConstants(frameInfo.commandBuffer, pipelineLayout,
                      VK_SHADER_STAGE_FRAGMENT_BIT, 0,
                      sizeof(SimplePushConstantData), &push);
+  vkCmdDraw(frameInfo.commandBuffer, 36, 1, 0, 0);
 }
 
 } // namespace Enforcer

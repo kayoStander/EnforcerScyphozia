@@ -21,6 +21,7 @@ layout(set = 0, binding = 0) uniform GlobalUniformBufferObject{
   int numLights;
 } uniformBufferObject;
 layout(set = 0, binding = 1) uniform sampler2D/*Array*/ image[5];
+layout(set = 0, binding = 2) uniform samplerCube enviromentMap;
 layout(push_constant) uniform Push {
   mat4 modelMatrix; 
   mat4 normalMatrix; 
@@ -66,14 +67,18 @@ void main(){
   blinnTerm = pow(blinnTerm,512.);
   specularLight += vec3(25.,6.,0.) * blinnTerm;*/
 
+  // reflection
+  vec3 reflectionDirection = reflect(-viewDirection,surfaceNormal);
+  vec3 reflectionColor = texture(enviromentMap,reflectionDirection).rgb;
+  float reflectionIntensity = .5;
+
   // fog
   float fogStart = 1.;
   float fogEnd = 100.;
-
   float distance = length(cameraPositionWorld - fragPositionWorld);
   float fogFactor = clamp((fogEnd - distance) / (fogEnd - fogStart),0.,1.);
 
-  vec3 hdrColor = mix(vec3(.1,.1,.1),(diffuseLight * fragColor + specularLight * fragColor) * imageColor,fogFactor);
+  vec3 hdrColor = mix(vec3(.1,.1,.1),(diffuseLight * fragColor + specularLight * fragColor) * imageColor+reflectionIntensity*reflectionColor,fogFactor);
 
   // bloom
   float brightnessThreshold = .1;

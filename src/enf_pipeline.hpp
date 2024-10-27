@@ -43,6 +43,8 @@ public:
 
   void bind(VkCommandBuffer commandBuffer);
   static void DefaultPipelineConfigInfo(PipelineConfigInfo &configInfo);
+  static void SkyboxPipelineConfigInfo(PipelineConfigInfo &configInfo);
+
   static void EnableAlphaBlending(PipelineConfigInfo &configInfo);
 
 private:

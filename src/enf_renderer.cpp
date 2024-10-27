@@ -69,7 +69,7 @@ void Renderer::FreeCommandBuffers() {
   commandBuffers.clear();
 }
 
-VkCommandBuffer Renderer::BeginFrame() {
+VkCommandBuffer Renderer::BeginFrame(/*u32 i*/) {
   ASSERT_LOG(!isFrameStarted,
              "Can't call BeginFrame() while alredy on progress");
   auto result = swapChain->acquireNextImage(&currentImageIndex);
@@ -166,6 +166,11 @@ void Renderer::EndSwapChainRenderPass(VkCommandBuffer commandBuffer) {
   ASSERT_LOG(commandBuffer == GetCurrentCommandBuffer(),
              "Can't end render pass on command buffer in a different frame");
   vkCmdEndRenderPass(commandBuffer);
+}
+
+VkCommandBuffer Renderer::GetSecondaryCommandBuffer() {
+  ASSERT_LOG(isFrameStarted, "Frame not started, cannot get secondary buffer!");
+  return commandBuffers[(currentFrameIndex + 1) % commandBuffers.size()];
 }
 
 } // namespace Enforcer

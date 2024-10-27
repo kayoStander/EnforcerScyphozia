@@ -14,7 +14,8 @@
 #include <stdexcept>
 
 namespace Enforcer {
-Texture::Texture(Device &device, const std::string &filepath) : device{device} {
+Texture::Texture(Device &device, const std::string &filepath, u32 layerCount)
+    : device{device} {
   if (filepath.empty()) {
     LOG_WARNING(Vulkan, "Texture {}loaded as empty so it will be ignored",
                 filepath);
@@ -26,6 +27,7 @@ Texture::Texture(Device &device, const std::string &filepath) : device{device} {
   stbi_uc *data =
       stbi_load(filepath.c_str(), &width, &height, &bytesPerPixel, 4);
   ASSERT_LOG(data, "Failed to load texture {}", filepath);
+
   LOG_INFO(Vulkan, "Loaded texture {} (W:{},H:{},CH:{},BPP:{})", filepath,
            width, height, channels, bytesPerPixel);
 
@@ -45,7 +47,7 @@ Texture::Texture(Device &device, const std::string &filepath) : device{device} {
   imageInfo.imageType = VK_IMAGE_TYPE_2D;
   imageInfo.format = imageFormat;
   imageInfo.mipLevels = 1;
-  imageInfo.arrayLayers = 1;
+  imageInfo.arrayLayers = layerCount;
   imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
   imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
   imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
@@ -53,19 +55,22 @@ Texture::Texture(Device &device, const std::string &filepath) : device{device} {
   imageInfo.extent = {static_cast<u32>(width), static_cast<u32>(height), 1};
   imageInfo.usage =
       VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+  if (layerCount > 1) {
+    imageInfo.flags = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT;
+  }
 
   device.createImageWithInfo(imageInfo, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                              image, imageMemory);
 
   TransitionImageLayout(VK_IMAGE_LAYOUT_UNDEFINED,
-                        VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+                        VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, layerCount);
 
   device.copyBufferToImage(stagingBuffer.getBuffer(), image,
                            static_cast<u32>(width), static_cast<u32>(height),
                            1);
 
   TransitionImageLayout(VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-                        VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+                        VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, layerCount);
 
   imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
@@ -89,14 +94,15 @@ Texture::Texture(Device &device, const std::string &filepath) : device{device} {
 
   VkImageViewCreateInfo imageViewInfo{};
   imageViewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-  imageViewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D /*_ARRAY*/;
+  imageViewInfo.viewType = layerCount > 1 ? VK_IMAGE_VIEW_TYPE_CUBE
+                                          : VK_IMAGE_VIEW_TYPE_2D /*_ARRAY*/;
   imageViewInfo.format = imageFormat;
   imageViewInfo.components = {VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G,
                               VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A};
   imageViewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
   imageViewInfo.subresourceRange.baseMipLevel = 0;
   imageViewInfo.subresourceRange.baseArrayLayer = 0;
-  imageViewInfo.subresourceRange.layerCount = 1;
+  imageViewInfo.subresourceRange.layerCount = layerCount;
   imageViewInfo.subresourceRange.levelCount = 1;
   imageViewInfo.image = image;
 
@@ -113,7 +119,7 @@ Texture::~Texture() {
 }
 
 void Texture::TransitionImageLayout(VkImageLayout oldLayout,
-                                    VkImageLayout newLayout) {
+                                    VkImageLayout newLayout, u32 layerCount) {
   VkCommandBuffer commandBuffer = device.beginSingleTimeCommands();
 
   VkImageMemoryBarrier barrier{};
@@ -127,7 +133,7 @@ void Texture::TransitionImageLayout(VkImageLayout oldLayout,
   barrier.subresourceRange.baseMipLevel = 0;
   barrier.subresourceRange.levelCount = 1;
   barrier.subresourceRange.baseArrayLayer = 0;
-  barrier.subresourceRange.layerCount = 1;
+  barrier.subresourceRange.layerCount = layerCount;
 
   VkPipelineStageFlags sourceStage;
   VkPipelineStageFlags destinationStage;
