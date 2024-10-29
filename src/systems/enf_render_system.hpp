@@ -18,7 +18,7 @@ public:
 
   void RenderGameObjects(FrameInfo &frameInfo);
 
-  const std::vector<std::variant<u32, float>> specializedValues{};
+  const std::vector<u32> specializedValues{};
 
 private:
   void CreatePipelineLayout(VkDescriptorSetLayout globalSetLayout);

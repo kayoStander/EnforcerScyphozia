@@ -5,7 +5,6 @@
 
 #include <fstream>
 #include <stdexcept>
-#include <variant>
 #include <vulkan/vulkan_core.h>
 
 #define ROOT ""
@@ -37,8 +36,7 @@ void Pipeline::bind(VkCommandBuffer commandBuffer) {
 void Pipeline::CreateGraphicsPipeline(
     const std::string &vertFilepath, const std::string &fragFilepath,
     const PipelineConfigInfo &configInfo,
-    [[maybe_unused]] const std::vector<std::variant<u32, float>>
-        specializedValues) {
+    const std::vector<u32> specializedValues) {
 
   ASSERT_LOG(configInfo.pipelineLayout != VK_NULL_HANDLE,
              "Cannot create graphics pipeline :: no pipelineLayout provided");
@@ -56,16 +54,16 @@ void Pipeline::CreateGraphicsPipeline(
 
   std::vector<VkSpecializationMapEntry> entries{specializedValues.size()};
   for (u32 i{0}; i < specializedValues.size(); ++i) {
-    entries[i].constantID = 0;
-    entries[i].offset = 0;
-    entries[i].size = sizeof(specializedValues[i]);
+    entries[i].constantID = i;
+    entries[i].offset = i * sizeof(u32);
+    entries[i].size = sizeof(u32);
   }
 
   VkSpecializationInfo specializationInfo{};
   specializationInfo.mapEntryCount = entries.size();
   specializationInfo.pMapEntries = entries.data();
-  specializationInfo.dataSize = entries.size();
-  specializationInfo.pData = entries.data();
+  specializationInfo.dataSize = sizeof(u32) * specializedValues.size();
+  specializationInfo.pData = specializedValues.data();
 
   // TODO: FOR CONSTANTS LIKE TEXTURE AMOUNT AND ETC
   // layout(constant_id = 0)const int mySpecialValue;
@@ -326,10 +324,10 @@ void Pipeline::SkyboxPipelineConfigInfo(PipelineConfigInfo &configInfo) {
   configInfo.attributeDescriptions = Model::Vertex::GetAttributeDescriptions();
 }
 
-Pipeline::Pipeline(
-    Device &device, const std::string &vertFilepath,
-    const std::string &fragFilepath, const PipelineConfigInfo &configInfo,
-    const std::vector<std::variant<u32, float>> specializedValues)
+Pipeline::Pipeline(Device &device, const std::string &vertFilepath,
+                   const std::string &fragFilepath,
+                   const PipelineConfigInfo &configInfo,
+                   const std::vector<u32> specializedValues)
     : device{device} {
   CreateGraphicsPipeline(vertFilepath, fragFilepath, configInfo,
                          specializedValues);
