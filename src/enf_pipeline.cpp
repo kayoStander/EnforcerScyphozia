@@ -5,6 +5,7 @@
 
 #include <fstream>
 #include <stdexcept>
+#include <variant>
 #include <vulkan/vulkan_core.h>
 
 #define ROOT ""
@@ -35,7 +36,9 @@ void Pipeline::bind(VkCommandBuffer commandBuffer) {
 
 void Pipeline::CreateGraphicsPipeline(
     const std::string &vertFilepath, const std::string &fragFilepath,
-    [[maybe_unused]] const PipelineConfigInfo &configInfo) {
+    const PipelineConfigInfo &configInfo,
+    [[maybe_unused]] const std::vector<std::variant<u32, float>>
+        specializedValues) {
 
   ASSERT_LOG(configInfo.pipelineLayout != VK_NULL_HANDLE,
              "Cannot create graphics pipeline :: no pipelineLayout provided");
@@ -51,6 +54,23 @@ void Pipeline::CreateGraphicsPipeline(
   CreateShaderModule(vertexCode, &vertShaderModule);
   CreateShaderModule(fragmentCode, &fragShaderModule);
 
+  std::vector<VkSpecializationMapEntry> entries{specializedValues.size()};
+  for (u32 i{0}; i < specializedValues.size(); ++i) {
+    entries[i].constantID = 0;
+    entries[i].offset = 0;
+    entries[i].size = sizeof(specializedValues[i]);
+  }
+
+  VkSpecializationInfo specializationInfo{};
+  specializationInfo.mapEntryCount = entries.size();
+  specializationInfo.pMapEntries = entries.data();
+  specializationInfo.dataSize = entries.size();
+  specializationInfo.pData = entries.data();
+
+  // TODO: FOR CONSTANTS LIKE TEXTURE AMOUNT AND ETC
+  // layout(constant_id = 0)const int mySpecialValue;
+  // WARN: DONT FORGET YOU IDIOT
+
   VkPipelineShaderStageCreateInfo shaderStages[2]{};
   shaderStages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
   shaderStages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
@@ -58,7 +78,7 @@ void Pipeline::CreateGraphicsPipeline(
   shaderStages[0].pName = "main";
   shaderStages[0].flags = 0;
   shaderStages[0].pNext = nullptr;
-  shaderStages[0].pSpecializationInfo = nullptr;
+  shaderStages[0].pSpecializationInfo = &specializationInfo;
 
   shaderStages[1].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
   shaderStages[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
@@ -236,7 +256,7 @@ void Pipeline::SkyboxPipelineConfigInfo(PipelineConfigInfo &configInfo) {
   configInfo.rasterizationInfo.rasterizerDiscardEnable = VK_FALSE;
   configInfo.rasterizationInfo.polygonMode = VK_POLYGON_MODE_FILL;
   configInfo.rasterizationInfo.lineWidth = 1.f; // 50.0f;
-  configInfo.rasterizationInfo.cullMode = VK_CULL_MODE_FRONT_BIT;
+  configInfo.rasterizationInfo.cullMode = VK_CULL_MODE_NONE;
   configInfo.rasterizationInfo.frontFace = VK_FRONT_FACE_CLOCKWISE;
   configInfo.rasterizationInfo.depthBiasEnable = VK_FALSE;
   configInfo.rasterizationInfo.depthBiasConstantFactor = 0.0f; // Optional
@@ -281,7 +301,7 @@ void Pipeline::SkyboxPipelineConfigInfo(PipelineConfigInfo &configInfo) {
   configInfo.depthStencilInfo.sType =
       VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
   configInfo.depthStencilInfo.depthTestEnable = VK_TRUE;
-  configInfo.depthStencilInfo.depthWriteEnable = VK_FALSE;
+  configInfo.depthStencilInfo.depthWriteEnable = VK_TRUE;
   configInfo.depthStencilInfo.depthCompareOp = VK_COMPARE_OP_LESS;
   configInfo.depthStencilInfo.depthBoundsTestEnable = VK_FALSE;
   configInfo.depthStencilInfo.minDepthBounds = 0.0f; // Optional
@@ -306,11 +326,13 @@ void Pipeline::SkyboxPipelineConfigInfo(PipelineConfigInfo &configInfo) {
   configInfo.attributeDescriptions = Model::Vertex::GetAttributeDescriptions();
 }
 
-Pipeline::Pipeline(Device &device, const std::string &vertFilepath,
-                   const std::string &fragFilepath,
-                   const PipelineConfigInfo &configInfo)
+Pipeline::Pipeline(
+    Device &device, const std::string &vertFilepath,
+    const std::string &fragFilepath, const PipelineConfigInfo &configInfo,
+    const std::vector<std::variant<u32, float>> specializedValues)
     : device{device} {
-  CreateGraphicsPipeline(vertFilepath, fragFilepath, configInfo);
+  CreateGraphicsPipeline(vertFilepath, fragFilepath, configInfo,
+                         specializedValues);
 }
 Pipeline::~Pipeline() noexcept {
   vkDestroyShaderModule(device.device(), vertShaderModule, nullptr);

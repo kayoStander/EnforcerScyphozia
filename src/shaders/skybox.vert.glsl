@@ -45,6 +45,7 @@ int indices[36] = int[](
 );
 
 void main(){
-  gl_Position = uniformBufferObject.projection * mat4(mat3(uniformBufferObject.view)) * vec4(positions[indices[gl_VertexIndex]],1.);
+  vec4 position = vec4(positions[indices[gl_VertexIndex]],1.);
+  gl_Position = uniformBufferObject.projection * mat4(mat3(uniformBufferObject.view)) * position;
   fragUV = uvs[gl_VertexIndex % 6];
 }

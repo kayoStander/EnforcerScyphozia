@@ -58,14 +58,14 @@ void SkyboxSystem::CreatePipelineLayout(VkDescriptorSetLayout globalSetLayout) {
 
 void SkyboxSystem::CreatePipeline(VkRenderPass renderPass) {
   PipelineConfigInfo pipelineConfig{};
-  Pipeline::DefaultPipelineConfigInfo(pipelineConfig);
+  Pipeline::SkyboxPipelineConfigInfo(pipelineConfig);
   pipelineConfig.attributeDescriptions.clear();
   pipelineConfig.bindingDescriptions.clear();
   pipelineConfig.renderPass = renderPass;
   pipelineConfig.pipelineLayout = pipelineLayout;
   pipeline = std::make_unique<Pipeline>(
       device, "src/shaders/skybox.vert.glsl.spv",
-      "src/shaders/skybox.frag.glsl.spv", pipelineConfig);
+      "src/shaders/skybox.frag.glsl.spv", pipelineConfig, specializedValues);
 }
 
 void SkyboxSystem::RenderSkybox(FrameInfo &frameInfo) {
@@ -77,14 +77,14 @@ void SkyboxSystem::RenderSkybox(FrameInfo &frameInfo) {
                           &frameInfo.globalDescriptorSet, 0, nullptr);
 
   SimplePushConstantData push{};
-  push.fogColor = glm::vec3(.1, .1, .1);
-  push.fogStart = 50.f;
+  push.fogColor = glm::vec3(1., 1., 1.);
+  push.fogStart = 5.f;
   push.fogEnd = 150.f;
 
   vkCmdPushConstants(frameInfo.commandBuffer, pipelineLayout,
                      VK_SHADER_STAGE_FRAGMENT_BIT, 0,
                      sizeof(SimplePushConstantData), &push);
-  vkCmdDraw(frameInfo.commandBuffer, 36, 1, 0, 0);
+  vkCmdDraw(frameInfo.commandBuffer, (32 + 1) * 64, 1, 0, 0);
 }
 
 } // namespace Enforcer

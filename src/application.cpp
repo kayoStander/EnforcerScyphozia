@@ -211,6 +211,7 @@ void Application::LoadGameObjects() {
   cube.model = coloredCubeModel;
   cube.transform.translation = {-1.0f, .0f, 0.f};
   cube.transform.scale = {3.f, 3.f, 3.f};
+  cube.reflection = .02f;
   cube.imageBind = 0;
 
   std::shared_ptr<Model> smoothVaseModel{
@@ -219,6 +220,7 @@ void Application::LoadGameObjects() {
   vase.model = smoothVaseModel;
   vase.transform.translation = {1.0f, .0f, 0.f};
   vase.transform.scale = {3.f, 3.f, 3.f};
+  vase.reflection = .05f;
   vase.imageBind = 1;
 
   std::shared_ptr<Model> quadModel{
@@ -227,6 +229,7 @@ void Application::LoadGameObjects() {
   quad.model = quadModel;
   quad.transform.translation = {.0f, .0f, 0.f};
   quad.transform.scale = {15.f, 10.f, 15.f};
+  quad.reflection = 0.03f;
   quad.imageBind = 2;
 
   std::vector<glm::vec3> lightColors{

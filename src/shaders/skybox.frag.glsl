@@ -25,10 +25,13 @@ layout(push_constant) uniform Push {
 } push;
 
 void main() {
+  /*
   vec2 uv = fragUV * 2.0 - 1.0;
   vec3 viewDirection = normalize(vec3(uv.x, uv.y, -1.0));
-
   vec3 worldDirection = normalize((mat4(mat3(uniformBufferObject.inverseView)) * vec4(viewDirection,0.)).xyz);
+  */
 
-  outColor = texture(images[4],fragUV);
+  vec4 textureColor = texture(images[4],fragUV);
+
+  outColor = textureColor;
 }

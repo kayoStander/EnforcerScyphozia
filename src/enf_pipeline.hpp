@@ -4,6 +4,7 @@
 #include "enf_device.hpp"
 
 #include <string>
+#include <variant>
 #include <vector>
 #include <vulkan/vulkan_core.h>
 
@@ -35,7 +36,8 @@ class Pipeline {
 public:
   Pipeline(Device &device, const std::string &vertFilepath,
            const std::string &fragFilepath,
-           const PipelineConfigInfo &ConfigInfo);
+           const PipelineConfigInfo &ConfigInfo,
+           const std::vector<std::variant<u32, float>> specializedValues);
   ~Pipeline() noexcept;
 
   Pipeline(const Pipeline &) = delete;
@@ -50,9 +52,10 @@ public:
 private:
   static std::vector<char> ReadFile(const std::string &filepath);
 
-  void CreateGraphicsPipeline(const std::string &vertFilepath,
-                              const std::string &fragFilepath,
-                              const PipelineConfigInfo &configInfo);
+  void CreateGraphicsPipeline(
+      const std::string &vertFilepath, const std::string &fragFilepath,
+      const PipelineConfigInfo &configInfo,
+      const std::vector<std::variant<u32, float>> specializedValues);
 
   void CreateShaderModule(const std::vector<char> &code,
                           VkShaderModule *shaderModule);

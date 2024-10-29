@@ -5,6 +5,7 @@
 #include "../enf_pipeline.hpp"
 
 #include <memory>
+#include <variant>
 
 namespace Enforcer {
 class SkyboxSystem {
@@ -17,6 +18,8 @@ public:
   SkyboxSystem &operator=(const SkyboxSystem &) = delete;
 
   void RenderSkybox(FrameInfo &frameInfo);
+
+  const std::vector<std::variant<u32, float>> specializedValues{};
 
 private:
   void CreatePipelineLayout(VkDescriptorSetLayout globalSetLayout);

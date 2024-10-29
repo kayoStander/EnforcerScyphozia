@@ -27,6 +27,7 @@ layout(set = 0, binding = 0) uniform GlobalUniformBufferObject{
 layout(push_constant) uniform Push {
   mat4 modelMatrix; 
   mat4 normalMatrix; 
+  float reflection;
   int imageBind; 
 } push;
 

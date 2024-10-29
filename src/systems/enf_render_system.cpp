@@ -18,6 +18,7 @@ namespace Enforcer {
 struct SimplePushConstantData {
   glm::mat4 modelMatrix{1.f};
   glm::mat4 normalMatrix{1.f};
+  float reflection;
   int imageBind;
 };
 
@@ -64,7 +65,7 @@ void RenderSystem::CreatePipeline(VkRenderPass renderPass) {
   pipelineConfig.pipelineLayout = pipelineLayout;
   pipeline = std::make_unique<Pipeline>(
       device, "src/shaders/vertex.vert.glsl.spv",
-      "src/shaders/fragment.frag.glsl.spv", pipelineConfig);
+      "src/shaders/fragment.frag.glsl.spv", pipelineConfig, specializedValues);
 }
 
 void RenderSystem::RenderGameObjects(FrameInfo &frameInfo) {
@@ -83,6 +84,7 @@ void RenderSystem::RenderGameObjects(FrameInfo &frameInfo) {
     SimplePushConstantData push{};
     push.modelMatrix = obj.transform.mat4();
     push.normalMatrix = obj.transform.normalMatrix();
+    push.reflection = obj.reflection;
     push.imageBind = static_cast<s32>(obj.imageBind);
 
     vkCmdPushConstants(frameInfo.commandBuffer, pipelineLayout,

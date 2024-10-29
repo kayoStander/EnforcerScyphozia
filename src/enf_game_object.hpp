@@ -51,9 +51,10 @@ public:
   glm::vec3 color;
   TransformComponent transform;
 
-  std::shared_ptr<Model> model{};
+  std::shared_ptr<Model> model{nullptr};
   std::unique_ptr<PointLightComponent> pointLight{nullptr};
 
+  float reflection{.01f};
   u32 imageBind{0};
 
 private:

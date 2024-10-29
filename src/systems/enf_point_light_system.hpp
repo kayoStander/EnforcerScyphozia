@@ -20,6 +20,8 @@ public:
               DefaultUniformBufferObject &uniformBufferObject);
   void Render(FrameInfo &frameInfo);
 
+  const std::vector<std::variant<u32, float>> specializedValues{};
+
 private:
   void CreatePipelineLayout(VkDescriptorSetLayout globalSetLayout);
   void CreatePipeline(VkRenderPass renderPass);
