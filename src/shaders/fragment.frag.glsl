@@ -1,6 +1,9 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
 
+layout(constant_id = 0) const int pointLightsAmount=10;
+layout(constant_id = 1) const int imagesAmount=10;
+
 layout(location = 0) out vec4 outColor;
 
 layout(location = 0) in vec3 fragColor;
@@ -17,11 +20,11 @@ layout(set = 0, binding = 0) uniform GlobalUniformBufferObject{
   mat4 view;
   mat4 inverseView;
   vec4 ambientLightColor;
-  PointLight pointLights[10];
+  PointLight pointLights[pointLightsAmount];
   //float deltaTime;
   int numLights;
 } uniformBufferObject;
-layout(set = 0, binding = 1) uniform sampler2D/*Array*/ image[5];
+layout(set = 0, binding = 1) uniform sampler2D/*Array*/ image[imagesAmount];
 layout(set = 0, binding = 2) uniform samplerCube enviromentMap;
 layout(push_constant) uniform Push {
   mat4 modelMatrix; 
@@ -72,14 +75,13 @@ void main(){
 
   // fog
   float fogStart = 1.;
-  float fogEnd = 100.;
+  float fogEnd = 20.;
   float distance = length(cameraPositionWorld - fragPositionWorld);
   float fogFactor = clamp((fogEnd - distance) / (fogEnd - fogStart),0.,1.);
 
-  vec3 hdrColor = mix(vec3(.1,.1,.1),(diffuseLight * fragColor + specularLight * fragColor) * imageColor +
+  vec3 hdrColor = mix(vec3(.1,.1,.155),(diffuseLight * fragColor + specularLight * fragColor) * imageColor +
                       push.reflection * reflectionColor,fogFactor);
-
-  // bloom
+    // bloom
   float brightnessThreshold = .5;
   float brightness = dot(hdrColor,vec3(0.2126, 0.7152, 0.0722));
   vec3 brightColor = (brightness > brightnessThreshold) ? hdrColor : vec3(0.0);

@@ -68,7 +68,6 @@ private:
   DefaultUniformBufferObject uniformBufferObject;
 
   std::unique_ptr<DescriptorPool> defaultPool{};
-  std::unique_ptr<DescriptorPool> skyboxPool{};
 
   std::vector<std::unique_ptr<Texture>> textures{};
   std::vector<std::unique_ptr<Texture>> texturesCube{};

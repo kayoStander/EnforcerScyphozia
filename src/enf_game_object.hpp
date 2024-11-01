@@ -3,6 +3,7 @@
 #include "../common/logging/log.hpp"
 #include "../common/types.hpp"
 #include "enf_model.hpp"
+#include <array>
 
 #if __has_include(<glm/glm.hpp>)
 #define GLM_FORCE_RADIANS
@@ -52,6 +53,7 @@ public:
   TransformComponent transform;
 
   std::shared_ptr<Model> model{nullptr};
+  std::array<std::shared_ptr<Model>, 4> imposters;
   std::unique_ptr<PointLightComponent> pointLight{nullptr};
 
   float reflection{.01f};

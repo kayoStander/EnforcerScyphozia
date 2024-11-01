@@ -56,14 +56,17 @@ Device::Device(Window &window) : window{window} {
 
 Device::~Device() {
   vkDestroyCommandPool(device_, commandPool, nullptr);
-  vkDestroyDevice(device_, nullptr);
-
+  if (device_) {
+    vkDestroyDevice(device_, nullptr);
+  }
   if (enableValidationLayers) {
     DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
   }
 
   vkDestroySurfaceKHR(instance, surface_, nullptr);
-  vkDestroyInstance(instance, nullptr);
+  if (instance) {
+    vkDestroyInstance(instance, nullptr);
+  }
 
   LOG_DEBUG(Vulkan, "Device destroyed");
 }

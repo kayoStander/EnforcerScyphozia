@@ -42,6 +42,7 @@ public:
   VkCommandPool getCommandPool() const noexcept { return commandPool; }
   VkDevice device() const noexcept { return device_; }
   VkPhysicalDevice getPhysicalDevice() const noexcept { return physicalDevice; }
+  VkInstance getInstance() const noexcept { return instance; }
   VkSurfaceKHR surface() const noexcept { return surface_; }
   VkQueue graphicsQueue() const noexcept { return graphicsQueue_; }
   VkQueue presentQueue() const noexcept { return presentQueue_; }

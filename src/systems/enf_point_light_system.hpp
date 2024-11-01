@@ -20,7 +20,7 @@ public:
               DefaultUniformBufferObject &uniformBufferObject);
   void Render(FrameInfo &frameInfo);
 
-  const std::vector<u32> specializedValues{};
+  const std::vector<u32> specializedValues{MAX_LIGHTS};
 
 private:
   void CreatePipelineLayout(VkDescriptorSetLayout globalSetLayout);

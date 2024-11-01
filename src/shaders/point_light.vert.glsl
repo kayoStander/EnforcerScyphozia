@@ -1,5 +1,7 @@
 #version 450
 
+layout(constant_id = 0) const int pointLightsAmount=10;
+
 const vec2 OFFSETS[6] = vec2[](
   vec2(-1.,-1.),
   vec2(-1.,1.),
@@ -20,7 +22,7 @@ layout(set = 0, binding = 0) uniform GlobalUniformBufferObject{
   mat4 view;
   mat4 inverseView;
   vec4 ambientLightColor;
-  PointLight pointLights[10];
+  PointLight pointLights[pointLightsAmount];
   int numLights;
 } uniformBufferObject;
 layout(push_constant) uniform Push{

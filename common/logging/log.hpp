@@ -85,3 +85,11 @@ void FmtLogMessage(Class logClass, Level logLevel,
                                  Common::Logging::Level::Critical,             \
                                  Common::Logging::TrimSourcePath(__FILE__),    \
                                  __LINE__, __func__, __VA_ARGS__)
+
+#define LOG_GENERIC_SPAN(logClass, span, fmt, ...)                             \
+  for (auto &i : span) {                                                       \
+    Common::Logging::FmtLogMessage(Common::Logging::Class::logClass,           \
+                                   Common::Logging::Level::Info,               \
+                                   Common::Logging::TrimSourcePath(__FILE__),  \
+                                   __LINE__, __func__, fmt, i, ##__VA_ARGS__); \
+  }

@@ -59,6 +59,8 @@ void Pipeline::CreateGraphicsPipeline(
     entries[i].size = sizeof(u32);
   }
 
+  LOG_GENERIC_SPAN(Shader, specializedValues, "specializedValues => {}");
+
   VkSpecializationInfo specializationInfo{};
   specializationInfo.mapEntryCount = entries.size();
   specializationInfo.pMapEntries = entries.data();
@@ -84,6 +86,7 @@ void Pipeline::CreateGraphicsPipeline(
   shaderStages[1].pName = "main";
   shaderStages[1].flags = 0;
   shaderStages[1].pNext = nullptr;
+  shaderStages[1].pSpecializationInfo = &specializationInfo;
 
   auto &bindingDescriptions = configInfo.bindingDescriptions;
   auto &attributeDescriptions = configInfo.attributeDescriptions;
@@ -298,8 +301,8 @@ void Pipeline::SkyboxPipelineConfigInfo(PipelineConfigInfo &configInfo) {
 
   configInfo.depthStencilInfo.sType =
       VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-  configInfo.depthStencilInfo.depthTestEnable = VK_TRUE;
-  configInfo.depthStencilInfo.depthWriteEnable = VK_TRUE;
+  configInfo.depthStencilInfo.depthTestEnable = VK_FALSE;
+  configInfo.depthStencilInfo.depthWriteEnable = VK_FALSE;
   configInfo.depthStencilInfo.depthCompareOp = VK_COMPARE_OP_LESS;
   configInfo.depthStencilInfo.depthBoundsTestEnable = VK_FALSE;
   configInfo.depthStencilInfo.minDepthBounds = 0.0f; // Optional

@@ -1,5 +1,8 @@
 #version 450
 
+layout(constant_id = 0) const int pointLightsAmount=10;
+layout(constant_id = 1) const int imagesAmount=10;
+
 layout(location = 0) in vec2 fragUV;
 
 layout(location = 0) out vec4 outColor;
@@ -13,10 +16,10 @@ layout(set = 0, binding = 0) uniform GlobalUniformBufferObject{
   mat4 view;
   mat4 inverseView;
   vec4 ambientLightColor;
-  PointLight pointLights[10];
+  PointLight pointLights[pointLightsAmount];
   int numLights;
 } uniformBufferObject;
-layout(set = 0, binding = 1) uniform sampler2D images[5];
+layout(set = 0, binding = 1) uniform sampler2D images[imagesAmount];
 layout(set = 0, binding = 2) uniform samplerCube environmentMap;
 layout(push_constant) uniform Push {
   vec3 fogColor;
@@ -33,5 +36,11 @@ void main() {
 
   vec4 textureColor = texture(images[4],fragUV);
 
-  outColor = textureColor;
+  /*const float density = .0005;
+  const float LOG2 = 1.442695;
+  float z = gl_FragCoord.z/gl_FragCoord.w;
+  float fogFactor= exp2(density*density*z*z*LOG2);
+  fogFactor=clamp(fogFactor,0.,1.);
+*/
+  outColor = textureColor;//vec4(z,z-.1,z,1.);//mix(vec4(.1,.1,.155,0.),textureColor*,fogFactor);
 }

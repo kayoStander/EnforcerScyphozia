@@ -16,14 +16,14 @@ layout(set = 0, binding = 0) uniform GlobalUniformBufferObject{
 } uniformBufferObject;
 
 vec3 positions[8] = vec3[](
-    vec3(-100.0, -100.0,  100.0), // Front-bottom-left
-    vec3( 100.0, -100.0,  100.0), // Front-bottom-right
-    vec3( 100.0,  100.0,  100.0), // Front-top-right
-    vec3(-100.0,  100.0,  100.0), // Front-top-left
-    vec3(-100.0, -100.0, -100.0), // Back-bottom-left
-    vec3( 100.0, -100.0, -100.0), // Back-bottom-right
-    vec3( 100.0,  100.0, -100.0), // Back-top-right
-    vec3(-100.0,  100.0, -100.0)  // Back-top-left
+    vec3(-1., -1.,  1.), // Front-bottom-left
+    vec3( 1., -1.,  1.), // Front-bottom-right
+    vec3( 1.,  1.,  1.), // Front-top-right
+    vec3(-1.,  1.,  1.), // Front-top-left
+    vec3(-1., -1., -1.), // Back-bottom-left
+    vec3( 1., -1., -1.), // Back-bottom-right
+    vec3( 1.,  1., -1.), // Back-top-right
+    vec3(-1.,  1., -1.)  // Back-top-left
 );
 
 vec2 uvs[6] = vec2[](

@@ -18,7 +18,7 @@ public:
 
   void RenderGameObjects(FrameInfo &frameInfo);
 
-  const std::vector<u32> specializedValues{};
+  const std::vector<u32> specializedValues{MAX_LIGHTS, MAX_TEXTURE};
 
 private:
   void CreatePipelineLayout(VkDescriptorSetLayout globalSetLayout);

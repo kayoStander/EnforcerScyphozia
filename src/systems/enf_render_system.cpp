@@ -1,5 +1,4 @@
 #include "enf_render_system.hpp"
-#include "../../common/logging/log.hpp"
 
 #if __has_include(<glm/glm.hpp>)
 #define GLM_FORCE_RADIANS
@@ -91,8 +90,20 @@ void RenderSystem::RenderGameObjects(FrameInfo &frameInfo) {
                        VK_SHADER_STAGE_VERTEX_BIT |
                            VK_SHADER_STAGE_FRAGMENT_BIT,
                        0, sizeof(SimplePushConstantData), &push);
-    obj.model->Bind(frameInfo.commandBuffer);
-    obj.model->Draw(frameInfo.commandBuffer);
+    float distanceFromCamera{glm::length(frameInfo.camera.getPosition() -
+                                         obj.transform.translation)};
+
+#define DRAW_MODEL(x, y)                                                       \
+  if (y && distanceFromCamera < x) {                                           \
+    y->Bind(frameInfo.commandBuffer);                                          \
+    y->Draw(frameInfo.commandBuffer);                                          \
+  }
+
+    DRAW_MODEL(10.f, obj.model);
+    DRAW_MODEL(25.f, obj.imposters[0]);
+    DRAW_MODEL(75.f, obj.imposters[1]);
+    DRAW_MODEL(100.f, obj.imposters[2]);
+    DRAW_MODEL(125.f, obj.imposters[3]);
   }
 }
 

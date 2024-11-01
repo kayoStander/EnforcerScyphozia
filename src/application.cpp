@@ -11,8 +11,8 @@
 #include "systems/enf_point_light_system.hpp"
 #include "systems/enf_render_system.hpp"
 #include "systems/enf_skybox_system.hpp"
-#include <memory>
-#include <vulkan/vulkan_core.h>
+#include <cmath>
+#include <random>
 
 #if __has_include(<glm/glm.hpp>)
 #define GLM_FORCE_RADIANS
@@ -23,13 +23,21 @@
 #error "No GLM recognized in the system"
 #endif
 
+#if __has_include("../external/imgui/imgui.h")
+#include "../external/imgui/backends/imgui_impl_glfw.h"
+#include "../external/imgui/backends/imgui_impl_vulkan.h"
+#include "../external/imgui/imgui.h"
+#else
+#error "No ImGui installed on the project, try => make install"
+#endif
+
 #include <chrono>
 
-#define TEXTURE_AMOUNT 5
-
-// TODO: Skybox
-
 Discord::RPC RPC{};
+
+// TODO: WINDOWS EXE
+// TODO: LOD
+// TODO: IMPOSTERS http://blog.wolfire.com/2010/10/Imposters
 
 namespace Enforcer {
 
@@ -41,7 +49,7 @@ Application::Application() {
           .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
                        SwapChain::MAX_FRAMES_IN_FLIGHT)
           .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                       TEXTURE_AMOUNT * SwapChain::MAX_FRAMES_IN_FLIGHT)
+                       MAX_TEXTURE * SwapChain::MAX_FRAMES_IN_FLIGHT)
           .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, // cube
                        6 * SwapChain::MAX_FRAMES_IN_FLIGHT)
           .build();
@@ -68,14 +76,14 @@ void Application::Run() {
           .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
                       VK_SHADER_STAGE_ALL_GRAPHICS)
           .addBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                      VK_SHADER_STAGE_FRAGMENT_BIT, TEXTURE_AMOUNT)
+                      VK_SHADER_STAGE_FRAGMENT_BIT, MAX_TEXTURE)
           .addBinding(2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
                       VK_SHADER_STAGE_FRAGMENT_BIT, 6) // cube
           .build()};
 
   AddTexture("image.jpg");
   AddTexture("image2.jpg");
-  AddTexture("image3.jpg");
+  AddTexture("grass.jpg");
   AddTexture("yale.png");
   AddTexture("sky.jpg");
 
@@ -118,15 +126,15 @@ void Application::Run() {
   RenderSystem renderSystem{device, renderer.GetSwapChainRenderPass(),
                             defaultSetLayout->getDescriptorSetLayout()};
 
-  SkyboxSystem skyboxSystem{device, renderer.GetSwapChainRenderPass(),
-                            defaultSetLayout->getDescriptorSetLayout()};
-
   PointLightSystem pointLightSystem{device, renderer.GetSwapChainRenderPass(),
                                     defaultSetLayout->getDescriptorSetLayout()};
 
+  SkyboxSystem skyboxSystem{device, renderer.GetSwapChainRenderPass(),
+                            defaultSetLayout->getDescriptorSetLayout()};
+
   Camera camera{};
   const float FOV{100.f};
-  const float FAR{175.f};
+  const float FAR{25.f};
   // camera.SetViewDirection(glm::vec3(0.f), glm::vec3(.5f, 0.f, 1.f));
   // camera.SetViewTarget(glm::vec3(-1.f, -2.f, 20.f), glm::vec3(0.f,
   // 0.f, 2.5f));
@@ -142,9 +150,48 @@ void Application::Run() {
   LOG_DEBUG(Vulkan, "maxPushCostantsSize => {}, UBO size => {}",
             device.properties.limits.maxPushConstantsSize,
             sizeof(DefaultUniformBufferObject));
+  /*
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO &IO = ImGui::GetIO();
+    (void)IO;
+    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    // Enable Keyboard Controls
+    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+    // Enable Gamepad Controls
 
+    ImGui::StyleColorsDark();
+
+    ImGui_ImplGlfw_InitForVulkan(window.GetGLFWWindow(), true);
+
+    ImGui_ImplVulkan_InitInfo initInfo{};
+    initInfo.Instance = device.getInstance();
+    initInfo.PhysicalDevice = device.getPhysicalDevice();
+    initInfo.Device = device.device();
+    initInfo.QueueFamily = device.findPhysicalQueueFamilies().graphicsFamily;
+    initInfo.Queue = device.graphicsQueue();
+    initInfo.DescriptorPool = defaultPool->GetDescriptorPool();
+    initInfo.RenderPass = renderer.GetSwapChainRenderPass();
+    initInfo.MinImageCount =
+        device.getSwapChainSupport().capabilities.minImageCount;
+    initInfo.ImageCount = SwapChain::MAX_FRAMES_IN_FLIGHT;
+    initInfo.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
+
+    initInfo.PipelineCache = nullptr; // optional
+    initInfo.Subpass = 0;
+
+    initInfo.UseDynamicRendering = false; // optional
+
+    initInfo.Allocator = nullptr;       // optional
+    initInfo.CheckVkResultFn = nullptr; // optional
+    initInfo.MinAllocationSize = 0;     // optional
+
+    ImGui_ImplVulkan_InitInfo(&initInfo, renderer.GetSwapChainRenderPass());
+  */
   while (!window.ShouldClose()) {
     glfwPollEvents();
+
+    // ImGui::ShowDemoWindow();
 
     const std::chrono::time_point newTime{
         std::chrono::high_resolution_clock::now()};
@@ -185,8 +232,8 @@ void Application::Run() {
                                 uniformBufferObject);
 
       // order between render matters
-      renderSystem.RenderGameObjects(frameInfo);
       skyboxSystem.RenderSkybox(frameInfo);
+      renderSystem.RenderGameObjects(frameInfo);
       pointLightSystem.Render(frameInfo);
 
       renderer.EndSwapChainRenderPass(commandBuffer);
@@ -205,33 +252,131 @@ void Application::Run() {
 
 void Application::LoadGameObjects() {
 
-  std::shared_ptr<Model> coloredCubeModel{
-      Model::CreateModelFromFile(device, "model/smooth_vase.obj")};
+  auto fade = [](float t) noexcept {
+    return t * t * t * (t * (t * 6 - 15) + 10);
+  };
+  auto lerp = [](float a, float b, float t) noexcept {
+    return a + t * (b - a);
+  };
+  auto grad = [](int hash, float x, float y) noexcept {
+    switch (hash & 3) {
+    case 0:
+      return x + y;
+    case 1:
+      return x - y;
+    case 2:
+      return x + y;
+    case 3:
+      return -x + y;
+    default:
+      return 0.f;
+    }
+  };
+  std::vector<int> perm(512);
+  for (int i{0}; i < 256; ++i) {
+    perm[i] = i;
+  }
+  std::shuffle(perm.begin(), perm.begin() + 256, std::default_random_engine());
+  for (int i{0}; i < 256; ++i) {
+    perm[256 + i] = perm[i];
+  }
+  auto perlinNoise = [&](float x, float y, const std::vector<int> &perm,
+                         int octaves, float frequency, float amplitude) {
+    float noiseValue = 0.0f;
+    float maxAmplitude = 0.0f;
+
+    for (int octave = 0; octave < octaves; ++octave) {
+      float freq = frequency * std::pow(2.0f, octave);
+      float amp = amplitude * std::pow(0.5f, octave);
+
+      int xi = static_cast<int>(std::floor(x * freq)) & 255;
+      int yi = static_cast<int>(std::floor(y * freq)) & 255;
+
+      float xf = x * freq - std::floor(x * freq);
+      float yf = y * freq - std::floor(y * freq);
+
+      float u = fade(xf);
+      float v = fade(yf);
+
+      int aa = perm[xi + perm[yi]];
+      int ab = perm[xi + perm[yi + 1]];
+      int ba = perm[xi + 1 + perm[yi]];
+      int bb = perm[xi + 1 + perm[yi + 1]];
+
+      float x1 = lerp(grad(aa, xf, yf), grad(ab, xf, yf - 1), v);
+      float x2 = lerp(grad(ba, xf - 1, yf), grad(bb, xf - 1, yf - 1), v);
+
+      noiseValue += lerp(x1, x2, u) * amp;
+      maxAmplitude += amp;
+    }
+
+    return noiseValue / maxAmplitude; // Normalize to [0, 1]
+  };
+
+  const float frequency{.5f};
+  const float amplitude{5.f};
+  const float noiseScale{.5f};
+  const int octaves{4};
+
+  std::shared_ptr<Model> cube{
+      Model::CreateModelFromFile(device, "model/cube.obj")};
+  std::shared_ptr<Model> imposterCube0{
+      Model::CreateModelFromFile(device, "model/colored_cube.obj")};
+
+  for (s32 x{-25}; x < 25; ++x) {
+    for (s32 y{-25}; y < 25; ++y) {
+      GameObject gameObject = GameObject::CreateGameObject();
+
+      const float noiseValue{
+          perlinNoise(static_cast<float>(x) * noiseScale,
+                      static_cast<float>(y) * noiseScale, perm, octaves,
+                      frequency, amplitude),
+      };
+
+      gameObject.transform.scale = {.5f, 1.f, .5f};
+      gameObject.transform.translation = {static_cast<float>(x) * 1.f,
+                                          noiseValue * 2.f,
+                                          static_cast<float>(y) * 1.f};
+      gameObject.model = cube;
+      gameObject.imposters[0] = imposterCube0;
+      gameObject.imageBind = 2;
+      gameObject.reflection = 0.f;
+
+      gameObjects.emplace(gameObject.GetId(), std::move(gameObject));
+    }
+  }
+
+  /*std::shared_ptr<noiseValueel> coloredCubeModel{
+      noiseValueel::CreateModelFromFile(device, "model/smooth_vase.obj")};
   GameObject cube = GameObject::CreateGameObject();
-  cube.model = coloredCubeModel;
+  cube.noiseValueel = coloredCubeModel;
   cube.transform.translation = {-1.0f, .0f, 0.f};
   cube.transform.scale = {3.f, 3.f, 3.f};
   cube.reflection = .02f;
   cube.imageBind = 0;
 
-  std::shared_ptr<Model> smoothVaseModel{
-      Model::CreateModelFromFile(device, "model/flat_vase.obj")};
+  std::shared_ptr<noiseValueel> smoothVaseModel{
+      noiseValueel::CreateModelFromFile(device, "model/flat_vase.obj")};
   GameObject vase = GameObject::CreateGameObject();
-  vase.model = smoothVaseModel;
+  vase.noiseValueel = smoothVaseModel;
   vase.transform.translation = {1.0f, .0f, 0.f};
   vase.transform.scale = {3.f, 3.f, 3.f};
   vase.reflection = .05f;
   vase.imageBind = 1;
 
-  std::shared_ptr<Model> quadModel{
-      Model::CreateModelFromFile(device, "model/quad.obj")};
+  std::shared_ptr<noiseValueel> quadModel{
+      noiseValueel::CreateModelFromFile(device, "model/quad.obj")};
   GameObject quad = GameObject::CreateGameObject();
-  quad.model = quadModel;
+  quad.noiseValueel = quadModel;
   quad.transform.translation = {.0f, .0f, 0.f};
   quad.transform.scale = {15.f, 10.f, 15.f};
   quad.reflection = 0.03f;
   quad.imageBind = 2;
 
+  gameObjects.emplace(cube.GetId(), std::move(cube));
+  gameObjects.emplace(vase.GetId(), std::move(vase));
+  gameObjects.emplace(quad.GetId(), std::move(quad));
+*/
   std::vector<glm::vec3> lightColors{
       {1.f, .1f, .1f}, {.1f, .1f, 1.f}, {.1f, 1.f, .1f},
       {1.f, 1.f, .1f}, {.1f, 1.f, 1.f}, {1.f, 1.f, 1.f} //
@@ -248,10 +393,6 @@ void Application::LoadGameObjects() {
 
     gameObjects.emplace(pointLight.GetId(), std::move(pointLight));
   }
-
-  gameObjects.emplace(cube.GetId(), std::move(cube));
-  gameObjects.emplace(vase.GetId(), std::move(vase));
-  gameObjects.emplace(quad.GetId(), std::move(quad));
 }
 
 } // namespace Enforcer

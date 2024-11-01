@@ -75,6 +75,8 @@ public:
 
   void resetPool();
 
+  VkDescriptorPool GetDescriptorPool() noexcept { return descriptorPool; }
+
 private:
   Device &device;
   VkDescriptorPool descriptorPool;
