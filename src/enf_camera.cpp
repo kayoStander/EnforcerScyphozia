@@ -105,4 +105,40 @@ void Camera::SetViewYXZ(const glm::vec3 position, const glm::vec3 rotation) {
   inverseViewMatrix[3][2] = position.z;
 }
 
+const std::array<glm::vec4, 6> Camera::GetFrustumPlanes() const {
+  glm::mat4 vpMatrix{projectionMatrix * viewMatrix};
+
+  std::array<glm::vec4, 6> planes;
+
+  // Left plane
+  planes[0] = glm::vec4(
+      vpMatrix[0][3] + vpMatrix[0][0], vpMatrix[1][3] + vpMatrix[1][0],
+      vpMatrix[2][3] + vpMatrix[2][0], vpMatrix[3][3] + vpMatrix[3][0]);
+  // Right plane
+  planes[1] = glm::vec4(
+      vpMatrix[0][3] - vpMatrix[0][0], vpMatrix[1][3] - vpMatrix[1][0],
+      vpMatrix[2][3] - vpMatrix[2][0], vpMatrix[3][3] - vpMatrix[3][0]);
+  // Bottom plane
+  planes[2] = glm::vec4(
+      vpMatrix[0][3] + vpMatrix[0][1], vpMatrix[1][3] + vpMatrix[1][1],
+      vpMatrix[2][3] + vpMatrix[2][1], vpMatrix[3][3] + vpMatrix[3][1]);
+  // Top plane
+  planes[3] = glm::vec4(
+      vpMatrix[0][3] - vpMatrix[0][1], vpMatrix[1][3] - vpMatrix[1][1],
+      vpMatrix[2][3] - vpMatrix[2][1], vpMatrix[3][3] - vpMatrix[3][1]);
+  // Near plane
+  planes[4] =
+      glm::vec4(vpMatrix[0][2], vpMatrix[1][2], vpMatrix[2][2], vpMatrix[3][2]);
+  // Far plane
+  planes[5] = glm::vec4(
+      vpMatrix[0][3] - vpMatrix[0][2], vpMatrix[1][3] - vpMatrix[1][2],
+      vpMatrix[2][3] - vpMatrix[2][2], vpMatrix[3][3] - vpMatrix[3][2]);
+
+  for (auto &plane : planes) {
+    plane = glm::normalize(plane);
+  }
+
+  return planes;
+};
+
 } // namespace Enforcer

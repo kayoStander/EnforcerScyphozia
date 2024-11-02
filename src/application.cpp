@@ -23,21 +23,24 @@
 #error "No GLM recognized in the system"
 #endif
 
-#if __has_include("../external/imgui/imgui.h")
+/*#if __has_include("../external/imgui/imgui.h")
 #include "../external/imgui/backends/imgui_impl_glfw.h"
 #include "../external/imgui/backends/imgui_impl_vulkan.h"
 #include "../external/imgui/imgui.h"
 #else
 #error "No ImGui installed on the project, try => make install"
 #endif
+*/
 
 #include <chrono>
 
 Discord::RPC RPC{};
 
 // TODO: WINDOWS EXE
-// TODO: LOD
+// TODO: LOD & BATCH RENDERING & OCLUSION CULLING
 // TODO: IMPOSTERS http://blog.wolfire.com/2010/10/Imposters
+// TODO: IMGUI
+// TODO: PHYSICS
 
 namespace Enforcer {
 
@@ -134,7 +137,7 @@ void Application::Run() {
 
   Camera camera{};
   const float FOV{100.f};
-  const float FAR{25.f};
+  const float FAR{50.f};
   // camera.SetViewDirection(glm::vec3(0.f), glm::vec3(.5f, 0.f, 1.f));
   // camera.SetViewTarget(glm::vec3(-1.f, -2.f, 20.f), glm::vec3(0.f,
   // 0.f, 2.5f));
@@ -323,9 +326,9 @@ void Application::LoadGameObjects() {
   std::shared_ptr<Model> imposterCube0{
       Model::CreateModelFromFile(device, "model/colored_cube.obj")};
 
-  for (s32 x{-25}; x < 25; ++x) {
-    for (s32 y{-25}; y < 25; ++y) {
-      GameObject gameObject = GameObject::CreateGameObject();
+  for (s32 x{-50}; x < 50; ++x) {
+    for (s32 y{-50}; y < 50; ++y) {
+      GameObject gameObject{GameObject::CreateGameObject()};
 
       const float noiseValue{
           perlinNoise(static_cast<float>(x) * noiseScale,
@@ -346,37 +349,6 @@ void Application::LoadGameObjects() {
     }
   }
 
-  /*std::shared_ptr<noiseValueel> coloredCubeModel{
-      noiseValueel::CreateModelFromFile(device, "model/smooth_vase.obj")};
-  GameObject cube = GameObject::CreateGameObject();
-  cube.noiseValueel = coloredCubeModel;
-  cube.transform.translation = {-1.0f, .0f, 0.f};
-  cube.transform.scale = {3.f, 3.f, 3.f};
-  cube.reflection = .02f;
-  cube.imageBind = 0;
-
-  std::shared_ptr<noiseValueel> smoothVaseModel{
-      noiseValueel::CreateModelFromFile(device, "model/flat_vase.obj")};
-  GameObject vase = GameObject::CreateGameObject();
-  vase.noiseValueel = smoothVaseModel;
-  vase.transform.translation = {1.0f, .0f, 0.f};
-  vase.transform.scale = {3.f, 3.f, 3.f};
-  vase.reflection = .05f;
-  vase.imageBind = 1;
-
-  std::shared_ptr<noiseValueel> quadModel{
-      noiseValueel::CreateModelFromFile(device, "model/quad.obj")};
-  GameObject quad = GameObject::CreateGameObject();
-  quad.noiseValueel = quadModel;
-  quad.transform.translation = {.0f, .0f, 0.f};
-  quad.transform.scale = {15.f, 10.f, 15.f};
-  quad.reflection = 0.03f;
-  quad.imageBind = 2;
-
-  gameObjects.emplace(cube.GetId(), std::move(cube));
-  gameObjects.emplace(vase.GetId(), std::move(vase));
-  gameObjects.emplace(quad.GetId(), std::move(quad));
-*/
   std::vector<glm::vec3> lightColors{
       {1.f, .1f, .1f}, {.1f, .1f, 1.f}, {.1f, 1.f, .1f},
       {1.f, 1.f, .1f}, {.1f, 1.f, 1.f}, {1.f, 1.f, 1.f} //

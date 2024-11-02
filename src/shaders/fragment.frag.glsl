@@ -31,6 +31,7 @@ layout(push_constant) uniform Push {
   mat4 normalMatrix; 
   float reflection;
   int imageBind; 
+  //bool isImpostor;
 } push;
 
 void main(){

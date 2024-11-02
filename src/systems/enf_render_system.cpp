@@ -12,6 +12,29 @@
 #include <cassert>
 #include <stdexcept>
 
+// IDK if it is really working but its here
+[[gnu::hot]] bool IsInFrustum(const Enforcer::Camera &camera,
+                              const Enforcer::GameObject &obj) {
+  const glm::vec3 halfSize{obj.model->GetBoundingBoxSize()};
+
+  const std::array<glm::vec4, 6> frustumPlanes{camera.GetFrustumPlanes()};
+
+  for (const glm::vec4 &plane : frustumPlanes) {
+    float distance{glm::dot(glm::vec3(plane), obj.transform.translation) +
+                   plane.w};
+    if (distance < -halfSize.x && distance < -halfSize.y &&
+        distance < -halfSize.z) {
+      return false;
+    }
+  }
+  return true;
+}
+
+[[gnu::hot, deprecated("TODO")]] bool
+IsOccluded([[maybe_unused]] const Enforcer::GameObject &obj) {
+  return false;
+}
+
 namespace Enforcer {
 
 struct SimplePushConstantData {
@@ -76,7 +99,7 @@ void RenderSystem::RenderGameObjects(FrameInfo &frameInfo) {
                           &frameInfo.globalDescriptorSet, 0, nullptr);
 
   for (auto &keyValue : frameInfo.gameObjects) {
-    auto &obj = keyValue.second;
+    auto &obj{keyValue.second};
     if (obj.model == nullptr) {
       continue;
     }
@@ -93,17 +116,23 @@ void RenderSystem::RenderGameObjects(FrameInfo &frameInfo) {
     float distanceFromCamera{glm::length(frameInfo.camera.getPosition() -
                                          obj.transform.translation)};
 
+    if (!IsInFrustum(frameInfo.camera, obj)) {
+      continue;
+    }
+
 #define DRAW_MODEL(x, y)                                                       \
-  if (y && distanceFromCamera < x) {                                           \
+  if (y && distanceFromCamera < x) [[unlikely]] {                              \
     y->Bind(frameInfo.commandBuffer);                                          \
     y->Draw(frameInfo.commandBuffer);                                          \
   }
 
-    DRAW_MODEL(10.f, obj.model);
-    DRAW_MODEL(25.f, obj.imposters[0]);
+    DRAW_MODEL(17.5f, obj.model);
+    DRAW_MODEL(70.f, obj.imposters[0]);
     DRAW_MODEL(75.f, obj.imposters[1]);
-    DRAW_MODEL(100.f, obj.imposters[2]);
-    DRAW_MODEL(125.f, obj.imposters[3]);
+    DRAW_MODEL(80.f, obj.imposters[2]);
+    DRAW_MODEL(90.f, obj.imposters[3]);
+
+#undef DRAW_MODEL
   }
 }
 

@@ -2,6 +2,7 @@
 
 // #include "../common/types.hpp"
 
+#include <array>
 #if __has_include(<glm/glm.hpp>)
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -33,6 +34,7 @@ public:
   const glm::vec3 getPosition() const noexcept {
     return glm::vec3{inverseViewMatrix[3]};
   }
+  const std::array<glm::vec4, 6> GetFrustumPlanes() const;
 
 private:
   glm::mat4 projectionMatrix{1.f};

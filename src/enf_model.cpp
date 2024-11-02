@@ -213,4 +213,16 @@ void Model::Data::LoadModel(const std::string &filepath) {
   }
 }
 
+void Model::ComputeBoundingBox(Data data) {
+  if (data.vertices.empty()) {
+    return;
+  }
+  boundingBoxMin = glm::vec3(FLT_MAX);
+  boundingBoxMax = glm::vec3(-FLT_MAX);
+  for (const Vertex &vertex : data.vertices) {
+    boundingBoxMin = glm::min(boundingBoxMin, vertex.position);
+    boundingBoxMax = glm::max(boundingBoxMax, vertex.position);
+  }
+}
+
 } // namespace Enforcer

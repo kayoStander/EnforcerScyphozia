@@ -54,9 +54,18 @@ public:
   void Bind(VkCommandBuffer commandBuffer);
   void Draw(VkCommandBuffer commandBuffer);
 
+  glm::vec3 GetBoundingBoxSize() const noexcept {
+    return boundingBoxMax - boundingBoxMin;
+  }
+
 private:
   void CreateVertexBuffers(const std::vector<Vertex> &vertices);
   void CreateIndexBuffers(const std::vector<u32> &indices);
+
+  void ComputeBoundingBox(Data data);
+
+  glm::vec3 boundingBoxMin;
+  glm::vec3 boundingBoxMax;
 
   Device &device;
 
