@@ -1,4 +1,6 @@
 #include "enf_render_system.hpp"
+#include "../../common/logging/log.hpp"
+#include <unordered_map>
 
 #if __has_include(<glm/glm.hpp>)
 #define GLM_FORCE_RADIANS
@@ -12,29 +14,6 @@
 #include <cassert>
 #include <stdexcept>
 
-// IDK if it is really working but its here
-[[gnu::hot]] bool IsInFrustum(const Enforcer::Camera &camera,
-                              const Enforcer::GameObject &obj) {
-  const glm::vec3 halfSize{obj.model->GetBoundingBoxSize()};
-
-  const std::array<glm::vec4, 6> frustumPlanes{camera.GetFrustumPlanes()};
-
-  for (const glm::vec4 &plane : frustumPlanes) {
-    float distance{glm::dot(glm::vec3(plane), obj.transform.translation) +
-                   plane.w};
-    if (distance < -halfSize.x && distance < -halfSize.y &&
-        distance < -halfSize.z) {
-      return false;
-    }
-  }
-  return true;
-}
-
-[[gnu::hot, deprecated("TODO")]] bool
-IsOccluded([[maybe_unused]] const Enforcer::GameObject &obj) {
-  return false;
-}
-
 namespace Enforcer {
 
 struct SimplePushConstantData {
@@ -43,6 +22,22 @@ struct SimplePushConstantData {
   float reflection;
   int imageBind;
 };
+
+[[gnu::hot]] bool IsInFrustum(const Camera &camera, const GameObject &obj) {
+  const glm::vec3 halfSize{obj.model->GetBoundingBoxSize()};
+
+  const std::array<glm::vec4, 6> frustumPlanes{camera.GetFrustumPlanes()};
+
+  for (const glm::vec4 &plane : frustumPlanes) {
+    const float distance{glm::dot(glm::vec3(plane), obj.transform.translation) +
+                         plane.w};
+    if (distance < -halfSize.x && distance < -halfSize.y &&
+        distance < -halfSize.z) {
+      return false;
+    }
+  }
+  return true;
+}
 
 RenderSystem::RenderSystem(Device &device, VkRenderPass renderPass,
                            VkDescriptorSetLayout globalSetLayout)
@@ -98,11 +93,13 @@ void RenderSystem::RenderGameObjects(FrameInfo &frameInfo) {
                           VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1,
                           &frameInfo.globalDescriptorSet, 0, nullptr);
 
-  for (auto &keyValue : frameInfo.gameObjects) {
-    auto &obj{keyValue.second};
+  for (u32 i{0}; i < frameInfo.gameObjects.size(); ++i) {
+    GameObject &obj{frameInfo.gameObjects.at(i)};
+
     if (obj.model == nullptr) {
       continue;
     }
+
     SimplePushConstantData push{};
     push.modelMatrix = obj.transform.mat4();
     push.normalMatrix = obj.transform.normalMatrix();
@@ -115,7 +112,6 @@ void RenderSystem::RenderGameObjects(FrameInfo &frameInfo) {
                        0, sizeof(SimplePushConstantData), &push);
     float distanceFromCamera{glm::length(frameInfo.camera.getPosition() -
                                          obj.transform.translation)};
-
     if (!IsInFrustum(frameInfo.camera, obj)) {
       continue;
     }

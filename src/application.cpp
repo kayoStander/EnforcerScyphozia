@@ -8,11 +8,11 @@
 #include "enf_model.hpp"
 #include "enf_texture.hpp"
 #include "keyboard.hpp"
+#include "systems/enf_physics_system.hpp"
 #include "systems/enf_point_light_system.hpp"
 #include "systems/enf_render_system.hpp"
 #include "systems/enf_skybox_system.hpp"
-#include <cmath>
-#include <random>
+#include <algorithm>
 
 #if __has_include(<glm/glm.hpp>)
 #define GLM_FORCE_RADIANS
@@ -32,13 +32,15 @@
 #endif
 */
 
+#include <algorithm>
 #include <chrono>
+#include <cmath>
+#include <random>
 
 Discord::RPC RPC{};
 
 // TODO: WINDOWS EXE
-// TODO: LOD & BATCH RENDERING & OCLUSION CULLING
-// TODO: IMPOSTERS http://blog.wolfire.com/2010/10/Imposters
+// TODO: IMPOSTERS WITH BILLBOARDS & BATCH RENDERING & OCLUSION CULLING
 // TODO: IMGUI
 // TODO: PHYSICS
 
@@ -135,9 +137,11 @@ void Application::Run() {
   SkyboxSystem skyboxSystem{device, renderer.GetSwapChainRenderPass(),
                             defaultSetLayout->getDescriptorSetLayout()};
 
+  PhysicsSystem physicsSystem{};
+
   Camera camera{};
   const float FOV{100.f};
-  const float FAR{50.f};
+  const float FAR{75.f};
   // camera.SetViewDirection(glm::vec3(0.f), glm::vec3(.5f, 0.f, 1.f));
   // camera.SetViewTarget(glm::vec3(-1.f, -2.f, 20.f), glm::vec3(0.f,
   // 0.f, 2.5f));
@@ -199,9 +203,10 @@ void Application::Run() {
     const std::chrono::time_point newTime{
         std::chrono::high_resolution_clock::now()};
     const float frameTime{
-        std::chrono::duration<float, std::chrono::seconds::period>(newTime -
-                                                                   currentTime)
-            .count()};
+        std::min(std::chrono::duration<float, std::chrono::seconds::period>(
+                     newTime - currentTime)
+                     .count(),
+                 .1f)};
     currentTime = newTime;
 
     cameraController.MoveInPlaneXZ(window.GetGLFWWindow(), frameTime,
@@ -227,6 +232,7 @@ void Application::Run() {
       uniformBufferObject.view = camera.GetView();
       uniformBufferObject.inverseView = camera.GetInverseView();
 
+      physicsSystem.Update(frameInfo);
       pointLightSystem.Update(frameInfo, uniformBufferObject);
       // render
       renderer.BeginSwapChainRenderPass(commandBuffer);
@@ -326,8 +332,19 @@ void Application::LoadGameObjects() {
   std::shared_ptr<Model> imposterCube0{
       Model::CreateModelFromFile(device, "model/colored_cube.obj")};
 
-  for (s32 x{-50}; x < 50; ++x) {
-    for (s32 y{-50}; y < 50; ++y) {
+  std::shared_ptr<Model> smoothVase{
+      Model::CreateModelFromFile(device, "model/smooth_vase.obj")};
+  GameObject gameObject{GameObject::CreateGameObject()};
+  gameObject.transform.scale = {2.f, 1.5f, 2.f};
+  gameObject.transform.translation = {0.f, -1.f, 0.f};
+  gameObject.model = smoothVase;
+  gameObject.imageBind = 1;
+  gameObject.reflection = 0.2f;
+  gameObject.physics.isStatic = true;
+  gameObjects.emplace(gameObject.GetId(), std::move(gameObject));
+
+  for (s32 x{-25}; x < 25; ++x) {
+    for (s32 y{-25}; y < 25; ++y) {
       GameObject gameObject{GameObject::CreateGameObject()};
 
       const float noiseValue{
@@ -344,6 +361,8 @@ void Application::LoadGameObjects() {
       gameObject.imposters[0] = imposterCube0;
       gameObject.imageBind = 2;
       gameObject.reflection = 0.f;
+      gameObject.physics.isStatic = true;
+      gameObject.physics.velocity = glm::vec3(0.f, .001f, 0.f);
 
       gameObjects.emplace(gameObject.GetId(), std::move(gameObject));
     }

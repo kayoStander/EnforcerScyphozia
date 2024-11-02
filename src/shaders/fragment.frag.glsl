@@ -75,8 +75,8 @@ void main(){
   vec3 reflectionColor = texture(image[4],reflectionCoordinates).rgb;
 
   // fog
-  float fogStart = 1.;
-  float fogEnd = 20.;
+  float fogStart = 10.; // make dynamic later
+  float fogEnd = 50.; // make dynamic later
   float distance = length(cameraPositionWorld - fragPositionWorld);
   float fogFactor = clamp((fogEnd - distance) / (fogEnd - fogStart),0.,1.);
 

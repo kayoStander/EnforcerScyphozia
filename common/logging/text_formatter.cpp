@@ -17,7 +17,7 @@ std::string FormatLogMessage(const Entry &entry) {
   const char *className{GetLogClassName(entry.logClass)};
   const char *levelName{GetLevelName(entry.logLevel)};
 
-  return fmt::format("[{}:{}] {}:{}:{} -> {}", levelName, className,
+  return fmt::format("[{}:{}] {}:{}:{} -> {}", /*time,*/ levelName, className,
                      entry.fileName, entry.function, entry.lineNum,
                      entry.message);
 }

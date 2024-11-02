@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../common/logging/log.hpp"
+// #include "../common/logging/log.hpp"
 #include "../common/types.hpp"
 #include "enf_model.hpp"
 #include <array>
@@ -31,6 +31,27 @@ struct PointLightComponent {
   float lightIntensity{1.f};
 };
 
+struct PhysicsComponent {
+  glm::vec3 velocity{0.f};
+  mutable glm::vec3 acceleration{0.f};
+  float mass{10.f};
+  bool isStatic{false};
+
+  void ApplyForce(const glm::vec3 force) const noexcept {
+    if (isStatic)
+      return;
+    acceleration += force / mass;
+  }
+
+  void Update(float deltaTime, TransformComponent &transform) {
+    if (isStatic)
+      return;
+    velocity += acceleration * deltaTime;
+    transform.translation += velocity * deltaTime;
+    acceleration = glm::vec3(.0f);
+  }
+};
+
 class GameObject {
 public:
   static GameObject MakePointLight(float intensity = 10.f, float radius = .1f,
@@ -38,19 +59,19 @@ public:
 
   static GameObject CreateGameObject() {
     static u32 currentId{0};
-    LOG_DEBUG(Vulkan, "GameObject{} created", currentId);
+    // LOG_DEBUG(Vulkan, "GameObject{} created", currentId);
     return GameObject{currentId++};
   }
 
   GameObject(const GameObject &) = delete;
   GameObject &operator=(const GameObject &) = delete;
   GameObject(GameObject &&) = default;
-  // GameObject &operator=(GameObject &&) = default;
 
   u32 GetId() const noexcept { return id; };
 
   glm::vec3 color;
   TransformComponent transform;
+  PhysicsComponent physics;
 
   std::shared_ptr<Model> model{nullptr};
   std::array<std::shared_ptr<Model>, 4> imposters;

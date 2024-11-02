@@ -223,6 +223,10 @@ void Model::ComputeBoundingBox(Data data) {
     boundingBoxMin = glm::min(boundingBoxMin, vertex.position);
     boundingBoxMax = glm::max(boundingBoxMax, vertex.position);
   }
+
+  ASSERT_LOG(boundingBoxMin == glm::vec3(FLT_MAX) ||
+                 boundingBoxMax == glm::vec3(-FLT_MAX),
+             "Bouding box could not be computed correctly!");
 }
 
 } // namespace Enforcer
