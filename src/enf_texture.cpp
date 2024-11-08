@@ -15,7 +15,7 @@
 
 namespace Enforcer {
 Texture::Texture(Device &device, const std::string &filepath, u32 layerCount)
-    : device{device} {
+    : device{device}, image{}, imageMemory{}, imageView{}, sampler{} {
   if (filepath.empty()) {
     LOG_WARNING(Vulkan, "Texture {}loaded as empty so it will be ignored",
                 filepath);
@@ -115,8 +115,8 @@ Texture::~Texture() {
   vkDestroySampler(device.device(), sampler, nullptr);
 }
 
-void Texture::TransitionImageLayout(VkImageLayout oldLayout,
-                                    VkImageLayout newLayout, u32 layerCount) {
+void Texture::TransitionImageLayout(const VkImageLayout oldLayout,
+                                    const VkImageLayout newLayout, const u32 layerCount) const {
   VkCommandBuffer commandBuffer = device.beginSingleTimeCommands();
 
   VkImageMemoryBarrier barrier{};

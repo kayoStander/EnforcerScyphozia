@@ -16,7 +16,7 @@ public:
   RenderSystem(const RenderSystem &) = delete;
   RenderSystem &operator=(const RenderSystem &) = delete;
 
-  void RenderGameObjects(FrameInfo &frameInfo);
+  void RenderGameObjects(const FrameInfo &frameInfo) const;
 
   const std::vector<u32> specializedValues{MAX_LIGHTS, MAX_TEXTURE};
 

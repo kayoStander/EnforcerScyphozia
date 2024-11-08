@@ -7,7 +7,7 @@
 }
 
 namespace Enforcer {
-Window::Window(int width, int height) : width{width}, height{height} { Init(); }
+Window::Window(const int width, const int height) : width{width}, height{height}, window{} { Init(); }
 Window::~Window() {
   LOG_DEBUG(GLFW, "Window closed");
 
@@ -15,7 +15,7 @@ Window::~Window() {
   glfwTerminate();
 }
 
-void Window::CreateWindowSurface(VkInstance instance, VkSurfaceKHR *surface) {
+void Window::CreateWindowSurface(const VkInstance instance, VkSurfaceKHR *surface) const {
   if (glfwCreateWindowSurface(instance, window, nullptr, surface) !=
       VK_SUCCESS) {
     throw std::runtime_error("Failed to create window surface");
@@ -45,9 +45,10 @@ void Window::Init() {
   LOG_INFO(GLFW, "Window created");
 }
 
-void Window::FramebufferResizedCallback(GLFWwindow *window_, int width,
-                                        int height) {
-  auto window = reinterpret_cast<Window *>(glfwGetWindowUserPointer(window_));
+void Window::FramebufferResizedCallback(GLFWwindow *window_, const int width,
+                                        const int height) {
+  const auto window = static_cast<Window *>(glfwGetWindowUserPointer(window_));
+  ASSERT_LOG(window, "Window wasn't generated");
 
   if (window) {
     window->frameBufferResized = true;
@@ -56,6 +57,5 @@ void Window::FramebufferResizedCallback(GLFWwindow *window_, int width,
     LOG_WARNING(GLFW, "{}x : {}y", width, height);
     return;
   }
-  LOG_ERROR(GLFW, "Failed to resize window");
 }
 } // namespace Enforcer

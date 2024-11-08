@@ -3,12 +3,14 @@
 #include "enf_game_object.hpp"
 
 namespace Enforcer {
+#define MOVE_SPEED_WALK 3.f
+#define MOVE_SPEED_SPRINT 4.5f
 class Keyboard {
 public:
-  void MoveInPlaneXZ(GLFWwindow *window, const float deltaTime,
+  void MoveInPlaneXZ(GLFWwindow *window, float deltaTime,
                      GameObject &gameObject);
 
-  const float moveSpeed{3.f};
+  float moveSpeed{3.f};
   const float lookSpeed{1.5f};
 
 private:
@@ -22,7 +24,8 @@ private:
     lookLeft = GLFW_KEY_LEFT,
     lookRight = GLFW_KEY_RIGHT,
     lookUp = GLFW_KEY_UP,
-    lookDown = GLFW_KEY_DOWN
+    lookDown = GLFW_KEY_DOWN,
+    Sprint = GLFW_KEY_LEFT_SHIFT
   };
 }; // temp
 } // namespace Enforcer

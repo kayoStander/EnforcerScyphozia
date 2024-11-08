@@ -21,8 +21,8 @@ struct SimplePushConstantData {
   float fogEnd;
 };
 
-SkyboxSystem::SkyboxSystem(Device &device, VkRenderPass renderPass,
-                           VkDescriptorSetLayout globalSetLayout)
+SkyboxSystem::SkyboxSystem(Device &device, const VkRenderPass renderPass,
+                           const VkDescriptorSetLayout globalSetLayout)
     : device{device} {
   LOG_DEBUG(Vulkan, "SkyboxSystem created");
 
@@ -35,13 +35,13 @@ SkyboxSystem::~SkyboxSystem() {
   vkDestroyPipelineLayout(device.device(), pipelineLayout, nullptr);
 }
 
-void SkyboxSystem::CreatePipelineLayout(VkDescriptorSetLayout globalSetLayout) {
+void SkyboxSystem::CreatePipelineLayout(const VkDescriptorSetLayout globalSetLayout) {
   VkPushConstantRange pushConstantRange{};
   pushConstantRange.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
   pushConstantRange.offset = 0;
   pushConstantRange.size = sizeof(SimplePushConstantData);
 
-  std::vector<VkDescriptorSetLayout> descriptorSetLayouts{globalSetLayout};
+  const std::vector<VkDescriptorSetLayout> descriptorSetLayouts{globalSetLayout};
 
   VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
   pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -56,7 +56,7 @@ void SkyboxSystem::CreatePipelineLayout(VkDescriptorSetLayout globalSetLayout) {
   }
 }
 
-void SkyboxSystem::CreatePipeline(VkRenderPass renderPass) {
+void SkyboxSystem::CreatePipeline(const VkRenderPass renderPass) {
   PipelineConfigInfo pipelineConfig{};
   Pipeline::SkyboxPipelineConfigInfo(pipelineConfig);
   pipelineConfig.attributeDescriptions.clear();
@@ -68,7 +68,7 @@ void SkyboxSystem::CreatePipeline(VkRenderPass renderPass) {
       "src/shaders/skybox.frag.glsl.spv", pipelineConfig, specializedValues);
 }
 
-void SkyboxSystem::RenderSkybox(FrameInfo &frameInfo) {
+void SkyboxSystem::RenderSkybox(const FrameInfo &frameInfo) const {
 
   pipeline->bind(frameInfo.commandBuffer);
 

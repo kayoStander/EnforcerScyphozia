@@ -16,7 +16,7 @@ public:
   SkyboxSystem(const SkyboxSystem &) = delete;
   SkyboxSystem &operator=(const SkyboxSystem &) = delete;
 
-  void RenderSkybox(FrameInfo &frameInfo);
+  void RenderSkybox(const FrameInfo &frameInfo) const;
 
   const std::vector<u32> specializedValues{MAX_LIGHTS, MAX_TEXTURE};
 

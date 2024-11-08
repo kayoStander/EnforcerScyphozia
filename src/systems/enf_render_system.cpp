@@ -24,12 +24,10 @@ struct SimplePushConstantData {
 };
 
 [[gnu::hot]] bool IsInFrustum(const Camera &camera, const GameObject &obj) {
-  const glm::vec3 halfSize{obj.model->GetBoundingBoxSize()};
+  const glm::vec3 halfSize{obj.model->GetBoundingBoxSize()*obj.transform.scale}; // be cautious about obj.transform.scale, not sure if it is working as expected.
 
-  const std::array<glm::vec4, 6> frustumPlanes{camera.GetFrustumPlanes()};
-
-  for (const glm::vec4 &plane : frustumPlanes) {
-    const float distance{glm::dot(glm::vec3(plane), obj.transform.translation) +
+  for (const std::array frustumPlanes{camera.GetFrustumPlanes()}; const glm::vec4 &plane : frustumPlanes) {
+    const float distance{dot(glm::vec3(plane), obj.transform.translation) +
                          plane.w};
     if (distance < -halfSize.x && distance < -halfSize.y &&
         distance < -halfSize.z) {
@@ -39,8 +37,8 @@ struct SimplePushConstantData {
   return true;
 }
 
-RenderSystem::RenderSystem(Device &device, VkRenderPass renderPass,
-                           VkDescriptorSetLayout globalSetLayout)
+RenderSystem::RenderSystem(Device &device, const VkRenderPass renderPass,
+                           const VkDescriptorSetLayout globalSetLayout)
     : device{device} {
   LOG_DEBUG(Vulkan, "RenderSystem created");
 
@@ -53,14 +51,14 @@ RenderSystem::~RenderSystem() {
   vkDestroyPipelineLayout(device.device(), pipelineLayout, nullptr);
 }
 
-void RenderSystem::CreatePipelineLayout(VkDescriptorSetLayout globalSetLayout) {
+void RenderSystem::CreatePipelineLayout(const VkDescriptorSetLayout globalSetLayout) {
   VkPushConstantRange pushConstantRange{};
   pushConstantRange.stageFlags =
       VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
   pushConstantRange.offset = 0;
   pushConstantRange.size = sizeof(SimplePushConstantData);
 
-  std::vector<VkDescriptorSetLayout> descriptorSetLayouts{globalSetLayout};
+  const std::vector<VkDescriptorSetLayout> descriptorSetLayouts{globalSetLayout};
 
   VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
   pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -75,7 +73,7 @@ void RenderSystem::CreatePipelineLayout(VkDescriptorSetLayout globalSetLayout) {
   }
 }
 
-void RenderSystem::CreatePipeline(VkRenderPass renderPass) {
+void RenderSystem::CreatePipeline(const VkRenderPass renderPass) {
   PipelineConfigInfo pipelineConfig{};
   Pipeline::DefaultPipelineConfigInfo(pipelineConfig);
   pipelineConfig.renderPass = renderPass;
@@ -85,7 +83,7 @@ void RenderSystem::CreatePipeline(VkRenderPass renderPass) {
       "src/shaders/fragment.frag.glsl.spv", pipelineConfig, specializedValues);
 }
 
-void RenderSystem::RenderGameObjects(FrameInfo &frameInfo) {
+void RenderSystem::RenderGameObjects(const FrameInfo &frameInfo) const {
 
   pipeline->bind(frameInfo.commandBuffer);
 

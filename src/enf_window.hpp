@@ -16,25 +16,25 @@ public:
   Window(int width, int height);
   ~Window();
 
-  [[gnu::pure]] inline GLFWwindow *GetGLFWWindow() const noexcept {
+  [[gnu::pure]] GLFWwindow *GetGLFWWindow() const noexcept {
     return window;
   }
-  [[gnu::leaf]] VkExtent2D getExtent() noexcept {
+  [[gnu::leaf]] VkExtent2D getExtent() const noexcept {
     return {static_cast<u32>(width), static_cast<u32>(height)};
   }
-  [[gnu::hot, gnu::pure]] inline bool ShouldClose() noexcept {
+  [[gnu::hot, gnu::pure]] bool ShouldClose() const noexcept {
     return glfwWindowShouldClose(window);
   }
-  [[gnu::pure]] bool inline WasWindowResized() noexcept {
+  [[gnu::pure]] bool WasWindowResized() const noexcept {
     return frameBufferResized;
   }
 
-  void inline ResetWindowResizedFlag() noexcept { frameBufferResized = false; }
+  void ResetWindowResizedFlag() noexcept { frameBufferResized = false; }
 
-  void CreateWindowSurface(VkInstance instance, VkSurfaceKHR *surface);
+  void CreateWindowSurface(VkInstance instance, VkSurfaceKHR *surface) const ;
 
 private:
-  static void FramebufferResizedCallback(GLFWwindow *window, int width,
+  static void FramebufferResizedCallback(GLFWwindow *window_, int width,
                                          int height);
   void Init();
 

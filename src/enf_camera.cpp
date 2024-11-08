@@ -3,7 +3,7 @@
 namespace Enforcer {
 void Camera::SetOrthographicProjection(const float left, const float right,
                                        const float top, const float bottom,
-                                       const float near, const float far) {
+                                       const float near, const float far) const {
   projectionMatrix = glm::mat4{1.0f};
   projectionMatrix[0][0] = 2.f / (right - left);
   projectionMatrix[1][1] = 2.f / (bottom - top);
@@ -14,9 +14,9 @@ void Camera::SetOrthographicProjection(const float left, const float right,
 }
 
 void Camera::SetPerspectiveProjection(const float fovy, const float aspect,
-                                      const float near, const float far) {
-  assert(glm::abs(aspect - std::numeric_limits<float>::epsilon()) > 0.0f);
-  const float tanHalfFovy = tan(fovy / 2.f);
+                                      const float near, const float far) const {
+  assert(glm::abs(aspect - std::numeric_limits<float>::epsilon()) > .0f);
+  const float tanHalfFovy = std::tan(fovy / 2.f);
   projectionMatrix = glm::mat4{0.0f};
   projectionMatrix[0][0] = 1.f / (aspect * tanHalfFovy);
   projectionMatrix[1][1] = 1.f / (tanHalfFovy);
@@ -25,7 +25,7 @@ void Camera::SetPerspectiveProjection(const float fovy, const float aspect,
   projectionMatrix[3][2] = -(far * near) / (far - near);
 }
 void Camera::SetViewDirection(const glm::vec3 position,
-                              const glm::vec3 direction, const glm::vec3 up) {
+                              const glm::vec3 direction, const glm::vec3 up) const {
   const glm::vec3 w{glm::normalize(direction)};
   const glm::vec3 u{glm::normalize(glm::cross(w, up))};
   const glm::vec3 v{glm::cross(w, u)};
@@ -60,11 +60,11 @@ void Camera::SetViewDirection(const glm::vec3 position,
 }
 
 void Camera::SetViewTarget(const glm::vec3 position, const glm::vec3 target,
-                           const glm::vec3 up) {
+                           const glm::vec3 up) const {
   SetViewDirection(position, target - position, up);
 }
 
-void Camera::SetViewYXZ(const glm::vec3 position, const glm::vec3 rotation) {
+void Camera::SetViewYXZ(const glm::vec3 position, const glm::vec3 rotation) const {
   const float c3 = glm::cos(rotation.z);
   const float s3 = glm::sin(rotation.z);
   const float c2 = glm::cos(rotation.x);
@@ -105,7 +105,7 @@ void Camera::SetViewYXZ(const glm::vec3 position, const glm::vec3 rotation) {
   inverseViewMatrix[3][2] = position.z;
 }
 
-const std::array<glm::vec4, 6> Camera::GetFrustumPlanes() const {
+std::array<glm::vec4, 6> Camera::GetFrustumPlanes() const {
   glm::mat4 vpMatrix{projectionMatrix * viewMatrix};
 
   std::array<glm::vec4, 6> planes;

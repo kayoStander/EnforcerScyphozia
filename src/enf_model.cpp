@@ -34,6 +34,7 @@ namespace Enforcer {
 Model::Model(Device &device, const Model::Data &data) : device{device} {
   CreateVertexBuffers(data.vertices);
   CreateIndexBuffers(data.indices);
+  ComputeBoundingBox(data);
 }
 
 Model::~Model() {}
@@ -213,20 +214,23 @@ void Model::Data::LoadModel(const std::string &filepath) {
   }
 }
 
-void Model::ComputeBoundingBox(Data data) {
+void Model::ComputeBoundingBox(const Data data) {
   if (data.vertices.empty()) {
+    LOG_WARNING(Vulkan, "No vertices in obj to make an bounding box!");
     return;
   }
-  boundingBoxMin = glm::vec3(FLT_MAX);
-  boundingBoxMax = glm::vec3(-FLT_MAX);
   for (const Vertex &vertex : data.vertices) {
     boundingBoxMin = glm::min(boundingBoxMin, vertex.position);
     boundingBoxMax = glm::max(boundingBoxMax, vertex.position);
   }
-
-  ASSERT_LOG(boundingBoxMin == glm::vec3(FLT_MAX) ||
-                 boundingBoxMax == glm::vec3(-FLT_MAX),
+  ASSERT_LOG(boundingBoxMin != glm::vec3(FLT_MAX) ||
+                 boundingBoxMax != glm::vec3(-FLT_MAX),
              "Bouding box could not be computed correctly!");
+
+  ASSERT_LOG(boundingBoxMin.x < boundingBoxMax.x &&
+                 boundingBoxMin.y < boundingBoxMax.y &&
+                 boundingBoxMin.z < boundingBoxMax.z,
+             "Bounding box could not be computed correctly!");
 }
 
 } // namespace Enforcer

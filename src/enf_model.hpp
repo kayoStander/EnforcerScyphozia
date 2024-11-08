@@ -62,10 +62,10 @@ private:
   void CreateVertexBuffers(const std::vector<Vertex> &vertices);
   void CreateIndexBuffers(const std::vector<u32> &indices);
 
-  void ComputeBoundingBox(Data data);
+  void ComputeBoundingBox(const Data data);
 
-  glm::vec3 boundingBoxMin;
-  glm::vec3 boundingBoxMax;
+  glm::vec3 boundingBoxMin{FLT_MAX};
+  glm::vec3 boundingBoxMax{-FLT_MAX};
 
   Device &device;
 

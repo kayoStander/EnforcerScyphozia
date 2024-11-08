@@ -11,6 +11,7 @@
 #include <memory>
 #include <unordered_map>
 
+
 #define WIDTH 800
 #define HEIGHT 600
 
@@ -18,7 +19,7 @@ namespace Enforcer {
 class Application {
 public:
   explicit Application();
-  ~Application();
+  ~Application() = default;
 
   Application(const Application &) = delete;
   Application &operator=(const Application &) = delete;
@@ -38,11 +39,12 @@ private:
   }
 
   [[deprecated("wip")]] void
-  AddObject([[maybe_unused]] const std::string &filepath) noexcept {}
+  static AddObject([[maybe_unused]] const std::string &filepath) noexcept {
+  }
 
   [[nodiscard]] [[deprecated(
       "not working as expected yet")]] VkDescriptorImageInfo
-  GetTextureDescriptorImageInfo(std::unique_ptr<Texture> texture) noexcept {
+  static GetTextureDescriptorImageInfo(const std::unique_ptr<Texture> &texture) noexcept {
     VkDescriptorImageInfo textureDescriptorImageInfo{};
     textureDescriptorImageInfo.sampler = texture->GetSampler();
     textureDescriptorImageInfo.imageView = texture->GetImageView();
@@ -54,9 +56,9 @@ private:
   void UpdateUniformBufferObject(
       const std::vector<std::unique_ptr<Buffer>> &uniformBufferObjectBuffers,
       T &uniformBufferObject) noexcept {
-    uniformBufferObjectBuffers[static_cast<u32>(renderer.GetFrameIndex())]
+    uniformBufferObjectBuffers[renderer.GetFrameIndex()]
         ->writeToBuffer(&uniformBufferObject);
-    uniformBufferObjectBuffers[static_cast<u32>(renderer.GetFrameIndex())]
+    uniformBufferObjectBuffers[renderer.GetFrameIndex()]
         ->flush();
   };
 

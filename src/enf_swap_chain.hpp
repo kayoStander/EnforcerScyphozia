@@ -1,5 +1,7 @@
 #pragma once
 
+#include <assert.hpp>
+
 #include "enf_device.hpp"
 
 #include <memory>
@@ -13,37 +15,38 @@ public:
 
   SwapChain(Device &deviceRef, VkExtent2D windowExtent);
   SwapChain(Device &deviceRef, VkExtent2D windowExtent,
-            std::shared_ptr<SwapChain> previous);
+            const std::shared_ptr<SwapChain> &previous);
 
   ~SwapChain();
 
   SwapChain(const SwapChain &) = delete;
   SwapChain &operator=(const SwapChain &) = delete;
 
-  VkFramebuffer getFrameBuffer(const size_t index) {
+  [[nodiscard]] VkFramebuffer getFrameBuffer(const size_t index) const noexcept {
     return swapChainFramebuffers[index];
   }
-  VkRenderPass getRenderPass() { return renderPass; }
-  VkImageView getImageView(const size_t index) {
+  [[nodiscard]] VkRenderPass getRenderPass() const { return renderPass; }
+  [[nodiscard]] VkImageView getImageView(const size_t index) const noexcept {
     return swapChainImageViews[index];
   }
-  size_t imageCount() noexcept { return swapChainImages.size(); }
-  VkFormat getSwapChainImageFormat() noexcept { return swapChainImageFormat; }
-  VkExtent2D getSwapChainExtent() noexcept { return swapChainExtent; }
-  u32 width() noexcept { return swapChainExtent.width; }
-  u32 height() noexcept { return swapChainExtent.height; }
+  [[nodiscard]] size_t imageCount() const noexcept { return swapChainImages.size(); }
+  [[nodiscard]] VkFormat getSwapChainImageFormat() const noexcept { return swapChainImageFormat; }
+  [[nodiscard]] VkExtent2D getSwapChainExtent() const noexcept { return swapChainExtent; }
+  [[nodiscard]] u32 width() const noexcept { return swapChainExtent.width; }
+  [[nodiscard]] u32 height() const noexcept { return swapChainExtent.height; }
 
-  float extentAspectRatio() {
+  [[nodiscard]] float extentAspectRatio() const {
+    ASSERT_LOG(swapChainExtent.width != 0 || swapChainExtent.height != 0, "Cant divide swapChains width/height by 0");
     return static_cast<float>(swapChainExtent.width) /
            static_cast<float>(swapChainExtent.height);
   }
   VkFormat findDepthFormat();
 
-  VkResult acquireNextImage(uint32_t *imageIndex);
+  VkResult acquireNextImage(uint32_t *imageIndex) const;
   VkResult submitCommandBuffers(const VkCommandBuffer *buffers,
-                                uint32_t *imageIndex);
+                                uint32_t const *imageIndex);
 
-  bool CompareSwapFormats(const SwapChain &swapChain) const noexcept {
+  [[nodiscard]] bool CompareSwapFormats(const SwapChain &swapChain) const noexcept {
     return swapChain.swapChainDepthFormat == swapChainDepthFormat &&
            swapChain.swapChainImageFormat == swapChainImageFormat;
   }
@@ -54,7 +57,7 @@ private:
   void createImageViews();
   void createDepthResources();
   void createRenderPass();
-  void createFramebuffers();
+  void createFrameBuffers();
   void createSyncObjects();
 
   // Helper functions

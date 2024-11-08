@@ -32,7 +32,6 @@ layout(push_constant) uniform Push {
   float reflection;
   int imageBind; 
 } push;
-
 void main(){
   vec4 positionWorld = push.modelMatrix * vec4(position,1.);
   gl_Position = uniformBufferObject.projection * uniformBufferObject.view * positionWorld;

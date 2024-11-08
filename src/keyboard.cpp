@@ -1,5 +1,6 @@
 #include "keyboard.hpp"
 
+#include <cmath>
 #include <limits>
 
 namespace Enforcer {
@@ -31,9 +32,9 @@ void Keyboard::MoveInPlaneXZ(GLFWwindow *window, const float deltaTime,
       glm::mod(gameObject.transform.rotation.y, glm::two_pi<float>());
 
   const float yaw = gameObject.transform.rotation.y;
-  const glm::vec3 forwardDirection{sin(yaw), 0.f, cos(yaw)};
+  const glm::vec3 forwardDirection{std::sin(yaw), 0.f, std::cos(yaw)};
   const glm::vec3 rightDirection{forwardDirection.z, 0.f, -forwardDirection.x};
-  const glm::vec3 upDirection{0.f, -1.f, 0.f};
+  constexpr glm::vec3 upDirection{0.f, -1.f, 0.f};
 
   glm::vec3 moveDirection{0.f};
   if (glfwGetKey(window, KeyMappings::moveForward) == GLFW_PRESS) {
@@ -53,6 +54,12 @@ void Keyboard::MoveInPlaneXZ(GLFWwindow *window, const float deltaTime,
   }
   if (glfwGetKey(window, KeyMappings::moveDown) == GLFW_PRESS) {
     moveDirection -= upDirection;
+  }
+
+  if (glfwGetKey(window, KeyMappings::Sprint) == GLFW_PRESS) {
+    moveSpeed = MOVE_SPEED_SPRINT;
+  } else {
+    moveSpeed = MOVE_SPEED_WALK;
   }
 
   if (glm::dot(moveDirection, moveDirection) >
