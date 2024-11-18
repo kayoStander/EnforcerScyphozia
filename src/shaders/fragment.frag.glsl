@@ -27,10 +27,10 @@ layout(set = 0, binding = 0) uniform GlobalUniformBufferObject{
 layout(set = 0, binding = 1) uniform sampler2D/*Array*/ image[imagesAmount];
 layout(set = 0, binding = 2) uniform samplerCube enviromentMap;
 layout(push_constant) uniform Push {
-  mat4 modelMatrix; 
-  mat4 normalMatrix; 
+  mat4 modelMatrix;
+  mat4 normalMatrix;
   float reflection;
-  int imageBind; 
+  int imageBind;
   //bool isImpostor;
 } push;
 
@@ -42,8 +42,8 @@ void main(){
   const vec3 cameraPositionWorld = uniformBufferObject.inverseView[3].xyz;
   const vec3 viewDirection = normalize(cameraPositionWorld - fragPositionWorld);
 
-  vec3 directionalLightDirection = normalize(vec3(-7.0, -7.0, -1.0)); 
-  vec3 directionalLightColor = vec3(1., 1., 1.); 
+  vec3 directionalLightDirection = normalize(vec3(-7.0, -7.0, -1.0));
+  vec3 directionalLightColor = vec3(1., 1., 1.);
 
   float cosAngIncidence = max(dot(surfaceNormal, directionalLightDirection), 0.0);
   diffuseLight += directionalLightColor * cosAngIncidence;
@@ -54,7 +54,7 @@ void main(){
     float attenuation = 1./dot(directionToLight,directionToLight); // distance squared
     directionToLight = normalize(directionToLight);
 
-    float cosAngIncidence = max(dot(surfaceNormal,directionToLight),0); 
+    float cosAngIncidence = max(dot(surfaceNormal,directionToLight),0);
     vec3 intensity = light.color.xyz * light.color.w * attenuation;
   
     diffuseLight += intensity * cosAngIncidence;
@@ -82,10 +82,11 @@ void main(){
 
   vec3 hdrColor = mix(vec3(.1,.1,.155),(diffuseLight * fragColor + specularLight * fragColor) * imageColor +
                       push.reflection * reflectionColor,fogFactor);
-    // bloom
+  
+  // bloom
   float brightnessThreshold = .5;
   float brightness = dot(hdrColor,vec3(0.2126, 0.7152, 0.0722));
   vec3 brightColor = (brightness > brightnessThreshold) ? hdrColor : vec3(0.0);
 
-  outColor = vec4(hdrColor + brightColor * .25, 1.0);  
+  outColor = vec4(hdrColor + brightColor * .25, 1.0);
 }

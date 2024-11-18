@@ -7,73 +7,71 @@
 #include "enf_renderer.hpp"
 #include "enf_texture.hpp"
 #include "enf_window.hpp"
+#include "../game/player.hpp"
 
 #include <memory>
 #include <unordered_map>
-
 
 #define WIDTH 800
 #define HEIGHT 600
 
 namespace Enforcer {
-class Application {
-public:
-  explicit Application();
-  ~Application() = default;
+  class Application {
+  public:
+    explicit Application();
+    ~Application() = default;
 
-  Application(const Application &) = delete;
-  Application &operator=(const Application &) = delete;
+    Application(const Application &) = delete;
+    Application &operator=(const Application &) = delete;
 
-  void Run();
+    void Run();
 
-private:
-  void LoadGameObjects();
+  private:
+    void LoadGameObjects();
 
-  void AddTexture(const std::string &filepath) noexcept {
-    textures.push_back(
-        std::make_unique<Texture>(device, "textures/" + filepath));
-  }
-  void AddTextureCube(const std::string &filepath) noexcept {
-    texturesCube.push_back(
-        std::make_unique<Texture>(device, "textures/" + filepath, 6));
-  }
+    void AddTexture(const std::string &filepath) noexcept {
+      textures.push_back(std::make_unique<Texture>(device, "textures/" + filepath));
+    }
+    void AddTextureCube(const std::string &filepath) noexcept {
+      texturesCube.push_back(std::make_unique<Texture>(device, "textures/" + filepath, 6));
+    }
 
-  [[deprecated("wip")]] void
-  static AddObject([[maybe_unused]] const std::string &filepath) noexcept {
-  }
+    GameObject CreateObject() noexcept {
+      GameObject gameObject{GameObject::CreateGameObject()};
+      gameObjects.emplace(gameObject.GetId(), std::move(gameObject));
+      return gameObject;
+    }
 
-  [[nodiscard]] [[deprecated(
-      "not working as expected yet")]] VkDescriptorImageInfo
-  static GetTextureDescriptorImageInfo(const std::unique_ptr<Texture> &texture) noexcept {
-    VkDescriptorImageInfo textureDescriptorImageInfo{};
-    textureDescriptorImageInfo.sampler = texture->GetSampler();
-    textureDescriptorImageInfo.imageView = texture->GetImageView();
-    textureDescriptorImageInfo.imageLayout = texture->GetImageLayout();
-    return textureDescriptorImageInfo;
-  }
+    [[nodiscard]] [[deprecated(
+    "not working as expected yet")]] VkDescriptorImageInfo static GetTextureDescriptorImageInfo(const std::
+                                                                                                unique_ptr<Texture>
+                                                                                                &texture) noexcept {
+      VkDescriptorImageInfo textureDescriptorImageInfo{};
+      textureDescriptorImageInfo.sampler = texture->GetSampler();
+      textureDescriptorImageInfo.imageView = texture->GetImageView();
+      textureDescriptorImageInfo.imageLayout = texture->GetImageLayout();
+      return textureDescriptorImageInfo;
+    }
 
-  template <typename T>
-  void UpdateUniformBufferObject(
-      const std::vector<std::unique_ptr<Buffer>> &uniformBufferObjectBuffers,
-      T &uniformBufferObject) noexcept {
-    uniformBufferObjectBuffers[renderer.GetFrameIndex()]
-        ->writeToBuffer(&uniformBufferObject);
-    uniformBufferObjectBuffers[renderer.GetFrameIndex()]
-        ->flush();
+    template<typename T>
+    void UpdateUniformBufferObject(const std::vector<std::unique_ptr<Buffer>> &uniformBufferObjectBuffers,
+                                   T &uniformBufferObject) noexcept {
+      uniformBufferObjectBuffers[renderer.GetFrameIndex()]->writeToBuffer(&uniformBufferObject);
+      uniformBufferObjectBuffers[renderer.GetFrameIndex()]->flush();
+    };
+
+    Window window{WIDTH, HEIGHT};
+    Device device{window};
+    Renderer renderer{window, device};
+
+    // order of declaration matters
+    DefaultUniformBufferObject uniformBufferObject;
+
+    std::unique_ptr<DescriptorPool> defaultPool{};
+
+    std::vector<std::unique_ptr<Texture>> textures{};
+    std::vector<std::unique_ptr<Texture>> texturesCube{};
+
+    std::unordered_map<u32, GameObject> gameObjects{};
   };
-
-  Window window{WIDTH, HEIGHT};
-  Device device{window};
-  Renderer renderer{window, device};
-
-  // order of declaration matters
-  DefaultUniformBufferObject uniformBufferObject;
-
-  std::unique_ptr<DescriptorPool> defaultPool{};
-
-  std::vector<std::unique_ptr<Texture>> textures{};
-  std::vector<std::unique_ptr<Texture>> texturesCube{};
-
-  std::unordered_map<u32, GameObject> gameObjects{};
-};
 } // namespace Enforcer

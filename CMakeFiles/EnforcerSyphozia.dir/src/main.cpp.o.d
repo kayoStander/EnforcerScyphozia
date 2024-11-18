@@ -138,9 +138,9 @@ CMakeFiles/EnforcerSyphozia.dir/src/main.cpp.o: \
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
- /usr/include/glm/glm.hpp /usr/include/glm/detail/_fixes.hpp \
- /usr/include/c++/13/cmath /usr/include/math.h \
- /usr/include/x86_64-linux-gnu/bits/math-vector.h \
+ /usr/include/c++/13/stdfloat /usr/include/glm/glm.hpp \
+ /usr/include/glm/detail/_fixes.hpp /usr/include/c++/13/cmath \
+ /usr/include/math.h /usr/include/x86_64-linux-gnu/bits/math-vector.h \
  /usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h \
  /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h \
  /usr/include/x86_64-linux-gnu/bits/fp-logb.h \
@@ -405,10 +405,41 @@ CMakeFiles/EnforcerSyphozia.dir/src/main.cpp.o: \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/enf_frame_info.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/enf_camera.hpp \
  /usr/include/c++/13/array \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/external/imgui/backends/imgui_impl_glfw.h \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/external/imgui/backends/../imgui.h \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/external/imgui/backends/../imconfig.h \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/enf_game_object.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/enf_model.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/enf_buffer.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/enf_renderer.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../common/assert.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/enf_swap_chain.hpp \
- /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/enf_texture.hpp
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/enf_texture.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../game/player.hpp \
+ /usr/include/c++/13/chrono /usr/include/c++/13/bits/chrono.h \
+ /usr/include/c++/13/ratio /usr/include/c++/13/ctime \
+ /usr/include/c++/13/bits/parse_numbers.h /usr/include/c++/13/sstream \
+ /usr/include/c++/13/bits/sstream.tcc \
+ /usr/include/c++/13/bits/chrono_io.h /usr/include/c++/13/iomanip \
+ /usr/include/c++/13/locale \
+ /usr/include/c++/13/bits/locale_facets_nonio.h \
+ /usr/include/x86_64-linux-gnu/c++/13/bits/time_members.h \
+ /usr/include/x86_64-linux-gnu/c++/13/bits/messages_members.h \
+ /usr/include/libintl.h /usr/include/c++/13/bits/codecvt.h \
+ /usr/include/c++/13/bits/locale_facets_nonio.tcc \
+ /usr/include/c++/13/bits/locale_conv.h \
+ /usr/include/c++/13/bits/quoted_string.h /usr/include/c++/13/format \
+ /usr/include/c++/13/charconv /usr/include/c++/13/span \
+ /usr/include/c++/13/variant /usr/include/c++/13/functional \
+ /usr/include/c++/13/bits/std_function.h \
+ /usr/include/c++/13/bits/move_only_function.h \
+ /usr/include/c++/13/bits/mofunc_impl.h /usr/include/c++/13/thread \
+ /usr/include/c++/13/stop_token /usr/include/c++/13/atomic \
+ /usr/include/c++/13/bits/std_thread.h /usr/include/c++/13/semaphore \
+ /usr/include/c++/13/bits/semaphore_base.h \
+ /usr/include/c++/13/bits/atomic_timed_wait.h \
+ /usr/include/c++/13/bits/this_thread_sleep.h \
+ /usr/include/x86_64-linux-gnu/sys/time.h /usr/include/semaphore.h \
+ /usr/include/x86_64-linux-gnu/bits/semaphore.h \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../game/elements.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../game/../src/keyboard.hpp

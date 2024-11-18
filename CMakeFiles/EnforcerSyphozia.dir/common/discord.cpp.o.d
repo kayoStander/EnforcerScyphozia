@@ -31,14 +31,15 @@ CMakeFiles/EnforcerSyphozia.dir/common/discord.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/common/discord.hpp \
- /home/heck/prog/cpp/vulkan/EnforcerScyphozia/common/types.hpp \
- /usr/include/c++/13/cstdint \
+ /usr/local/include/discord_register.h /usr/local/include/discord_rpc.h \
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
  /usr/include/x86_64-linux-gnu/bits/wchar.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/common/types.hpp \
+ /usr/include/c++/13/cstdint /usr/include/c++/13/stdfloat \
  /usr/include/c++/13/type_traits /usr/include/glm/glm.hpp \
  /usr/include/glm/detail/_fixes.hpp /usr/include/c++/13/cmath \
  /usr/include/c++/13/bits/requires_hosted.h \
@@ -244,7 +245,6 @@ CMakeFiles/EnforcerSyphozia.dir/common/discord.cpp.o: \
  /usr/include/glm/ext/matrix_transform.hpp \
  /usr/include/glm/ext/matrix_transform.inl \
  /usr/include/glm/gtc/matrix_transform.inl \
- /usr/local/include/discord_register.h /usr/local/include/discord_rpc.h \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/common/logging/log.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/common/logging/text_formatter.hpp \
  /usr/include/c++/13/string /usr/include/c++/13/bits/stringfwd.h \

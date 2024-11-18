@@ -8,6 +8,7 @@ set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -Wno-sign-conversion -Wstrict-overflo
 
 # Include directories
 include_directories(
+        ${CMAKE_SOURCE_DIR}/game
         ${CMAKE_SOURCE_DIR}/common
         ${CMAKE_SOURCE_DIR}/external
         ${CMAKE_SOURCE_DIR}/external/imgui
@@ -22,6 +23,15 @@ file(GLOB_RECURSE SRCS
         common/*.cpp
         common/logging/*.cpp
 )
+
+file(GLOB_RECURSE HDRS
+        game/*.hpp
+        src/*.hpp
+        src/systems/*.hpp
+        common/*.hpp
+        common/logging/*.hpp
+)
+
 
 # ImGui source files
 file(GLOB IMGUI_SRCS
@@ -75,7 +85,7 @@ else()
 endif()
 
 # Define the target executable
-add_executable(${PROJECT_NAME} ${SRCS})
+add_executable(${PROJECT_NAME} ${SRCS} ${HDRS})
 
 # Link dependencies
 target_link_libraries(${PROJECT_NAME}

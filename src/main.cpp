@@ -7,7 +7,6 @@
 static_assert(__cplusplus >= 202100L, "The required version is C++20 or more.");
 
 int main([[maybe_unused]] const int argc, [[maybe_unused]] const char *argv[]) {
-
   Enforcer::Application app{};
   try {
     app.Run();

@@ -26,14 +26,16 @@ layout(push_constant) uniform Push {
   float fogStart;
   float fogEnd;
 } push;
-
+float LengthSquared(vec3 vector3){
+  return vector3.x * vector3.x + vector3.y * vector3.y + vector3.z * vector3.z
+}
 void main() {
   /*
   vec2 uv = fragUV * 2.0 - 1.0;
   vec3 viewDirection = normalize(vec3(uv.x, uv.y, -1.0));
   vec3 worldDirection = normalize((mat4(mat3(uniformBufferObject.inverseView)) * vec4(viewDirection,0.)).xyz);
   */
-
+  
   vec4 textureColor = texture(images[4],fragUV);
 
   /*const float density = .0005;

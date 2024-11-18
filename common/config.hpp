@@ -8,36 +8,31 @@
 
 namespace Config {
 
-///////////////////////////////////////////////////////////////////////////////
-//                                      GETTER                               //
-///////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////
+  //                                      GETTER                               //
+  ///////////////////////////////////////////////////////////////////////////////
 
-// namespace Window{
-[[gnu::pure, nodiscard]] auto GetMainWindowName() noexcept -> std::string;
-//}
-namespace Scissors {
-[[gnu::pure, nodiscard]] auto GetScissorsOffset() noexcept -> VkOffset2D;
-}
+  // namespace Window{
+  [[gnu::pure, nodiscard]] auto GetMainWindowName() noexcept -> std::string;
+  //}
+  namespace Scissors {
+    [[gnu::pure, nodiscard]] auto GetScissorsOffset() noexcept -> VkOffset2D;
+  }
 
-namespace DeviceFeatures {
-enum class PhysicalDeviceFeatures : u32 {
-  wideLines = 0,
-  samplerAnisotropy,
-  count
-};
+  namespace DeviceFeatures {
+    enum class PhysicalDeviceFeatures : u32 { wideLines = 0, samplerAnisotropy, count };
 
-[[gnu::pure, nodiscard]] auto
-GetPhysicalDeviceFeatures() noexcept -> std::vector<PhysicalDeviceFeatures>;
-} // namespace DeviceFeatures
+    [[gnu::pure, nodiscard]] auto GetPhysicalDeviceFeatures() noexcept -> std::vector<PhysicalDeviceFeatures>;
+  } // namespace DeviceFeatures
 
-///////////////////////////////////////////////////////////////////////////////
-//                                      SETTER                               //
-///////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////
+  //                                      SETTER                               //
+  ///////////////////////////////////////////////////////////////////////////////
 
-namespace Scissors {
-constexpr void SetScissorsOffset(const u32 width, const u32 height) noexcept;
-}
-// namespace Window {
-void SetMainWindowName(const std::string name) noexcept;
-//} // namespace Window
+  namespace Scissors {
+    constexpr void SetScissorsOffset(const u32 width, const u32 height) noexcept;
+  }
+  // namespace Window {
+  void SetMainWindowName(const std::string name) noexcept;
+  //} // namespace Window
 } // namespace Config

@@ -25,9 +25,9 @@ CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_point_light_system.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
- /usr/include/c++/13/type_traits /usr/include/glm/glm.hpp \
- /usr/include/glm/detail/_fixes.hpp /usr/include/c++/13/cmath \
- /usr/include/c++/13/bits/requires_hosted.h \
+ /usr/include/c++/13/stdfloat /usr/include/c++/13/type_traits \
+ /usr/include/glm/glm.hpp /usr/include/glm/detail/_fixes.hpp \
+ /usr/include/c++/13/cmath /usr/include/c++/13/bits/requires_hosted.h \
  /usr/include/c++/13/bits/cpp_type_traits.h \
  /usr/include/c++/13/ext/type_traits.h /usr/include/math.h \
  /usr/include/x86_64-linux-gnu/bits/math-vector.h \
@@ -281,6 +281,13 @@ CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_point_light_system.cpp.o: \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/systems/../enf_frame_info.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/systems/../enf_camera.hpp \
  /usr/include/c++/13/array \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/external/imgui/backends/imgui_impl_glfw.h \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/external/imgui/backends/../imgui.h \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/external/imgui/backends/../imconfig.h \
+ /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h /usr/include/string.h \
+ /usr/include/strings.h \
+ /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
+ /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/systems/../enf_game_object.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/systems/../enf_model.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/systems/../enf_buffer.hpp \
@@ -290,8 +297,7 @@ CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_point_light_system.cpp.o: \
  /usr/include/c++/13/ostream /usr/include/c++/13/ios \
  /usr/include/c++/13/iosfwd /usr/include/c++/13/bits/stringfwd.h \
  /usr/include/c++/13/bits/postypes.h /usr/include/c++/13/cwchar \
- /usr/include/wchar.h /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
- /usr/include/x86_64-linux-gnu/bits/types/wint_t.h \
+ /usr/include/wchar.h /usr/include/x86_64-linux-gnu/bits/types/wint_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__FILE.h \
@@ -393,6 +399,9 @@ CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_point_light_system.cpp.o: \
  /usr/include/c++/13/bits/node_handle.h \
  /usr/include/c++/13/bits/erase_if.h \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/systems/../enf_pipeline.hpp \
+ /usr/include/c++/13/map /usr/include/c++/13/bits/stl_tree.h \
+ /usr/include/c++/13/bits/stl_map.h \
+ /usr/include/c++/13/bits/stl_multimap.h \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/systems/../../common/assert.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/systems/../../common/logging/log.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/systems/../../common/logging/text_formatter.hpp \
@@ -405,11 +414,6 @@ CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_point_light_system.cpp.o: \
  /usr/include/c++/13/bits/uniform_int_dist.h \
  /usr/include/c++/13/bits/ranges_algo.h /usr/include/c++/13/optional \
  /usr/include/c++/13/pstl/glue_algorithm_defs.h /usr/include/fmt/core.h \
- /usr/include/c++/13/cstring /usr/include/string.h /usr/include/strings.h \
- /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
- /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
- /usr/include/c++/13/iterator /usr/include/c++/13/bits/stream_iterator.h \
- /usr/include/c++/13/iostream /usr/include/c++/13/istream \
- /usr/include/c++/13/bits/istream.tcc /usr/include/c++/13/map \
- /usr/include/c++/13/bits/stl_tree.h /usr/include/c++/13/bits/stl_map.h \
- /usr/include/c++/13/bits/stl_multimap.h
+ /usr/include/c++/13/cstring /usr/include/c++/13/iterator \
+ /usr/include/c++/13/bits/stream_iterator.h /usr/include/c++/13/iostream \
+ /usr/include/c++/13/istream /usr/include/c++/13/bits/istream.tcc

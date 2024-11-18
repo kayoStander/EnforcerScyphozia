@@ -728,6 +728,30 @@ src/enf_pipeline.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/src/enf_pipeline.cpp.s
 .PHONY : src/enf_pipeline.cpp.s
 
+src/enf_raycast.o: src/enf_raycast.cpp.o
+.PHONY : src/enf_raycast.o
+
+# target to build an object file
+src/enf_raycast.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/src/enf_raycast.cpp.o
+.PHONY : src/enf_raycast.cpp.o
+
+src/enf_raycast.i: src/enf_raycast.cpp.i
+.PHONY : src/enf_raycast.i
+
+# target to preprocess a source file
+src/enf_raycast.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/src/enf_raycast.cpp.i
+.PHONY : src/enf_raycast.cpp.i
+
+src/enf_raycast.s: src/enf_raycast.cpp.s
+.PHONY : src/enf_raycast.s
+
+# target to generate assembly for a file
+src/enf_raycast.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/src/enf_raycast.cpp.s
+.PHONY : src/enf_raycast.cpp.s
+
 src/enf_renderer.o: src/enf_renderer.cpp.o
 .PHONY : src/enf_renderer.o
 
@@ -895,6 +919,30 @@ src/main.s: src/main.cpp.s
 src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
+
+src/systems/enf_ocean_system.o: src/systems/enf_ocean_system.cpp.o
+.PHONY : src/systems/enf_ocean_system.o
+
+# target to build an object file
+src/systems/enf_ocean_system.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_ocean_system.cpp.o
+.PHONY : src/systems/enf_ocean_system.cpp.o
+
+src/systems/enf_ocean_system.i: src/systems/enf_ocean_system.cpp.i
+.PHONY : src/systems/enf_ocean_system.i
+
+# target to preprocess a source file
+src/systems/enf_ocean_system.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_ocean_system.cpp.i
+.PHONY : src/systems/enf_ocean_system.cpp.i
+
+src/systems/enf_ocean_system.s: src/systems/enf_ocean_system.cpp.s
+.PHONY : src/systems/enf_ocean_system.s
+
+# target to generate assembly for a file
+src/systems/enf_ocean_system.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_ocean_system.cpp.s
+.PHONY : src/systems/enf_ocean_system.cpp.s
 
 src/systems/enf_physics_system.o: src/systems/enf_physics_system.cpp.o
 .PHONY : src/systems/enf_physics_system.o
@@ -1073,6 +1121,9 @@ help:
 	@echo "... src/enf_pipeline.o"
 	@echo "... src/enf_pipeline.i"
 	@echo "... src/enf_pipeline.s"
+	@echo "... src/enf_raycast.o"
+	@echo "... src/enf_raycast.i"
+	@echo "... src/enf_raycast.s"
 	@echo "... src/enf_renderer.o"
 	@echo "... src/enf_renderer.i"
 	@echo "... src/enf_renderer.s"
@@ -1094,6 +1145,9 @@ help:
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/systems/enf_ocean_system.o"
+	@echo "... src/systems/enf_ocean_system.i"
+	@echo "... src/systems/enf_ocean_system.s"
 	@echo "... src/systems/enf_physics_system.o"
 	@echo "... src/systems/enf_physics_system.i"
 	@echo "... src/systems/enf_physics_system.s"

@@ -7,28 +7,26 @@
 #include <memory>
 
 namespace Enforcer {
-class PointLightSystem {
-public:
-  explicit PointLightSystem(Device &device, VkRenderPass renderPass,
-                            VkDescriptorSetLayout globalSetLayout);
-  ~PointLightSystem();
+  class PointLightSystem {
+  public:
+    explicit PointLightSystem(Device &device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout);
+    ~PointLightSystem();
 
-  PointLightSystem(const PointLightSystem &) = delete;
-  PointLightSystem &operator=(const PointLightSystem &) = delete;
+    PointLightSystem(const PointLightSystem &) = delete;
+    PointLightSystem &operator=(const PointLightSystem &) = delete;
 
-  void Update(FrameInfo &frameInfo,
-              DefaultUniformBufferObject &uniformBufferObject);
-  void Render(FrameInfo &frameInfo);
+    void Update(const FrameInfo &frameInfo, DefaultUniformBufferObject &uniformBufferObject);
+    void Render(FrameInfo &frameInfo);
 
-  const std::vector<u32> specializedValues{MAX_LIGHTS};
+    const std::vector<u32> specializedValues{MAX_LIGHTS};
 
-private:
-  void CreatePipelineLayout(VkDescriptorSetLayout globalSetLayout);
-  void CreatePipeline(VkRenderPass renderPass);
+  private:
+    void CreatePipelineLayout(VkDescriptorSetLayout globalSetLayout);
+    void CreatePipeline(VkRenderPass renderPass);
 
-  Device &device;
+    Device &device;
 
-  std::unique_ptr<Pipeline> pipeline;
-  VkPipelineLayout pipelineLayout;
-};
+    std::unique_ptr<Pipeline> pipeline;
+    VkPipelineLayout pipelineLayout;
+  };
 } // namespace Enforcer

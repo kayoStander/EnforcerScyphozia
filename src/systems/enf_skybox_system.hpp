@@ -7,26 +7,25 @@
 #include <memory>
 
 namespace Enforcer {
-class SkyboxSystem {
-public:
-  explicit SkyboxSystem(Device &device, VkRenderPass renderPass,
-                        VkDescriptorSetLayout globalSetLayout);
-  ~SkyboxSystem();
+  class SkyboxSystem {
+  public:
+    explicit SkyboxSystem(Device &device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout);
+    ~SkyboxSystem();
 
-  SkyboxSystem(const SkyboxSystem &) = delete;
-  SkyboxSystem &operator=(const SkyboxSystem &) = delete;
+    SkyboxSystem(const SkyboxSystem &) = delete;
+    SkyboxSystem &operator=(const SkyboxSystem &) = delete;
 
-  void RenderSkybox(const FrameInfo &frameInfo) const;
+    void RenderSkybox(const FrameInfo &frameInfo) const;
 
-  const std::vector<u32> specializedValues{MAX_LIGHTS, MAX_TEXTURE};
+    const std::vector<u32> specializedValues{MAX_LIGHTS, MAX_TEXTURE};
 
-private:
-  void CreatePipelineLayout(VkDescriptorSetLayout globalSetLayout);
-  void CreatePipeline(VkRenderPass renderPass);
+  private:
+    void CreatePipelineLayout(VkDescriptorSetLayout globalSetLayout);
+    void CreatePipeline(VkRenderPass renderPass);
 
-  Device &device;
+    Device &device;
 
-  std::unique_ptr<Pipeline> pipeline;
-  VkPipelineLayout pipelineLayout;
-};
+    std::unique_ptr<Pipeline> pipeline;
+    VkPipelineLayout pipelineLayout;
+  };
 } // namespace Enforcer

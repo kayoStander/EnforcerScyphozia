@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = -DDEBUG
 
-CXX_INCLUDES = -I/home/heck/prog/cpp/vulkan/EnforcerScyphozia/common -I/home/heck/prog/cpp/vulkan/EnforcerScyphozia/external -I/home/heck/prog/cpp/vulkan/EnforcerScyphozia/external/imgui
+CXX_INCLUDES = -I/home/heck/prog/cpp/vulkan/EnforcerScyphozia/game -I/home/heck/prog/cpp/vulkan/EnforcerScyphozia/common -I/home/heck/prog/cpp/vulkan/EnforcerScyphozia/external -I/home/heck/prog/cpp/vulkan/EnforcerScyphozia/external/imgui
 
 CXX_FLAGS = -Wall -Wextra -Werror -Wno-sign-conversion -Wstrict-overflow=2 -mcmodel=small -Wvla -O3 -std=gnu++23
 

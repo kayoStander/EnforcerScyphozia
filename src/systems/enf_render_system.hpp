@@ -7,26 +7,25 @@
 #include <memory>
 
 namespace Enforcer {
-class RenderSystem {
-public:
-  explicit RenderSystem(Device &device, VkRenderPass renderPass,
-                        VkDescriptorSetLayout globalSetLayout);
-  ~RenderSystem();
+  class RenderSystem {
+  public:
+    explicit RenderSystem(Device &device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout);
+    ~RenderSystem();
 
-  RenderSystem(const RenderSystem &) = delete;
-  RenderSystem &operator=(const RenderSystem &) = delete;
+    RenderSystem(const RenderSystem &) = delete;
+    RenderSystem &operator=(const RenderSystem &) = delete;
 
-  void RenderGameObjects(const FrameInfo &frameInfo) const;
+    void RenderGameObjects(const FrameInfo &frameInfo) const;
 
-  const std::vector<u32> specializedValues{MAX_LIGHTS, MAX_TEXTURE};
+    const std::vector<u32> specializedValues{MAX_LIGHTS, MAX_TEXTURE};
 
-private:
-  void CreatePipelineLayout(VkDescriptorSetLayout globalSetLayout);
-  void CreatePipeline(VkRenderPass renderPass);
+  private:
+    void CreatePipelineLayout(VkDescriptorSetLayout globalSetLayout);
+    void CreatePipeline(VkRenderPass renderPass);
 
-  Device &device;
+    Device &device;
 
-  std::unique_ptr<Pipeline> pipeline;
-  VkPipelineLayout pipelineLayout;
-};
+    std::unique_ptr<Pipeline> pipeline;
+    VkPipelineLayout pipelineLayout;
+  };
 } // namespace Enforcer

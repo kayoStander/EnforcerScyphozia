@@ -26,9 +26,9 @@ CMakeFiles/EnforcerSyphozia.dir/src/application.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
- /usr/include/c++/13/type_traits /usr/include/glm/glm.hpp \
- /usr/include/glm/detail/_fixes.hpp /usr/include/c++/13/cmath \
- /usr/include/c++/13/bits/requires_hosted.h \
+ /usr/include/c++/13/stdfloat /usr/include/c++/13/type_traits \
+ /usr/include/glm/glm.hpp /usr/include/glm/detail/_fixes.hpp \
+ /usr/include/c++/13/cmath /usr/include/c++/13/bits/requires_hosted.h \
  /usr/include/c++/13/bits/cpp_type_traits.h \
  /usr/include/c++/13/ext/type_traits.h /usr/include/math.h \
  /usr/include/x86_64-linux-gnu/bits/math-vector.h \
@@ -390,6 +390,12 @@ CMakeFiles/EnforcerSyphozia.dir/src/application.cpp.o: \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/enf_frame_info.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/enf_camera.hpp \
  /usr/include/c++/13/array \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/external/imgui/backends/imgui_impl_glfw.h \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/external/imgui/backends/../imgui.h \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/external/imgui/backends/../imconfig.h \
+ /usr/include/string.h /usr/include/strings.h \
+ /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
+ /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/enf_game_object.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/enf_model.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/enf_buffer.hpp \
@@ -406,22 +412,12 @@ CMakeFiles/EnforcerSyphozia.dir/src/application.cpp.o: \
  /usr/include/c++/13/bits/uniform_int_dist.h \
  /usr/include/c++/13/bits/ranges_algo.h /usr/include/c++/13/optional \
  /usr/include/c++/13/pstl/glue_algorithm_defs.h /usr/include/fmt/core.h \
- /usr/include/c++/13/cstring /usr/include/string.h /usr/include/strings.h \
- /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
- /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
- /usr/include/c++/13/iterator /usr/include/c++/13/bits/stream_iterator.h \
- /usr/include/c++/13/iostream /usr/include/c++/13/istream \
- /usr/include/c++/13/bits/istream.tcc \
+ /usr/include/c++/13/cstring /usr/include/c++/13/iterator \
+ /usr/include/c++/13/bits/stream_iterator.h /usr/include/c++/13/iostream \
+ /usr/include/c++/13/istream /usr/include/c++/13/bits/istream.tcc \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/enf_swap_chain.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/enf_texture.hpp \
- /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../common/discord.hpp \
- /usr/local/include/discord_register.h /usr/local/include/discord_rpc.h \
- /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/keyboard.hpp \
- /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/systems/enf_physics_system.hpp \
- /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/systems/enf_point_light_system.hpp \
- /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/systems/../enf_pipeline.hpp \
- /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/systems/enf_render_system.hpp \
- /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/systems/enf_skybox_system.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../game/player.hpp \
  /usr/include/c++/13/chrono /usr/include/c++/13/bits/chrono.h \
  /usr/include/c++/13/ratio /usr/include/c++/13/ctime \
  /usr/include/c++/13/bits/parse_numbers.h /usr/include/c++/13/sstream \
@@ -436,8 +432,28 @@ CMakeFiles/EnforcerSyphozia.dir/src/application.cpp.o: \
  /usr/include/c++/13/bits/locale_conv.h \
  /usr/include/c++/13/bits/quoted_string.h /usr/include/c++/13/format \
  /usr/include/c++/13/charconv /usr/include/c++/13/span \
- /usr/include/c++/13/variant /usr/include/c++/13/random \
- /usr/include/c++/13/bits/random.h \
+ /usr/include/c++/13/variant /usr/include/c++/13/functional \
+ /usr/include/c++/13/bits/std_function.h \
+ /usr/include/c++/13/bits/move_only_function.h \
+ /usr/include/c++/13/bits/mofunc_impl.h /usr/include/c++/13/thread \
+ /usr/include/c++/13/stop_token /usr/include/c++/13/atomic \
+ /usr/include/c++/13/bits/std_thread.h /usr/include/c++/13/semaphore \
+ /usr/include/c++/13/bits/semaphore_base.h \
+ /usr/include/c++/13/bits/atomic_timed_wait.h \
+ /usr/include/c++/13/bits/this_thread_sleep.h \
+ /usr/include/x86_64-linux-gnu/sys/time.h /usr/include/semaphore.h \
+ /usr/include/x86_64-linux-gnu/bits/semaphore.h \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../game/elements.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../game/../src/keyboard.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../common/discord.hpp \
+ /usr/local/include/discord_register.h /usr/local/include/discord_rpc.h \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/systems/enf_ocean_system.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/systems/../enf_pipeline.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/systems/enf_physics_system.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/systems/enf_point_light_system.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/systems/enf_render_system.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/systems/enf_skybox_system.hpp \
+ /usr/include/c++/13/random /usr/include/c++/13/bits/random.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/opt_random.h \
  /usr/include/c++/13/bits/random.tcc /usr/include/c++/13/numeric \
  /usr/include/c++/13/bits/stl_numeric.h \
