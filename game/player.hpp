@@ -14,21 +14,6 @@
 #include "../src/enf_game_object.hpp"
 #include "../src/keyboard.hpp"
 
-enum Guild {
-  None = 0,
-  Scholar,
-  Deacon,
-  GuildCount
-};
-
-enum Race {
-  Human = 0,
-  Elf,
-  HighElf,
-  Dwarf,
-  RaceCount
-};
-
 namespace Game {
   class Player {
 
@@ -41,6 +26,7 @@ namespace Game {
       std::unordered_map<Scaling, f32> scaling;
       const bool affectsM1;
       //int perking;
+      std::unordered_map<Scaling, bool> isScaleApplied{}; // REDO THAT LATER, WILL ONLY WORK ONE PER PLAYER FOR NOW
 
       static void GivePerkToPlayer(Player &player, const u32 id) {
         if (id == -1u) { return; }
@@ -62,6 +48,7 @@ namespace Game {
             return id;
           }
         }
+        LOG_ERROR(Core, "There's no such perk as {}", name);
         return -1u;
       }
 
@@ -69,9 +56,9 @@ namespace Game {
       static std::unordered_map<u32, std::shared_ptr<Perk> > perks;
     };
 
-    Player(/*Enforcer::Window &window,*/ Enforcer::Keyboard &keyboard, Enforcer::Camera &camera,
+    Player(Enforcer::Window &window, Enforcer::Keyboard &keyboard, Enforcer::Camera &camera,
            Enforcer::GameObject &viewerObject) noexcept
-      : /*window{window},*/ keyboard{keyboard}, camera{camera}, viewerObject{viewerObject} {
+      : window{window}, keyboard{keyboard}, camera{camera}, viewerObject{viewerObject} {
     };
 
     ~Player() noexcept = default;
@@ -84,19 +71,20 @@ namespace Game {
       if (damage == 0) {
         return;
       }
-      Health -= damage - (Defense == 0 ? 1.2f : Defense) * 1.2f;
+      scalings.at(Scaling::Health) -= damage - (scalings.at(Scaling::Defense) == 0 ? 1.2f : scalings.at(
+        Scaling::Defense)) * 1.2f;
     }
 
     // O(N) possible to refactor
     void attackM1() {
-      /*for ([[maybe_unused]] auto &[id,perk]: perks) {
+      for ([[maybe_unused]] auto &[id,perk]: perks) {
         if (glfwGetMouseButton(window.GetGLFWWindow(),GLFW_MOUSE_BUTTON_LEFT) != GLFW_PRESS) {
           return;
         }
         if (!perk->affectsM1) { return; }
         //if (!Hitbox(range,idk))
         perk->action(*this);
-      }*/
+      }
     }
 
     u32 GetPerkId(const std::string &name) {
@@ -105,54 +93,58 @@ namespace Game {
           return id;
         }
       }
+      LOG_ERROR(Core, "There's no such perk as {}", name);
       return -1u;
     }
 
     void Update() {
-      // thread-possible, just dont wanna do it rn.
+      // thread-possible, just don't want to do it rn.
       for (const auto &[id,perk]: perks) {
-        if (perk && perk->action) {
-            perk->action(*this);
+        if (!perk->affectsM1 and perk->action) {
+          perk->action(*this);
         }
 
+        keyboard.moveSpeed = scalings.at(Scaling::MoveSpeed);
 
-        /*#define SET_SCALING(x,y) (x *= y / 100.f)
-                for (const auto& [scaling,scaleAmount]:perk->scaling) {
-                  //if (flatScaling){}
-                  SET_SCALING(scaling,scaleAmount);
-                }
-        #undef SET_SCALING NOT WORKING AS EXPECTED*/
+        for (const auto &[scaling,scaleAmount]: perk->scaling) {
+          if (perk->isScaleApplied[scaling]){continue;}
+          scalings.at(scaling) *= scaleAmount;
+          perk->isScaleApplied.at(scaling) = true;
+        }
+        //perk->isScaleApplied.clear();
       }
     }
 
     [[nodiscard]] std::string_view GetName() const noexcept { return name; }
     [[nodiscard]] Enforcer::Keyboard &GetKeyboard() const noexcept { return keyboard; }
-
-    f32 Damage{10.f};
-
-    f32 Physical{10.f};
-    f32 Faith{1.f};
-    f32 Water{1.f};
-    f32 Flame{1.f};
-    f32 Wind{1.f};
-    f32 Tech{1.f};
-
-    f32 Defense{1.f};
-    f32 Health{100.f};
-    f32 MaxHealth{100.f};
-    f32 AttackSpeed{1.f}; // %
-    f32 MoveSpeed{4.5f};
-    f32 JumpPower{2.f};
-    f32 Perking{1.f};
-    f32 CooldownReduction{100.f}; // %
+    [[nodiscard]] f32 GetScaling(const Scaling scale) const noexcept {return scalings.at(scale);}
 
     std::unordered_map<u32, std::shared_ptr<Perk> > perks{};
 
   private:
-    //Enforcer::Window &window;
+    Enforcer::Window &window;
     Enforcer::Keyboard &keyboard;
     Enforcer::Camera &camera;
     Enforcer::GameObject &viewerObject;
+
+    std::unordered_map<Scaling, f32> scalings={
+      {Scaling::Damage,10.f},
+      {Scaling::Physical,1.f},
+      {Scaling::Faith, 1.f},
+      {Scaling::Water,1.f},
+      {Scaling::Flame,1.f},
+      {Scaling::Wind, 1.f},
+      {Scaling::Tech,1.f},
+
+      {Scaling::Defense,10.f},
+      {Scaling::Health,100.f},
+      {Scaling::MaxHealth,100.f},
+      {Scaling::AttackSpeed,1.f}, // %
+      {Scaling::MoveSpeed, 4.5f},
+      {Scaling::JumpPower,2.f},
+      {Scaling::Perking,1.f},
+      {Scaling::CooldownReduction, 100.f} // %
+    };
 
     std::string_view name{"Nameless"};
 

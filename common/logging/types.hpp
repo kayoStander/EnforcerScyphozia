@@ -25,6 +25,8 @@ namespace Common::Logging {
     GLFW, // GLFW related events
     Vulkan, // Vulkan related events
     Shader,
+    Client,
+    Server,
     Count // total number of classes
   };
 } // namespace Common::Logging

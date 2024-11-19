@@ -54,13 +54,13 @@ namespace Enforcer {
     }
 
     if (glfwGetKey(window, Sprint) == GLFW_PRESS) {
-      moveSpeed = MOVE_SPEED_SPRINT;
+      speed = MOVE_SPEED_SPRINT * moveSpeed;
     } else {
-      moveSpeed = MOVE_SPEED_WALK;
+      speed = MOVE_SPEED_WALK * moveSpeed;
     }
 
     if (glm::dot(moveDirection, moveDirection) > std::numeric_limits<float>::epsilon()) {
-      gameObject.transform.translation += moveSpeed * deltaTime * normalize(moveDirection);
+      gameObject.transform.translation += speed * deltaTime * normalize(moveDirection);
     }
   }
 } // namespace Enforcer

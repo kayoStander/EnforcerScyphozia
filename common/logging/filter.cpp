@@ -31,7 +31,7 @@ namespace Common::Logging {
   CLS(Common)                                                                                                          \
   CLS(Core)                                                                                                            \
   CLS(Debug)                                                                                                           \
-  CLS(Discord) CLS(Config) CLS(GLFW) CLS(Vulkan) CLS(Shader)
+  CLS(Discord) CLS(Config) CLS(GLFW) CLS(Vulkan) CLS(Shader) CLS(Client) CLS(Server)
 
   const char *GetLogClassName(Class logClass) {
     switch (logClass) {

@@ -33,19 +33,20 @@ namespace Enforcer {
   Application::Application() {
 
     defaultPool = DescriptorPool::Builder(device)
-                  .setMaxSets(SwapChain::MAX_FRAMES_IN_FLIGHT)
-                  .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, SwapChain::MAX_FRAMES_IN_FLIGHT)
-                  .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                               MAX_TEXTURE * SwapChain::MAX_FRAMES_IN_FLIGHT)
-                  .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, // cube
-                               6 * SwapChain::MAX_FRAMES_IN_FLIGHT)
-                  .build();
+    .setMaxSets(SwapChain::MAX_FRAMES_IN_FLIGHT)
+    .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, SwapChain::MAX_FRAMES_IN_FLIGHT)
+    .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                 MAX_TEXTURE * SwapChain::MAX_FRAMES_IN_FLIGHT)
+    .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, // cube
+                 6 * SwapChain::MAX_FRAMES_IN_FLIGHT)
+    .build();
     LoadGameObjects();
   }
+
   void Application::Run() {
     RPC.Init();
 
-    std::vector<std::unique_ptr<Buffer>> uniformBufferObjectBuffers(SwapChain::MAX_FRAMES_IN_FLIGHT);
+    std::vector<std::unique_ptr<Buffer> > uniformBufferObjectBuffers(SwapChain::MAX_FRAMES_IN_FLIGHT);
     for (u32 i{0}; i < uniformBufferObjectBuffers.size(); ++i) {
       uniformBufferObjectBuffers[i] =
       std::make_unique<Buffer>(device, sizeof(DefaultUniformBufferObject), 1, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
@@ -128,16 +129,51 @@ namespace Enforcer {
     LOG_DEBUG(Vulkan, "maxPushConstantsSize => {}, UBO size => {}", device.properties.limits.maxPushConstantsSize,
               sizeof(DefaultUniformBufferObject));
 
-    Game::Player player{/*window,*/ cameraController,camera, viewerObject};
+    Game::Player player{window, cameraController, camera, viewerObject};
     const u32 musicianID{Game::Player::Perk::GetPerkId("Musician")};
     const u32 rockAndStoneID{Game::Player::Perk::GetPerkId("Rock and stone")};
-    Game::Player::Perk::GivePerkToPlayer(player,musicianID);
-    Game::Player::Perk::GivePerkToPlayer(player,rockAndStoneID);
+    Game::Player::Perk::GivePerkToPlayer(player, musicianID);
+    Game::Player::Perk::GivePerkToPlayer(player, rockAndStoneID);
 
-    LOG_CRITICAL(Common,"PerkID and PerkName from player perks => {} and {}", player.GetPerkId("Marathon runner"),
-      player.perks[player.GetPerkId("Marathon runner")]->name);
-    LOG_CRITICAL(Common,"PerkID and PerkName from player perks => {} and {}", player.GetPerkId("Rock and stone"),
-      player.perks[player.GetPerkId("Rock and stone")]->name);
+    LOG_CRITICAL(Common, "PerkID and PerkName from player perks => {} and {}", player.GetPerkId("Musician"),
+                 player.perks[player.GetPerkId("Musician")]->name);
+    LOG_CRITICAL(Common, "PerkID and PerkName from player perks => {} and {}", player.GetPerkId("Rock and stone"),
+                 player.perks[player.GetPerkId("Rock and stone")]->name);
+
+    //Client client{"127.0.0.1", 12345};
+    Server server{};
+    Message<CustomMessageTypes> message;
+    message.header.id = CustomMessageTypes::A;
+
+    /* HOW IT WILL WORK:
+    class : public ClientInterface<CustomMessageTypes> {
+    public:
+      bool Attack(float x, float y, float z) {
+        Message<CustomMessageTypes> message;
+        message.header.id = CustomMessageTypes::A;
+        message << x << y << z;
+        Send(message);
+      }
+    } customClient;
+    customClient.Connect("Website.com",60000);
+    customClient.Attack(2.f,5.f,2.f);
+  */
+
+    int a{1};
+    bool b{true};
+    float c{1.22f};
+
+    struct {
+      float x{},y{};
+    } d[5];
+
+    message << a << b << c << d;
+
+    a = 22;
+    b = false;
+    c = 22.2f;
+
+    message >> a >> b >> c >> d;
 
     while (!window.ShouldClose()) {
       glfwPollEvents();
@@ -170,7 +206,8 @@ namespace Enforcer {
         // render
         renderer.BeginSwapChainRenderPass(commandBuffer);
 
-        player.Update();
+        player.Update(); // not sure if it is the best location for this call ill see later
+        //LOG_CRITICAL(Common,"PlayerDefense,PlayerMoveSpeed => {},{}",player.GetScaling(Game::Defense),player.GetScaling(Game::MoveSpeed));
 
         UpdateUniformBufferObject(uniformBufferObjectBuffers, uniformBufferObject);
 
@@ -196,9 +233,11 @@ namespace Enforcer {
 
   void Application::LoadGameObjects() {
 
-    [[maybe_unused]]auto fade = [](const float t) noexcept->float{ return t * t * t * (t * (t * 6 - 15) + 10); };
-    [[maybe_unused]]auto lerp = [](const float a, const float b, const float t) noexcept->float { return a + t * (b - a); };
-    [[maybe_unused]]auto grad = [](const int hash, const float x, const float y) noexcept->float{
+    [[maybe_unused]] auto fade = [](const float t) noexcept-> float { return t * t * t * (t * (t * 6 - 15) + 10); };
+    [[maybe_unused]] auto lerp = [](const float a, const float b, const float t) noexcept-> float {
+      return a + t * (b - a);
+    };
+    [[maybe_unused]] auto grad = [](const int hash, const float x, const float y) noexcept-> float {
       switch (hash & 3) {
         case 0:
           return x + y;
@@ -221,8 +260,9 @@ namespace Enforcer {
     for (u32 i{0}; i < 256u; ++i) {
       perm[256u + i] = perm[i];
     }
-    [[maybe_unused]]auto perlinNoise = [lerp, fade, grad](float x, float y, const std::vector<int> &perm, const int octaves,
-                                          float frequency, float amplitude) {
+    [[maybe_unused]] auto perlinNoise = [lerp, fade, grad](float x, float y, const std::vector<int> &perm,
+                                                           const int octaves,
+                                                           float frequency, float amplitude) {
       float noiseValue{.0f};
       float maxAmplitude{.0f};
 
@@ -254,8 +294,8 @@ namespace Enforcer {
       return noiseValue / maxAmplitude; // Normalize to [0, 1]
     };
 
-    [[maybe_unused]]constexpr float frequency{.5f}, amplitude{5.f}, noiseScale{.5f};
-    [[maybe_unused]]constexpr int octaves{4};
+    [[maybe_unused]] constexpr float frequency{.5f}, amplitude{5.f}, noiseScale{.5f};
+    [[maybe_unused]] constexpr int octaves{4};
 
     const std::shared_ptr<Model> cube{Model::CreateModelFromFile(device, "model/cube.obj")};
     const std::shared_ptr<Model> imposterCube0{Model::CreateModelFromFile(device, "model/colored_cube.obj")};

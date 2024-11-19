@@ -8,6 +8,7 @@
 #include "enf_texture.hpp"
 #include "enf_window.hpp"
 #include "../game/player.hpp"
+#include "enf_server.hpp"
 
 #include <memory>
 #include <unordered_map>

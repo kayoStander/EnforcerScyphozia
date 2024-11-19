@@ -9,10 +9,12 @@ namespace Enforcer {
   public:
     void MoveInPlaneXZ(const Window& enforcerWindow, float deltaTime, GameObject &gameObject);
 
-    float moveSpeed{3.f};
+    float moveSpeed{1.f};
     const float lookSpeed{1.5f};
 
   private:
+    float speed{3.f};
+
     enum KeyMappings {
       moveLeft = GLFW_KEY_A,
       moveRight = GLFW_KEY_D,

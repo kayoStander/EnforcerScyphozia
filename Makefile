@@ -776,6 +776,30 @@ src/enf_renderer.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/src/enf_renderer.cpp.s
 .PHONY : src/enf_renderer.cpp.s
 
+src/enf_server.o: src/enf_server.cpp.o
+.PHONY : src/enf_server.o
+
+# target to build an object file
+src/enf_server.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/src/enf_server.cpp.o
+.PHONY : src/enf_server.cpp.o
+
+src/enf_server.i: src/enf_server.cpp.i
+.PHONY : src/enf_server.i
+
+# target to preprocess a source file
+src/enf_server.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/src/enf_server.cpp.i
+.PHONY : src/enf_server.cpp.i
+
+src/enf_server.s: src/enf_server.cpp.s
+.PHONY : src/enf_server.s
+
+# target to generate assembly for a file
+src/enf_server.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/src/enf_server.cpp.s
+.PHONY : src/enf_server.cpp.s
+
 src/enf_sound.o: src/enf_sound.cpp.o
 .PHONY : src/enf_sound.o
 
@@ -1127,6 +1151,9 @@ help:
 	@echo "... src/enf_renderer.o"
 	@echo "... src/enf_renderer.i"
 	@echo "... src/enf_renderer.s"
+	@echo "... src/enf_server.o"
+	@echo "... src/enf_server.i"
+	@echo "... src/enf_server.s"
 	@echo "... src/enf_sound.o"
 	@echo "... src/enf_sound.i"
 	@echo "... src/enf_sound.s"

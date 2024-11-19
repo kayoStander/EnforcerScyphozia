@@ -47,6 +47,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/EnforcerSyphozia.dir/src/enf_raycast.cpp.o.d"
   "CMakeFiles/EnforcerSyphozia.dir/src/enf_renderer.cpp.o"
   "CMakeFiles/EnforcerSyphozia.dir/src/enf_renderer.cpp.o.d"
+  "CMakeFiles/EnforcerSyphozia.dir/src/enf_server.cpp.o"
+  "CMakeFiles/EnforcerSyphozia.dir/src/enf_server.cpp.o.d"
   "CMakeFiles/EnforcerSyphozia.dir/src/enf_sound.cpp.o"
   "CMakeFiles/EnforcerSyphozia.dir/src/enf_sound.cpp.o.d"
   "CMakeFiles/EnforcerSyphozia.dir/src/enf_swap_chain.cpp.o"

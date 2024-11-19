@@ -2,9 +2,22 @@ cmake_minimum_required(VERSION 3.10)
 project(EnforcerSyphozia VERSION 1.0)
 
 # Compiler settings
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 23)  # Enable C++20
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -Wno-sign-conversion -Wstrict-overflow=2 -mcmodel=small -Wvla -O3")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20 -Wall -Wextra -Werror -Wno-sign-conversion -Wstrict-overflow=2 -mcmodel=small -Wvla -O3")
+
+# Find Boost package (Ensure Boost is installed on your system)
+find_package(Boost 1.70 REQUIRED COMPONENTS system)
+
+# Check if Boost was found
+if(Boost_FOUND)
+    message(STATUS "Found Boost: ${Boost_INCLUDE_DIRS}")
+else()
+    message(FATAL_ERROR "Could not find Boost!")
+endif()
+
+# Include Boost headers
+include_directories(${Boost_INCLUDE_DIRS})
 
 # Include directories
 include_directories(
@@ -31,7 +44,6 @@ file(GLOB_RECURSE HDRS
         common/*.hpp
         common/logging/*.hpp
 )
-
 
 # ImGui source files
 file(GLOB IMGUI_SRCS
@@ -77,6 +89,7 @@ endif()
 
 # Find the Discord RPC static library
 find_library(DISCORD_RPC_LIBRARY NAMES discord-rpc libdiscord-rpc.a PATHS /usr/lib /usr/local/lib)
+#find_library(BOOST_LIBRARY NAMES  PATHS /usr/lib /usr/local/lib)
 
 if(NOT DISCORD_RPC_LIBRARY)
     message(FATAL_ERROR "Could not find Discord RPC library!")
@@ -93,6 +106,7 @@ target_link_libraries(${PROJECT_NAME}
         ${GLFW_LIBRARY}     # GLFW
         ${FMT_LIBRARY}      # fmt
         ${DISCORD_RPC_LIBRARY}  # Discord RPC
+        Boost::system # Boost.System
 )
 
 # Optional: If you want to set additional preprocessor definitions

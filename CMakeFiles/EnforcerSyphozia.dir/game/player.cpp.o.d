@@ -406,12 +406,12 @@ CMakeFiles/EnforcerSyphozia.dir/game/player.cpp.o: \
  /usr/include/glm/ext/matrix_transform.inl \
  /usr/include/glm/gtc/matrix_transform.inl /usr/include/c++/13/algorithm \
  /usr/include/c++/13/bits/ranges_algo.h \
- /usr/include/c++/13/pstl/glue_algorithm_defs.h /usr/include/fmt/core.h \
+ /usr/include/c++/13/pstl/glue_algorithm_defs.h \
+ /usr/include/c++/13/iostream /usr/include/fmt/core.h \
  /usr/include/c++/13/cstring /usr/include/string.h /usr/include/strings.h \
  /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
  /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
  /usr/include/c++/13/iterator /usr/include/c++/13/bits/stream_iterator.h \
- /usr/include/c++/13/iostream \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/game/elements.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/game/../src/enf_camera.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/external/imgui/backends/imgui_impl_glfw.h \

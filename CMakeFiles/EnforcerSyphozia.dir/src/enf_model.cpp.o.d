@@ -392,13 +392,13 @@ CMakeFiles/EnforcerSyphozia.dir/src/enf_model.cpp.o: \
  /usr/include/c++/13/bits/uniform_int_dist.h \
  /usr/include/c++/13/bits/ranges_algo.h /usr/include/c++/13/optional \
  /usr/include/c++/13/bits/enable_special_members.h \
- /usr/include/c++/13/pstl/glue_algorithm_defs.h /usr/include/fmt/core.h \
+ /usr/include/c++/13/pstl/glue_algorithm_defs.h \
+ /usr/include/c++/13/iostream /usr/include/c++/13/istream \
+ /usr/include/c++/13/bits/istream.tcc /usr/include/fmt/core.h \
  /usr/include/c++/13/cstring /usr/include/string.h /usr/include/strings.h \
  /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
  /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
  /usr/include/c++/13/iterator /usr/include/c++/13/bits/stream_iterator.h \
- /usr/include/c++/13/iostream /usr/include/c++/13/istream \
- /usr/include/c++/13/bits/istream.tcc \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../common/utils.hpp \
  /usr/include/c++/13/functional /usr/include/c++/13/bits/std_function.h \
  /usr/include/c++/13/unordered_map \

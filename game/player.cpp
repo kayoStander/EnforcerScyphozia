@@ -17,9 +17,9 @@ namespace Game {
   // RACES //
 
   DEFINE_PERK(
-  std::make_shared<Perk>("Human", "Deal 33.33% more damage when below 50% health", []([[maybe_unused]] Player &player) {
-    if (player.Health <= player.MaxHealth * 0.5f) {
-    player.Damage*=1.33f;
+  std::make_shared<Perk>("Human", "Deal 33.33% more damage when below 50% health", [](Player &player) {
+    if (player.scalings.at(Scaling::Health) <= player.scalings.at(Scaling::MaxHealth) * 0.5f) {
+    player.scalings.at(Scaling::Health)*=1.33f;
     } // look at that later
     }, std::unordered_map<Scaling, f32>{}, false
   )),
@@ -51,17 +51,34 @@ namespace Game {
     std::unordered_map<Scaling, f32>{{Scaling::Flame, 10.f}},
     true)),
   DEFINE_PERK(std::make_shared<Perk>(
-    "Blessing",
+    "Perking",
     "Remove all scaling from your armor, but gives an +11.11% buff to all perks",
     []([[maybe_unused]] Player &player) {},
     std::unordered_map<Scaling, f32>{{Scaling::Perking, 11.11f}},
     false)),
+
+  // GUILDS //
+
+  DEFINE_PERK(std::make_shared<Perk>(
+    "Scholar",
+    "You can recast your ability once",
+    []([[maybe_unused]] Player &player) {},
+    std::unordered_map<Scaling, f32>{},
+    false)),
+  DEFINE_PERK(std::make_shared<Perk>(
+    "Deacon",
+    "Your heals have chance to be critical",
+    []([[maybe_unused]] Player &player) {},
+    std::unordered_map<Scaling, f32>{{Scaling::Faith,10.f}},
+    false)),
+
+
   // PERKS //
+
   DEFINE_PERK(std::make_shared<Perk>(
     "Musician",
     "Your weapon becomes a lute and every tune that you play gives players a random buff!",
     []([[maybe_unused]] Player &player) {
-      LOG_INFO(Debug,"Musician!");
     },
     std::unordered_map<Scaling, f32>{},
     true)),
@@ -69,8 +86,9 @@ namespace Game {
     "Rock and stone",
     "Your tunes now only give players tanky buffs; also change your lute into an awesome guitar! extra buffs to dwarfs."
     ,
-    []([[maybe_unused]] Player &player) {},
-    std::unordered_map<Scaling, f32>{{Scaling::Defense, 100.f}, {Scaling::MoveSpeed, -25.f}},
+    []([[maybe_unused]] Player &player) {
+    },
+    std::unordered_map<Scaling, f32>{{Scaling::Defense, 33.f}, {Scaling::MoveSpeed, .25f}},
     true)),
   DEFINE_PERK(std::make_shared<Perk>(
     "Marathon runner",
@@ -119,7 +137,7 @@ namespace Game {
     []([[maybe_unused]] Player &player) {},
     std::unordered_map<Scaling, f32>{{Scaling::Flame,10.f}},
     true)),
-    DEFINE_PERK(std::make_shared<Perk>(
+  DEFINE_PERK(std::make_shared<Perk>(
     "Techno-flame",
     "Your fire now deals flame and tech damage",
     []([[maybe_unused]] Player &player) {},

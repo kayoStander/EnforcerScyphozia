@@ -3,8 +3,8 @@
 #include "text_formatter.hpp"
 
 #include <algorithm>
-#include <fmt/core.h>
 #include <iostream>
+#include <fmt/core.h>
 
 #if defined(__clang__) || defined(__GNUC__)
 // FIX #define JETBRAINS_FORMAT_COMPATIBLE 1
@@ -25,7 +25,7 @@
 namespace Common::Logging {
   constexpr const char *TrimSourcePath(const std::string_view source) {
     const auto rfind = [source](const std::string_view match) {
-      return source.rfind(match) == source.npos ? 0 : (source.rfind(match) + match.size());
+      return source.rfind(match) == std::string_view::npos ? 0 : (source.rfind(match) + match.size());
     };
     const u32 idx = std::max({rfind("/"), rfind("\\")});
     return source.data() + idx;
