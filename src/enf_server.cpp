@@ -9,7 +9,7 @@
 
 std::vector<char> buffer(20*1024);
 namespace Enforcer{
-  Server::Server() {
+  /*Server::Server() {
     boost::system::error_code errorCode;
 
     boost::asio::io_context context;
@@ -59,5 +59,6 @@ namespace Enforcer{
         GetData(socket);
       }
     });
-  }
+  }*/
+
 }

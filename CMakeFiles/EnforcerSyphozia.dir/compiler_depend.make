@@ -4193,7 +4193,6 @@ CMakeFiles/EnforcerSyphozia.dir/src/application.cpp.o: src/application.cpp \
   /usr/include/boost/asio/traits/static_require_concept.hpp \
   /usr/include/boost/asio/traits/submit_free.hpp \
   /usr/include/boost/asio/traits/submit_member.hpp \
-  /usr/include/boost/asio/ts/buffer.hpp \
   /usr/include/boost/asio/ts/internet.hpp \
   /usr/include/boost/asio/use_awaitable.hpp \
   /usr/include/boost/asio/use_future.hpp \
@@ -9571,7 +9570,6 @@ CMakeFiles/EnforcerSyphozia.dir/src/enf_server.cpp.o: src/enf_server.cpp \
   /usr/include/boost/asio/traits/static_require_concept.hpp \
   /usr/include/boost/asio/traits/submit_free.hpp \
   /usr/include/boost/asio/traits/submit_member.hpp \
-  /usr/include/boost/asio/ts/buffer.hpp \
   /usr/include/boost/asio/ts/internet.hpp \
   /usr/include/boost/asio/use_awaitable.hpp \
   /usr/include/boost/asio/use_future.hpp \
@@ -13455,7 +13453,6 @@ CMakeFiles/EnforcerSyphozia.dir/src/main.cpp.o: src/main.cpp \
   /usr/include/boost/asio/traits/static_require_concept.hpp \
   /usr/include/boost/asio/traits/submit_free.hpp \
   /usr/include/boost/asio/traits/submit_member.hpp \
-  /usr/include/boost/asio/ts/buffer.hpp \
   /usr/include/boost/asio/ts/internet.hpp \
   /usr/include/boost/asio/use_awaitable.hpp \
   /usr/include/boost/asio/use_future.hpp \
@@ -20129,8 +20126,6 @@ src/enf_descriptors.hpp:
 /usr/include/boost/mpl/integral_c_fwd.hpp:
 
 /usr/include/boost/asio/detail/operation.hpp:
-
-/usr/include/boost/asio/ts/buffer.hpp:
 
 /usr/include/boost/asio/detail/pop_options.hpp:
 

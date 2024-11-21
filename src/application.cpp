@@ -140,43 +140,67 @@ namespace Enforcer {
     LOG_CRITICAL(Common, "PerkID and PerkName from player perks => {} and {}", player.GetPerkId("Rock and stone"),
                  player.perks[player.GetPerkId("Rock and stone")]->name);
 
-    //Client client{"127.0.0.1", 12345};
-    Server server{};
-    Message<CustomMessageTypes> message;
-    message.header.id = CustomMessageTypes::A;
+    //Server server{};
+    //Message<CustomMessageTypes> message;
+    //message.header.id = CustomMessageTypes::A;
 
-    /* HOW IT WILL WORK:
-    class : public ClientInterface<CustomMessageTypes> {
+    class CustomServer : public ServerInterface<CustomMessageTypes> {
     public:
-      bool Attack(float x, float y, float z) {
+      CustomServer(const u16 port):ServerInterface(port) {
+
+      }
+    protected:
+      virtual bool OnClientConnect([[maybe_unused]]std::shared_ptr<Connection<CustomMessageTypes>> client) {
+        return true;
+      }
+      virtual void OnClientDisconnect([[maybe_unused]]std::shared_ptr<Connection<CustomMessageTypes>> client) {
+
+      }
+      virtual void OnMessage(std::shared_ptr<Connection<CustomMessageTypes>> client, const Message<CustomMessageTypes>& message) {
+        switch (message.header.id) {
+          case CustomMessageTypes::ServerPing: {
+            LOG_INFO(Server,"ServerPing called {}", client->GetId());
+            client->Send(message);
+          }
+          default: ;
+        }
+      }
+    } server{60000};
+
+    server.Start();
+
+    class CustomClient : public ClientInterface<CustomMessageTypes> {
+      void PingServer() {
         Message<CustomMessageTypes> message;
-        message.header.id = CustomMessageTypes::A;
-        message << x << y << z;
-        Send(message);
+        message.header.id = CustomMessageTypes::ServerPing;
+
+        const std::chrono::system_clock::time_point now{std::chrono::system_clock::now()};
+
+        message << now;
       }
     } customClient;
-    customClient.Connect("Website.com",60000);
-    customClient.Attack(2.f,5.f,2.f);
-  */
-
-    int a{1};
-    bool b{true};
-    float c{1.22f};
-
-    struct {
-      float x{},y{};
-    } d[5];
-
-    message << a << b << c << d;
-
-    a = 22;
-    b = false;
-    c = 22.2f;
-
-    message >> a >> b >> c >> d;
+    customClient.Connect("127.0.0.1",60000);
 
     while (!window.ShouldClose()) {
       glfwPollEvents();
+
+      /*
+      switch (auto message{customClient.Incoming().PopFront().message}; message.header.id) {
+        case CustomMessageTypes::ServerPing: {
+          std::chrono::system_clock::time_point now{std::chrono::system_clock::now()};
+          std::chrono::system_clock::time_point then;
+          message >> then;
+          LOG_INFO(Client,"Ping: {}", std::chrono::duration<float>(now - then).count());
+        }
+        case CustomMessageTypes::MessageClient: {}
+        case CustomMessageTypes::OnMessage: {}
+        case CustomMessageTypes::MessageAllClients: {}
+        case CustomMessageTypes::OnClientConnect: {}
+        case CustomMessageTypes::OnClientDisconnect: {}
+        default: break;
+      }*/
+
+      server.Update();
 
       const std::chrono::time_point newTime{std::chrono::high_resolution_clock::now()};
       const float frameTime{

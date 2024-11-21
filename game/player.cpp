@@ -40,19 +40,19 @@ namespace Game {
 
   DEFINE_PERK(std::make_shared<Perk>(
     "Firefly",
-    "Every hit received spawns a firefly that heals you and damages the enemy; damage scales with fire",
+    "Every hit received spawns a firefly that heals you and damages the enemy; damage scales with fire.",
     []([[maybe_unused]] Player &player) {},
     std::unordered_map<Scaling, f32>{{Scaling::Flame, 10.f}},
     true)),
   DEFINE_PERK(std::make_shared<Perk>(
     "Vampiring",
-    "Every hit receives life steal, loses damage at day",
+    "Every hit receives life steal, loses damage at day.",
     []([[maybe_unused]] Player &player) {},
     std::unordered_map<Scaling, f32>{{Scaling::Flame, 10.f}},
     true)),
   DEFINE_PERK(std::make_shared<Perk>(
     "Perking",
-    "Remove all scaling from your armor, but gives an +11.11% buff to all perks",
+    "Remove all scaling from your armor, but gives an +11.11% buff to all perks.",
     []([[maybe_unused]] Player &player) {},
     std::unordered_map<Scaling, f32>{{Scaling::Perking, 11.11f}},
     false)),
@@ -61,13 +61,13 @@ namespace Game {
 
   DEFINE_PERK(std::make_shared<Perk>(
     "Scholar",
-    "You can recast your ability once",
+    "You can recast your ability once.",
     []([[maybe_unused]] Player &player) {},
     std::unordered_map<Scaling, f32>{},
     false)),
   DEFINE_PERK(std::make_shared<Perk>(
     "Deacon",
-    "Your heals have chance to be critical",
+    "Your heals have chance to be critical.",
     []([[maybe_unused]] Player &player) {},
     std::unordered_map<Scaling, f32>{{Scaling::Faith,10.f}},
     false)),
@@ -80,7 +80,7 @@ namespace Game {
     "Your weapon becomes a lute and every tune that you play gives players a random buff!",
     []([[maybe_unused]] Player &player) {
     },
-    std::unordered_map<Scaling, f32>{},
+    std::unordered_map<Scaling, f32>{{Scaling::AttackSpeed,-25.f}},
     true)),
   DEFINE_PERK(std::make_shared<Perk>(
     "Rock and stone",
@@ -88,7 +88,7 @@ namespace Game {
     ,
     []([[maybe_unused]] Player &player) {
     },
-    std::unordered_map<Scaling, f32>{{Scaling::Defense, 33.f}, {Scaling::MoveSpeed, .25f}},
+    std::unordered_map<Scaling, f32>{{Scaling::Defense, 33.f}, {Scaling::MoveSpeed, .25f}, {Scaling::AttackSpeed, -10.f}},
     true)),
   DEFINE_PERK(std::make_shared<Perk>(
     "Marathon runner",
@@ -99,10 +99,24 @@ namespace Game {
     if (CHECK_TIME(15)) {
     return;
     }
-
     },
     std::unordered_map<Scaling, f32>{{Scaling::MoveSpeed, 25.f}},
     false)),
+  DEFINE_PERK(std::make_shared<Perk>(
+    "Plunger",
+    "Makes you able to plunge from free falls.",
+    []([[maybe_unused]] Player &player) {
+    },
+  std::unordered_map<Scaling, f32>{{Scaling::JumpPower, 15.f}},
+  true)),
+    DEFINE_PERK(std::make_shared<Perk>(
+    "Bucket.",
+    "Spawns a bucket that does something, for sure.",
+    []([[maybe_unused]] Player &player) {
+    // spawns a bucket that does absolutely nothing
+    },
+  std::unordered_map<Scaling, f32>{{Scaling::JumpPower, 15.f}},
+  true)),
   DEFINE_PERK(std::make_shared<Perk>(
     "Explosive",
     "Every attack has a low chance of exploding, giving damage in AOE to enemies and you.",
@@ -113,19 +127,19 @@ namespace Game {
     true)),
   DEFINE_PERK(std::make_shared<Perk>(
     "Toxic",
-    "Leaves a trail of toxin behind you; damage scales with move speed",
+    "Leaves a trail of toxin behind you; damage scales with move speed.",
     []([[maybe_unused]] Player &player) {},
     std::unordered_map<Scaling, f32>{{Scaling::MoveSpeed, 10.f}},
     false)),
   DEFINE_PERK(std::make_shared<Perk>(
     "High elf technique",
-    "You can recast your abilities once more",
+    "You can recast your abilities once more at the cost of damage output.",
     []([[maybe_unused]] Player &player) {},
     std::unordered_map<Scaling, f32>{},
     false)),
   DEFINE_PERK(std::make_shared<Perk>(
     "Spell-master",
-    "All your attacks will convert into a random element",
+    "All your attacks will convert into a random element.",
     []([[maybe_unused]] Player &player) {},
     std::unordered_map<Scaling, f32>{
     {Scaling::Physical, 10.f}, {Scaling::Faith, 10.f}, {Scaling::Water, 10.f}, {Scaling::Flame, 10.f}, {Scaling::Wind,
@@ -139,10 +153,17 @@ namespace Game {
     true)),
   DEFINE_PERK(std::make_shared<Perk>(
     "Techno-flame",
-    "Your fire now deals flame and tech damage",
+    "Your fire now deals flame and tech damage.",
     []([[maybe_unused]] Player &player) {},
     std::unordered_map<Scaling, f32>{{Scaling::Flame,5.f},{Scaling::Tech,5.f}},
+    true)),
+    DEFINE_PERK(std::make_shared<Perk>(
+    "Rhaegal's pet",
+    "Have a pet dragon that sometimes throw fireballs.",
+    []([[maybe_unused]] Player &player) {},
+    std::unordered_map<Scaling, f32>{{Scaling::Flame,6.3f},{Scaling::Wind,4.2f}},
     true))
+
   };
 
 }
