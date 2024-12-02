@@ -212,16 +212,25 @@ namespace Enforcer {
       return;
     }
 
+    boundingBoxMin = glm::vec3(FLT_MAX);
+    boundingBoxMax = glm::vec3(-FLT_MAX);
+
     for (const auto &[position, color, normal, uv]: data.vertices) {
       boundingBoxMin = glm::min(boundingBoxMin, position);
       boundingBoxMax = glm::max(boundingBoxMax, position);
     }
-    ASSERT_LOG(boundingBoxMin != glm::vec3(FLT_MAX) || boundingBoxMax != glm::vec3(-FLT_MAX),
-               "Bouding box could not be computed correctly!");
 
-    ASSERT_LOG(boundingBoxMin.x < boundingBoxMax.x && boundingBoxMin.y < boundingBoxMax.y &&
-               boundingBoxMin.z < boundingBoxMax.z,
-               "Bounding box could not be computed correctly!");
+    if (boundingBoxMin == glm::vec3(FLT_MAX) || boundingBoxMax == glm::vec3(-FLT_MAX)) {
+      LOG_ERROR(Vulkan, "Bounding box computation failed. Invalid vertex data.");
+      return;
+    }
+
+    ASSERT_LOG(boundingBoxMin.x <= boundingBoxMax.x && boundingBoxMin.y <= boundingBoxMax.y &&
+               boundingBoxMin.z <= boundingBoxMax.z,
+               "Bounding box computation error: invalid min/max values!");
+
+    LOG_INFO(Vulkan, "Bounding box computed successfully: Min({} {} {}), Max({} {} {})", boundingBoxMin.x,
+             boundingBoxMin.y, boundingBoxMin.z, boundingBoxMax.x, boundingBoxMax.y, boundingBoxMax.z);
   }
 
 } // namespace Enforcer

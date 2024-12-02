@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(EnforcerSyphozia VERSION 1.0)
 
 # Compiler settings
-set(CMAKE_CXX_STANDARD 23)  # Enable C++20
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20 -Wall -Wextra -Werror -Wno-sign-conversion -Wstrict-overflow=2 -mcmodel=small -Wvla -O3")
 

@@ -61,6 +61,31 @@ namespace Enforcer {
       uniformBufferObjectBuffers[renderer.GetFrameIndex()]->flush();
     };
 
+
+    class CustomServer : public ServerInterface<CustomMessageTypes> {
+    public:
+      CustomServer(const u16 port):ServerInterface(port) {
+
+      }
+    protected:
+      virtual bool OnClientConnect([[maybe_unused]]std::shared_ptr<Connection<CustomMessageTypes>> client) {
+        return true;
+      }
+      virtual void OnClientDisconnect([[maybe_unused]]std::shared_ptr<Connection<CustomMessageTypes>> client) {
+
+      }
+      virtual void OnMessage(const std::shared_ptr<Connection<CustomMessageTypes>> client, const Message<CustomMessageTypes>& message) {
+        switch (message.header.id) {
+          case CustomMessageTypes::ServerPing: {
+            LOG_INFO(Server,"[{}] ServerPing()", client->GetId());
+            client->Send(message);
+            break;
+          }
+          default: {break;}
+        }
+      }
+    } server{60000};
+
     Window window{WIDTH, HEIGHT};
     Device device{window};
     Renderer renderer{window, device};
@@ -68,7 +93,11 @@ namespace Enforcer {
     // order of declaration matters
     DefaultUniformBufferObject uniformBufferObject;
 
+    //std::unique_ptr<Buffer> imGuiVertexBuffer{std::make_unique<Buffer>(device,)};
+    //std::unique_ptr<Buffer> imGuiIndexBuffer;
+
     std::unique_ptr<DescriptorPool> defaultPool{};
+    std::unique_ptr<DescriptorPool> imGuiPool{};
 
     std::vector<std::unique_ptr<Texture>> textures{};
     std::vector<std::unique_ptr<Texture>> texturesCube{};

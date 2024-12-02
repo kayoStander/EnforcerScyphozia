@@ -68,7 +68,7 @@ namespace Enforcer {
 
   VkCommandBuffer Renderer::BeginFrame(/*u32 i*/) {
     ASSERT_LOG(!isFrameStarted, "Can't call BeginFrame() while alredy on progress");
-    auto result = swapChain->acquireNextImage(&currentImageIndex);
+    const auto result = swapChain->acquireNextImage(&currentImageIndex);
 
     if (result == VK_ERROR_OUT_OF_DATE_KHR) {
 

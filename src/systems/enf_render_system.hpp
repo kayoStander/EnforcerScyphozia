@@ -17,7 +17,7 @@ namespace Enforcer {
 
     void RenderGameObjects(const FrameInfo &frameInfo) const;
 
-    const std::vector<u32> specializedValues{MAX_LIGHTS, MAX_TEXTURE};
+    const std::vector<u32> specializedValues{MAX_LIGHTS, MAX_TEXTURE, OBJECT_PIXELIZATION};
 
   private:
     void CreatePipelineLayout(VkDescriptorSetLayout globalSetLayout);

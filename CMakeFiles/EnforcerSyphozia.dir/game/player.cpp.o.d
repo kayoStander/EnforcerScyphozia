@@ -249,6 +249,26 @@ CMakeFiles/EnforcerSyphozia.dir/game/player.cpp.o: \
  /usr/include/c++/13/bits/this_thread_sleep.h \
  /usr/include/x86_64-linux-gnu/sys/time.h /usr/include/semaphore.h \
  /usr/include/x86_64-linux-gnu/bits/semaphore.h \
+ /usr/include/boost/mpl/aux_/adl_barrier.hpp \
+ /usr/include/boost/mpl/aux_/config/adl.hpp \
+ /usr/include/boost/mpl/aux_/config/msvc.hpp \
+ /usr/include/boost/config.hpp /usr/include/boost/config/user.hpp \
+ /usr/include/boost/config/detail/select_compiler_config.hpp \
+ /usr/include/boost/config/compiler/gcc.hpp \
+ /usr/include/boost/config/detail/select_stdlib_config.hpp \
+ /usr/include/c++/13/version \
+ /usr/include/boost/config/stdlib/libstdcpp3.hpp \
+ /usr/include/boost/config/detail/select_platform_config.hpp \
+ /usr/include/boost/config/platform/linux.hpp \
+ /usr/include/boost/config/detail/posix_features.hpp \
+ /usr/include/boost/config/detail/suffix.hpp \
+ /usr/include/boost/config/helper_macros.hpp \
+ /usr/include/boost/config/detail/cxx_composite.hpp \
+ /usr/include/boost/mpl/aux_/config/intel.hpp \
+ /usr/include/boost/mpl/aux_/config/gcc.hpp \
+ /usr/include/boost/mpl/aux_/config/workaround.hpp \
+ /usr/include/boost/detail/workaround.hpp \
+ /usr/include/boost/config/workaround.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/common/logging/log.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/common/logging/text_formatter.hpp \
  /usr/include/assert.h \
@@ -412,7 +432,6 @@ CMakeFiles/EnforcerSyphozia.dir/game/player.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
  /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
  /usr/include/c++/13/iterator /usr/include/c++/13/bits/stream_iterator.h \
- /home/heck/prog/cpp/vulkan/EnforcerScyphozia/game/elements.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/game/../src/enf_camera.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/external/imgui/backends/imgui_impl_glfw.h \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/external/imgui/backends/../imgui.h \
@@ -435,4 +454,7 @@ CMakeFiles/EnforcerSyphozia.dir/game/player.cpp.o: \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/game/../src/enf_model.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/game/../src/enf_buffer.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/game/../src/enf_device.hpp \
- /home/heck/prog/cpp/vulkan/EnforcerScyphozia/game/../src/keyboard.hpp
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/game/../src/keyboard.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/game/elements.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/game/perk.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/game/item.hpp

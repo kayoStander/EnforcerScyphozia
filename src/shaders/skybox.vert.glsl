@@ -12,6 +12,7 @@ layout(set = 0, binding = 0) uniform GlobalUniformBufferObject{
   mat4 inverseView;
   vec4 ambientLightColor;
   PointLight pointLights[10];
+  float time;
   int numLights;
 } uniformBufferObject;
 

@@ -19,6 +19,8 @@ enum class Scaling : u8 {
   JumpPower, // 12
   Perking, // 13
   CooldownReduction, // 14
+  Reputation, // 15
+  InventorySize, // 16
   ScalingCount
 };
 }

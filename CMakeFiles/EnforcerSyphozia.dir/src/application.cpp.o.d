@@ -397,15 +397,11 @@ CMakeFiles/EnforcerSyphozia.dir/src/application.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
  /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/enf_game_object.hpp \
- /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/enf_model.hpp \
- /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/enf_buffer.hpp \
- /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/enf_renderer.hpp \
- /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../common/assert.hpp \
- /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../common/logging/log.hpp \
- /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../common/logging/text_formatter.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/common/logging/log.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/common/logging/text_formatter.hpp \
  /usr/include/assert.h \
- /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../common/logging/entry.hpp \
- /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../common/logging/types.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/common/logging/entry.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/common/logging/types.hpp \
  /usr/include/c++/13/algorithm /usr/include/c++/13/bits/stl_algo.h \
  /usr/include/c++/13/bits/algorithmfwd.h \
  /usr/include/c++/13/bits/stl_heap.h \
@@ -416,6 +412,10 @@ CMakeFiles/EnforcerSyphozia.dir/src/application.cpp.o: \
  /usr/include/c++/13/bits/istream.tcc /usr/include/fmt/core.h \
  /usr/include/c++/13/cstring /usr/include/c++/13/iterator \
  /usr/include/c++/13/bits/stream_iterator.h \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/enf_model.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/enf_buffer.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/enf_renderer.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../common/assert.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/enf_swap_chain.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/enf_texture.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../game/player.hpp \
@@ -444,14 +444,10 @@ CMakeFiles/EnforcerSyphozia.dir/src/application.cpp.o: \
  /usr/include/c++/13/bits/this_thread_sleep.h \
  /usr/include/x86_64-linux-gnu/sys/time.h /usr/include/semaphore.h \
  /usr/include/x86_64-linux-gnu/bits/semaphore.h \
- /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../game/elements.hpp \
- /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../game/../src/keyboard.hpp \
- /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/enf_server.hpp \
- /usr/include/c++/13/deque /usr/include/c++/13/bits/stl_deque.h \
- /usr/include/c++/13/bits/deque.tcc /usr/include/boost/asio.hpp \
- /usr/include/boost/asio/any_completion_executor.hpp \
- /usr/include/boost/asio/detail/config.hpp /usr/include/boost/config.hpp \
- /usr/include/boost/config/user.hpp \
+ /usr/include/boost/mpl/aux_/adl_barrier.hpp \
+ /usr/include/boost/mpl/aux_/config/adl.hpp \
+ /usr/include/boost/mpl/aux_/config/msvc.hpp \
+ /usr/include/boost/config.hpp /usr/include/boost/config/user.hpp \
  /usr/include/boost/config/detail/select_compiler_config.hpp \
  /usr/include/boost/config/compiler/gcc.hpp \
  /usr/include/boost/config/detail/select_stdlib_config.hpp \
@@ -463,8 +459,21 @@ CMakeFiles/EnforcerSyphozia.dir/src/application.cpp.o: \
  /usr/include/boost/config/detail/suffix.hpp \
  /usr/include/boost/config/helper_macros.hpp \
  /usr/include/boost/config/detail/cxx_composite.hpp \
- /usr/include/boost/version.hpp /usr/include/linux/version.h \
- /usr/include/boost/asio/execution.hpp \
+ /usr/include/boost/mpl/aux_/config/intel.hpp \
+ /usr/include/boost/mpl/aux_/config/gcc.hpp \
+ /usr/include/boost/mpl/aux_/config/workaround.hpp \
+ /usr/include/boost/detail/workaround.hpp \
+ /usr/include/boost/config/workaround.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../game/../src/keyboard.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../game/elements.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../game/perk.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../game/item.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/enf_server.hpp \
+ /usr/include/c++/13/deque /usr/include/c++/13/bits/stl_deque.h \
+ /usr/include/c++/13/bits/deque.tcc /usr/include/boost/asio.hpp \
+ /usr/include/boost/asio/any_completion_executor.hpp \
+ /usr/include/boost/asio/detail/config.hpp /usr/include/boost/version.hpp \
+ /usr/include/linux/version.h /usr/include/boost/asio/execution.hpp \
  /usr/include/boost/asio/execution/allocator.hpp \
  /usr/include/boost/asio/detail/type_traits.hpp \
  /usr/include/boost/asio/execution/executor.hpp \
@@ -483,8 +492,7 @@ CMakeFiles/EnforcerSyphozia.dir/src/application.cpp.o: \
  /usr/include/boost/throw_exception.hpp \
  /usr/include/boost/exception/exception.hpp \
  /usr/include/boost/assert/source_location.hpp \
- /usr/include/boost/current_function.hpp \
- /usr/include/boost/config/workaround.hpp /usr/include/boost/cstdint.hpp \
+ /usr/include/boost/current_function.hpp /usr/include/boost/cstdint.hpp \
  /usr/include/c++/13/source_location /usr/include/c++/13/utility \
  /usr/include/c++/13/bits/stl_relops.h \
  /usr/include/boost/asio/execution/receiver_invocation_error.hpp \
@@ -794,7 +802,6 @@ CMakeFiles/EnforcerSyphozia.dir/src/application.cpp.o: \
  /usr/include/boost/asio/detail/array_fwd.hpp \
  /usr/include/boost/asio/detail/string_view.hpp \
  /usr/include/boost/asio/is_contiguous_iterator.hpp \
- /usr/include/boost/detail/workaround.hpp \
  /usr/include/boost/asio/detail/is_buffer_sequence.hpp \
  /usr/include/boost/asio/detail/buffer_sequence_adapter.hpp \
  /usr/include/boost/asio/registered_buffer.hpp \
@@ -914,19 +921,12 @@ CMakeFiles/EnforcerSyphozia.dir/src/application.cpp.o: \
  /usr/include/boost/numeric/conversion/detail/meta.hpp \
  /usr/include/boost/mpl/if.hpp /usr/include/boost/mpl/aux_/value_wknd.hpp \
  /usr/include/boost/mpl/aux_/static_cast.hpp \
- /usr/include/boost/mpl/aux_/config/workaround.hpp \
  /usr/include/boost/mpl/aux_/config/integral.hpp \
- /usr/include/boost/mpl/aux_/config/msvc.hpp \
  /usr/include/boost/mpl/aux_/config/eti.hpp \
  /usr/include/boost/mpl/aux_/na_spec.hpp \
  /usr/include/boost/mpl/lambda_fwd.hpp \
- /usr/include/boost/mpl/void_fwd.hpp \
- /usr/include/boost/mpl/aux_/adl_barrier.hpp \
- /usr/include/boost/mpl/aux_/config/adl.hpp \
- /usr/include/boost/mpl/aux_/config/intel.hpp \
- /usr/include/boost/mpl/aux_/config/gcc.hpp \
- /usr/include/boost/mpl/aux_/na.hpp /usr/include/boost/mpl/bool.hpp \
- /usr/include/boost/mpl/bool_fwd.hpp \
+ /usr/include/boost/mpl/void_fwd.hpp /usr/include/boost/mpl/aux_/na.hpp \
+ /usr/include/boost/mpl/bool.hpp /usr/include/boost/mpl/bool_fwd.hpp \
  /usr/include/boost/mpl/integral_c_tag.hpp \
  /usr/include/boost/mpl/aux_/config/static_constant.hpp \
  /usr/include/boost/mpl/aux_/na_fwd.hpp \
@@ -1454,6 +1454,7 @@ CMakeFiles/EnforcerSyphozia.dir/src/application.cpp.o: \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/systems/enf_point_light_system.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/systems/enf_render_system.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/systems/enf_skybox_system.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../external/imgui/backends/imgui_impl_vulkan.h \
  /usr/include/c++/13/random /usr/include/c++/13/bits/random.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/opt_random.h \
  /usr/include/c++/13/bits/random.tcc /usr/include/c++/13/numeric \

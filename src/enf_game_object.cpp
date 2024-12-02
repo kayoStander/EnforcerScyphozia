@@ -59,4 +59,44 @@ namespace Enforcer {
     return obj;
   }
 
+  void PhysicsComponent::ApplyForce(const glm::vec3 force) const noexcept {
+    if (isStatic)
+      return;
+    acceleration += force / mass;
+  }
+  void PhysicsComponent::ApplyBounce(GameObject &objA, GameObject &objB, const float deltaTime) const noexcept {
+    if (objA.physics.isStatic or objB.physics.isStatic) {
+      return;
+    }
+
+    const glm::vec3 normal{normalize(objA.transform.translation - objB.transform.translation)};
+    const glm::vec3 relativeVelocity{velocity - objB.physics.velocity};
+    const float velocityAlongNormal{dot(relativeVelocity, normal)};
+
+    if (velocityAlongNormal > 0) {return;}
+
+    const float impulse{-(1 + bounciness) * velocityAlongNormal /
+                        (1 / mass + 1 / objB.physics.mass)};
+    const glm::vec3 impulseA{impulse * normal / mass};
+    const glm::vec3 impulseB{impulse * normal / objB.physics.mass};
+    objA.physics.velocity += impulseA;
+    objB.physics.velocity -= impulseB;
+
+    const float overlap{length(objA.transform.translation - objB.transform.translation)};
+    const float minDistance{length(objA.model->GetBoundingBoxSize() * objA.transform.scale) / 2.0f +
+                              length(objB.model->GetBoundingBoxSize() * objB.transform.scale) / 2.0f};
+
+    if (overlap < minDistance) {
+      const float penetrationDepth{minDistance - overlap};
+      const glm::vec3 pushAway{normal * penetrationDepth * .5f};
+
+      objA.transform.translation += pushAway * (objB.physics.mass / (mass + objB.physics.mass));
+      objB.transform.translation -= pushAway * (mass / (mass + objB.physics.mass));
+    }
+
+    objA.transform.translation += objA.physics.velocity * deltaTime;
+    objB.transform.translation += objB.physics.velocity * deltaTime;
+  }
+
+
 } // namespace Enforcer

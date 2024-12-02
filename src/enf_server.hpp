@@ -194,9 +194,9 @@ namespace Enforcer {
 
     void Send(const Message<T> &msg) {
       boost::asio::post(asioContext, [this, msg]() {
-        const bool writingMessage{messageOut.Empty()};
+        const bool writingMessage{!messageOut.Empty()};
         messageOut.PushBack(msg);
-        if (writingMessage) {
+        if (!writingMessage) {
           WriteHeader();
         }
       });
@@ -261,7 +261,7 @@ namespace Enforcer {
             if (messageOut.Empty()) {
               WriteHeader();
             }
-          }else {
+          } else {
             LOG_CRITICAL(Server, "Write Body {} fail.", id);
             socket.close();
           }
@@ -346,6 +346,13 @@ namespace Enforcer {
     [[nodiscard]] ThreadSafeQueue<OwnedMessage<T> > &Incoming() {
       return messagesIn;
     }
+
+    void Send(const Message<T>& message) {
+      if (IsConnected()) {
+        connection->Send(message);
+      }
+    }
+
 
   private:
     // incoming messages from server aka In

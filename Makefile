@@ -488,6 +488,54 @@ external/imgui/imgui_widgets.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_widgets.cpp.s
 .PHONY : external/imgui/imgui_widgets.cpp.s
 
+game/item.o: game/item.cpp.o
+.PHONY : game/item.o
+
+# target to build an object file
+game/item.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/item.cpp.o
+.PHONY : game/item.cpp.o
+
+game/item.i: game/item.cpp.i
+.PHONY : game/item.i
+
+# target to preprocess a source file
+game/item.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/item.cpp.i
+.PHONY : game/item.cpp.i
+
+game/item.s: game/item.cpp.s
+.PHONY : game/item.s
+
+# target to generate assembly for a file
+game/item.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/item.cpp.s
+.PHONY : game/item.cpp.s
+
+game/perk.o: game/perk.cpp.o
+.PHONY : game/perk.o
+
+# target to build an object file
+game/perk.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/perk.cpp.o
+.PHONY : game/perk.cpp.o
+
+game/perk.i: game/perk.cpp.i
+.PHONY : game/perk.i
+
+# target to preprocess a source file
+game/perk.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/perk.cpp.i
+.PHONY : game/perk.cpp.i
+
+game/perk.s: game/perk.cpp.s
+.PHONY : game/perk.s
+
+# target to generate assembly for a file
+game/perk.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/perk.cpp.s
+.PHONY : game/perk.cpp.s
+
 game/player.o: game/player.cpp.o
 .PHONY : game/player.o
 
@@ -1115,6 +1163,12 @@ help:
 	@echo "... external/imgui/imgui_widgets.o"
 	@echo "... external/imgui/imgui_widgets.i"
 	@echo "... external/imgui/imgui_widgets.s"
+	@echo "... game/item.o"
+	@echo "... game/item.i"
+	@echo "... game/item.s"
+	@echo "... game/perk.o"
+	@echo "... game/perk.i"
+	@echo "... game/perk.s"
 	@echo "... game/player.o"
 	@echo "... game/player.i"
 	@echo "... game/player.s"

@@ -1,6 +1,7 @@
 #include "enf_camera.hpp"
 
 #include <GLFW/glfw3.h>
+#include <glm/gtc/quaternion.hpp>
 
 #include "enf_window.hpp"
 
@@ -73,17 +74,17 @@ namespace Enforcer {
       glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_HIDDEN);
       double mouseX{},mouseY{};
       glfwGetCursorPos(window,&mouseX,&mouseY);
-      const float rotateX{SENSITIVITY * static_cast<float>(mouseY - height/2) /height};
-      const float rotateY{SENSITIVITY * static_cast<float>(mouseX - height/2.f) /height};
+      const float rotateX{SENSITIVITY * static_cast<float>(mouseY - height / 2.f) / height};
+      const float rotateY{SENSITIVITY * static_cast<float>(mouseX - width / 2.f) / width};
 
       const glm::mat4 rotationMatrixX{rotate(glm::mat4(1.f),glm::radians(-rotateX),
-        normalize(glm::vec3{0.f,1.f,0.f}))};
+        normalize(glm::vec3{1.f,0.f,0.f}))};
       const glm::mat4 rotationMatrixY{rotate(glm::mat4(1.f),glm::radians(-rotateY),
         normalize(glm::vec3{0.f,1.f,0.f}))};
-      projectionMatrix = rotationMatrixX * rotationMatrixY * projectionMatrix;
+      viewMatrix = rotationMatrixY * rotationMatrixX * viewMatrix;
 
-      glfwSetCursorPos(window,width/2.f,height/2.f);
-    }else {
+      glfwSetCursorPos(window,width / 2.f,height / 2.f);
+    } else {
       glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_NORMAL);
     }
   }

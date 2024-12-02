@@ -1,0 +1,17 @@
+# File produced by Open Asset Import Library (http://www.assimp.sf.net)
+# (assimp v5.3.0)
+
+newmtl Franks.C352.SC130k.DC32270k.M2064k
+Kd 1 1 1
+Ke 0 0 0
+d 1
+Ns 159.999985
+illum 2
+map_Kd textures/Franks.C352.SC130k.DC32270k.M2064k_baseColor.jpeg
+
+newmtl $Material_1
+Kd 1 1 1
+Ke 0 0 0
+d 1
+illum 1
+

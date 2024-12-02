@@ -3,15 +3,20 @@
 
 namespace Enforcer {
   bool CheckCollision(const GameObject &a, const GameObject &b) {
-    const glm::vec3 delta = a.transform.translation - b.transform.translation;
-    if (constexpr float maxDistanceSquared = 10.0f * 10.0f; dot(delta, delta) > maxDistanceSquared) {
+    const glm::vec3 delta{a.transform.translation - b.transform.translation};
+    const float aDiagonal{length(a.model->GetBoundingBoxSize() * a.transform.scale)};
+    const float bDiagonal{length(b.model->GetBoundingBoxSize() * b.transform.scale)};
+    constexpr float bufferDistance{5.f};
+
+    if (const float maxAllowedDistance{aDiagonal + bDiagonal + bufferDistance};
+        dot(delta, delta) > maxAllowedDistance * maxAllowedDistance) {
       return false;
     }
 
-    const glm::vec3 aMin{a.transform.translation - (a.model->GetBoundingBoxSize() * a.transform.scale)};
-    const glm::vec3 aMax{a.transform.translation + (a.model->GetBoundingBoxSize() * a.transform.scale)};
-    const glm::vec3 bMin{b.transform.translation - (b.model->GetBoundingBoxSize() * b.transform.scale)};
-    const glm::vec3 bMax{b.transform.translation + (b.model->GetBoundingBoxSize() * b.transform.scale)};
+    const glm::vec3 aMin{a.transform.translation - (a.model->GetBoundingBoxSize() * a.transform.scale * .5f)};
+    const glm::vec3 aMax{a.transform.translation + (a.model->GetBoundingBoxSize() * a.transform.scale * .5f)};
+    const glm::vec3 bMin{b.transform.translation - (b.model->GetBoundingBoxSize() * b.transform.scale * .5f)};
+    const glm::vec3 bMax{b.transform.translation + (b.model->GetBoundingBoxSize() * b.transform.scale * .5f)};
 
     return (aMin.x <= bMax.x && aMax.x >= bMin.x) && (aMin.y <= bMax.y && aMax.y >= bMin.y) &&
            (aMin.z <= bMax.z && aMax.z >= bMin.z);
@@ -20,34 +25,51 @@ namespace Enforcer {
   void PhysicsSystem::Update(const FrameInfo &frameInfo) const {
     // more objs = mode speed, bad way to implement
     for (auto &[keyA, objA]: frameInfo.gameObjects) {
-      if (objA.physics.isStatic || objA.model == nullptr) [[unlikely]]
+      if (objA.physics.isStatic or objA.model == nullptr)
         continue;
 
-      objA.physics.ApplyForce(gravity * objA.physics.mass);
+      if (!objA.physics.isGrounded) {
+        objA.physics.ApplyForce(gravity * objA.physics.mass);
+      }
+
       objA.physics.Update(frameInfo.frameTime, objA.transform);
 
+      const GameObject *lastCollidedObject{nullptr};
+
       for (auto &[keyB, objB]: frameInfo.gameObjects) {
-        if (objB.model == nullptr || keyA == keyB) [[unlikely]]
+        if (objB.model == nullptr or keyA == keyB)
           continue;
 
         if (CheckCollision(objA, objB)) {
-        LOG_WARNING(Common, "Object{} collided with object{}", objA.GetId(),
-                 objB.GetId());
-          const glm::vec3 bMin{objB.transform.translation -
-                                                (objB.model->GetBoundingBoxSize() * objB.transform.scale)};
-          const glm::vec3 aMin{objA.transform.translation -
-                                                (objA.model->GetBoundingBoxSize() * objA.transform.scale)};
-
-          /*LOG_WARNING(
-              Debug, "Positions: A({} {} {}) B({} {} {})",
-              objA.transform.translation.x, objA.transform.translation.y,
-              objA.transform.translation.z, objB.transform.translation.x,
-              objB.transform.translation.y, objB.transform.translation.z);
-          LOG_WARNING(Debug, "Bounding Box A({} {} {}) B({} {} {})", aMin.x,
-                      aMin.y, aMin.z, bMin.x, bMin.y, bMin.z);
-*/
+          //objA.physics.ApplyBounce(objA, objB, frameInfo.frameTime);
+          objA.physics.isGrounded = true;
           objA.physics.velocity = glm::vec3{0.0f};
+
+          glm::vec3 contactPoint{.5f * (objA.transform.translation + objB.transform.translation)};
+          glm::vec3 offset{contactPoint - objA.transform.translation};
+          glm::vec3 collisionNormal{normalize(offset)};
+          const float torque{length(cross(offset,collisionNormal))};
+
+          objA.physics.torque += torque;
+          lastCollidedObject = &objB;
+
+          LOG_INFO(Debug,"Torque => {}", objA.physics.torque);
+          LOG_INFO(Debug,"Angular Velocity => {}", objA.physics.angularVelocity);
+          LOG_INFO(Debug,"Rotation => ({},{},{})", objA.transform.rotation.x,objA.transform.rotation.y,objA.transform.rotation.z);
+
+          continue;
         }
+
+        if (!objA.physics.isGrounded or lastCollidedObject == nullptr) {
+          continue;
+        }
+
+        if (!CheckCollision(objA, *lastCollidedObject)) {
+          objA.physics.isGrounded = false;
+          lastCollidedObject = nullptr;
+        }
+
+        //objA.physics.angularVelocity *= 0.98f; // damping if I wish so
       }
     }
   }

@@ -1,7 +1,7 @@
 #pragma once
 
-// #include "../common/logging/log.hpp"
 #include <array>
+#include <logging/log.hpp>
 #include "../common/types.hpp"
 #include "enf_model.hpp"
 
@@ -23,32 +23,43 @@ namespace Enforcer {
     glm::vec3 rotation{}; //  cos0 -sin0 sin0 cos0 = circle
 
     // Y X Z rotation
-    glm::mat4 mat4() const noexcept;
-    glm::mat3 normalMatrix() const noexcept;
+    [[nodiscard]] glm::mat4 mat4() const noexcept;
+    [[nodiscard]] glm::mat3 normalMatrix() const noexcept;
   };
 
   struct PointLightComponent {
     float lightIntensity{1.f};
   };
 
+  class GameObject;
   struct PhysicsComponent {
     glm::vec3 velocity{0.f};
     mutable glm::vec3 acceleration{0.f};
+    float angularVelocity{0.f};
+    float torque{0.f};
     float mass{10.f};
+    float bounciness{1.f}; /*restitutionCoefficient*/
     bool isStatic{false};
+    bool isGrounded{false};
 
-    void ApplyForce(const glm::vec3 force) const noexcept {
-      if (isStatic)
-        return;
-      acceleration += force / mass;
-    }
+    void ApplyForce(glm::vec3 force) const noexcept;
+    void ApplyBounce(GameObject& objA, GameObject& objB, float deltaTime) const noexcept;
 
     void Update(const float deltaTime, TransformComponent &transform) {
       if (isStatic)
         return;
+
       velocity += acceleration * deltaTime;
       transform.translation += velocity * deltaTime;
+
+      angularVelocity += (torque / mass) * deltaTime;
+      transform.rotation += angularVelocity * deltaTime;
+
+      // damping : angularVelocity *= .98f;
+      // damping : velocity *= .98f;
+
       acceleration = glm::vec3(.0f);
+      torque = 0.f;
     }
   };
 
@@ -68,12 +79,12 @@ namespace Enforcer {
 
     u32 GetId() const noexcept { return id; };
 
-    glm::vec3 color;
-    TransformComponent transform;
-    PhysicsComponent physics;
+    glm::vec3 color{1.f,1.f,1.f};
+    TransformComponent transform{};
+    PhysicsComponent physics{};
 
     std::shared_ptr<Model> model{nullptr};
-    std::array<std::shared_ptr<Model>, 4> imposters;
+    std::array<std::shared_ptr<Model>, 4> imposters{};
     std::unique_ptr<PointLightComponent> pointLight{nullptr};
 
     float reflection{.01f};

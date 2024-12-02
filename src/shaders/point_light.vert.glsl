@@ -23,6 +23,7 @@ layout(set = 0, binding = 0) uniform GlobalUniformBufferObject{
   mat4 inverseView;
   vec4 ambientLightColor;
   PointLight pointLights[pointLightsAmount];
+  float time;
   int numLights;
 } uniformBufferObject;
 layout(push_constant) uniform Push{

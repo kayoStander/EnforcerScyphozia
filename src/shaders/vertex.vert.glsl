@@ -3,6 +3,8 @@
 // center = 0,0
 
 layout(constant_id = 0) const int pointLightsAmount=10;
+layout(constant_id = 1) const int imagesAmount=10;
+layout(constant_id = 2) const int pixelationGridSize=15;
 
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 color;
@@ -24,19 +26,25 @@ layout(set = 0, binding = 0) uniform GlobalUniformBufferObject{
   mat4 inverseView;
   vec4 ambientLightColor;
   PointLight pointLights[pointLightsAmount];
+  float time;
   int numLights;
 } uniformBufferObject;
 layout(push_constant) uniform Push {
   mat4 modelMatrix; 
   mat4 normalMatrix; 
   float reflection;
-  int imageBind; 
+  // float resolution
+  int imageBind;
 } push;
+vec3 PixelateWorld(const vec3 position){
+ return floor(position / (float(pixelationGridSize)/100.)) * (float(pixelationGridSize)/100.);
+}
 void main(){
   vec4 positionWorld = push.modelMatrix * vec4(position,1.);
-  gl_Position = uniformBufferObject.projection * uniformBufferObject.view * positionWorld;
+  vec3 pixelatedWorldPosition = PixelateWorld(positionWorld.xyz);
+  gl_Position = uniformBufferObject.projection * uniformBufferObject.view * vec4(pixelatedWorldPosition, 1.);
   fragNormalWorld = normalize(mat3(push.normalMatrix)*normal);
-  fragPositionWorld = positionWorld.xyz;
+  fragPositionWorld = pixelatedWorldPosition;
   fragColor = color;
   fragUV = uv;
 }

@@ -75,7 +75,7 @@ namespace Enforcer {
    * @param offset (Optional) Byte offset from beginning of mapped region
    *
    */
-  void Buffer::writeToBuffer(void *data, const VkDeviceSize size, const VkDeviceSize offset) {
+  void Buffer::writeToBuffer(void * __restrict__ data, const VkDeviceSize size, const VkDeviceSize offset) {
     assert(mapped && "Cannot copy to unmapped buffer");
 
     if (size == VK_WHOLE_SIZE) {

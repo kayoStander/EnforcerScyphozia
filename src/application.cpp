@@ -23,6 +23,13 @@
 #error "No GLM recognized in the system"
 #endif
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+#include "../external/imgui/imgui.h"
+#include "../external/imgui/backends/imgui_impl_glfw.h"
+#include "../external/imgui/backends/imgui_impl_vulkan.h"
+#pragma GCC diagnostic pop
+
 #include <chrono>
 #include <random>
 
@@ -39,6 +46,11 @@ namespace Enforcer {
                  MAX_TEXTURE * SwapChain::MAX_FRAMES_IN_FLIGHT)
     .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, // cube
                  6 * SwapChain::MAX_FRAMES_IN_FLIGHT)
+    .build();
+
+    imGuiPool = DescriptorPool::Builder(device)
+    .setMaxSets(SwapChain::MAX_FRAMES_IN_FLIGHT)
+    .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1 * SwapChain::MAX_FRAMES_IN_FLIGHT)
     .build();
     LoadGameObjects();
   }
@@ -130,46 +142,20 @@ namespace Enforcer {
               sizeof(DefaultUniformBufferObject));
 
     Game::Player player{window, cameraController, camera, viewerObject};
-    const u32 musicianID{Game::Player::Perk::GetPerkId("Musician")};
-    const u32 rockAndStoneID{Game::Player::Perk::GetPerkId("Rock and stone")};
-    Game::Player::Perk::GivePerkToPlayer(player, musicianID);
-    Game::Player::Perk::GivePerkToPlayer(player, rockAndStoneID);
+    const u32 musicianID{Game::Perk::GetPerkId("Musician")};
+    const u32 rockAndStoneID{Game::Perk::GetPerkId("Rock and stone")};
+    Game::Perk::GivePerkToPlayer(player, musicianID);
+    Game::Perk::GivePerkToPlayer(player, rockAndStoneID);
 
     LOG_CRITICAL(Common, "PerkID and PerkName from player perks => {} and {}", player.GetPerkId("Musician"),
                  player.perks[player.GetPerkId("Musician")]->name);
     LOG_CRITICAL(Common, "PerkID and PerkName from player perks => {} and {}", player.GetPerkId("Rock and stone"),
                  player.perks[player.GetPerkId("Rock and stone")]->name);
 
-    //Server server{};
-    //Message<CustomMessageTypes> message;
-    //message.header.id = CustomMessageTypes::A;
-
-    class CustomServer : public ServerInterface<CustomMessageTypes> {
-    public:
-      CustomServer(const u16 port):ServerInterface(port) {
-
-      }
-    protected:
-      virtual bool OnClientConnect([[maybe_unused]]std::shared_ptr<Connection<CustomMessageTypes>> client) {
-        return true;
-      }
-      virtual void OnClientDisconnect([[maybe_unused]]std::shared_ptr<Connection<CustomMessageTypes>> client) {
-
-      }
-      virtual void OnMessage(std::shared_ptr<Connection<CustomMessageTypes>> client, const Message<CustomMessageTypes>& message) {
-        switch (message.header.id) {
-          case CustomMessageTypes::ServerPing: {
-            LOG_INFO(Server,"ServerPing called {}", client->GetId());
-            client->Send(message);
-          }
-          default: ;
-        }
-      }
-    } server{60000};
-
     server.Start();
 
     class CustomClient : public ClientInterface<CustomMessageTypes> {
+    public:
       void PingServer() {
         Message<CustomMessageTypes> message;
         message.header.id = CustomMessageTypes::ServerPing;
@@ -177,30 +163,88 @@ namespace Enforcer {
         const std::chrono::system_clock::time_point now{std::chrono::system_clock::now()};
 
         message << now;
+        Send(message);
       }
-    } customClient;
+    } customClient;//,customClient2;
     customClient.Connect("127.0.0.1",60000);
+    //customClient2.Connect("127.0.0.1",60000);
 
+    std::chrono::time_point lastPingTime{std::chrono::high_resolution_clock::now()};
+
+    /*ImGui_ImplVulkan_InitInfo initInfo{};
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGui::StyleColorsDark();
+
+    ImGuiIO &IO = ImGui::GetIO();
+    (void) IO;
+    s32 w{},h{};
+    glfwGetFramebufferSize(window.GetGLFWWindow(), &w, &h);
+    IO.DisplaySize = ImVec2(static_cast<float>(w), static_cast<float>(h));
+    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    // Enable Keyboard Controls
+    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+    // Enable Gamepad Controls
+
+    LOG_WARNING(Vulkan,"TEST");
+    ImGui_ImplGlfw_InitForVulkan(window.GetGLFWWindow(), true);
+
+    initInfo.Instance = device.getInstance();
+    initInfo.PhysicalDevice = device.getPhysicalDevice();
+    initInfo.Device = device.device();
+    initInfo.QueueFamily = device.findPhysicalQueueFamilies().graphicsFamily;
+    initInfo.Queue = device.graphicsQueue();
+    initInfo.DescriptorPool = imGuiPool->GetDescriptorPool();
+    initInfo.RenderPass = renderer.GetSwapChainRenderPass();
+    initInfo.MinImageCount = device.getSwapChainSupport().capabilities.minImageCount;
+    initInfo.ImageCount = SwapChain::MAX_FRAMES_IN_FLIGHT;
+    initInfo.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
+
+    initInfo.PipelineCache = nullptr; // optional
+    initInfo.Subpass = 0;
+
+    initInfo.UseDynamicRendering = false; // optional
+
+    initInfo.Allocator = nullptr; // optional
+    initInfo.CheckVkResultFn = nullptr; // optional
+    initInfo.MinAllocationSize = 0; // optional
+
+    ImGui_ImplVulkan_Init(&initInfo);
+    ImGui_ImplVulkan_CreateFontsTexture();*/
+
+    std::chrono::time_point time{std::chrono::high_resolution_clock::now()};
+
+    camera.SetPerspectiveProjection(glm::radians(FOV), renderer.GetAspectRatio(), .1f, FAR);
     while (!window.ShouldClose()) {
       glfwPollEvents();
 
-      /*
-      switch (auto message{customClient.Incoming().PopFront().message}; message.header.id) {
-        case CustomMessageTypes::ServerPing: {
-          std::chrono::system_clock::time_point now{std::chrono::system_clock::now()};
-          std::chrono::system_clock::time_point then;
-          message >> then;
-          LOG_INFO(Client,"Ping: {}", std::chrono::duration<float>(now - then).count());
-        }
-        case CustomMessageTypes::MessageClient: {}
-        case CustomMessageTypes::OnMessage: {}
-        case CustomMessageTypes::MessageAllClients: {}
-        case CustomMessageTypes::OnClientConnect: {}
-        case CustomMessageTypes::OnClientDisconnect: {}
-        default: break;
-      }*/
-
       server.Update();
+
+      auto currentTimePing = std::chrono::high_resolution_clock::now();
+      if (glfwGetKey(window.GetGLFWWindow(), GLFW_KEY_1) == GLFW_PRESS
+        && std::chrono::duration_cast<std::chrono::milliseconds>(currentTimePing - lastPingTime).count() > 500) {
+        lastPingTime = currentTimePing;
+        LOG_INFO(Debug,"1 pressed");
+        customClient.PingServer();
+      }
+      if (!customClient.Incoming().Empty()) {
+        switch (auto message{customClient.Incoming().PopFront().message}; message.header.id) {
+          case CustomMessageTypes::ServerPing: {
+            std::chrono::system_clock::time_point now{std::chrono::system_clock::now()};
+            std::chrono::system_clock::time_point then;
+            message >> then;
+            LOG_INFO(Client,"Ping: {}", std::chrono::duration<float>(now - then).count());
+            break;
+          }
+          case CustomMessageTypes::MessageClient: {break;}
+          case CustomMessageTypes::OnMessage: {break;}
+          case CustomMessageTypes::MessageAllClients: {break;}
+          case CustomMessageTypes::OnClientConnect: {break;}
+          case CustomMessageTypes::OnClientDisconnect: {break;}
+          default: {break;}
+        }
+      }
 
       const std::chrono::time_point newTime{std::chrono::high_resolution_clock::now()};
       const float frameTime{
@@ -209,11 +253,10 @@ namespace Enforcer {
 
       cameraController.MoveInPlaneXZ(window, frameTime, viewerObject);
       camera.SetViewYXZ(viewerObject.transform.translation, viewerObject.transform.rotation);
-
-      const float aspect{renderer.GetAspectRatio()};
+      camera.FollowMouse(window); // cancelled bc of those other 2 functions on top
       // camera.SetOrthographicProjection(-aspect, aspect, -1, 1, -1, 1);
-      camera.SetPerspectiveProjection(glm::radians(FOV), aspect, .1f, FAR);
-      camera.FollowMouse(window);
+
+      uniformBufferObject.time += frameTime;
 
       if (VkCommandBuffer commandBuffer{renderer.BeginFrame()}) {
         const int frameIndex{static_cast<int>(renderer.GetFrameIndex())};
@@ -230,6 +273,21 @@ namespace Enforcer {
         // render
         renderer.BeginSwapChainRenderPass(commandBuffer);
 
+        // imgui
+        /*ImGui::NewFrame();
+        ImGui_ImplVulkan_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+
+        ImGui::Begin("Test");
+        ImGui::Text("Hello");
+        ImGui::End();
+
+        LOG_WARNING(GLFW,"IMGUI RENDERING");
+
+        ImGui::Render();
+        ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), commandBuffer);*/
+
+        // player
         player.Update(); // not sure if it is the best location for this call ill see later
         //LOG_CRITICAL(Common,"PlayerDefense,PlayerMoveSpeed => {},{}",player.GetScaling(Game::Defense),player.GetScaling(Game::MoveSpeed));
 
@@ -250,8 +308,11 @@ namespace Enforcer {
       //std::cout << "\r\033[FFps => " << 1.f / frameTime << std::flush;
     }
 
+    //server.Stop();
+
     vkDeviceWaitIdle(device.device());
 
+    //ImGui_ImplVulkan_DestroyFontsTexture();
     LOG_DEBUG(GLFW, "Loop ended");
   }
 
@@ -324,15 +385,28 @@ namespace Enforcer {
     const std::shared_ptr<Model> cube{Model::CreateModelFromFile(device, "model/cube.obj")};
     const std::shared_ptr<Model> imposterCube0{Model::CreateModelFromFile(device, "model/colored_cube.obj")};
 
-    const std::shared_ptr<Model> smoothVase{Model::CreateModelFromFile(device, "model/noise_plane.obj")};
-    GameObject gameObject{GameObject::CreateGameObject()};
-    gameObject.transform.scale = {.5f, .5f, .5f};
-    gameObject.transform.translation = {0.f, -5.f, 0.f};
-    gameObject.model = cube;
-    gameObject.imageBind = 1;
-    gameObject.reflection = 0.2f;
-    gameObject.physics.isStatic = true;
-    gameObjects.emplace(gameObject.GetId(), std::move(gameObject));
+    for (f32 y{0.f}; y < 10.f;) {
+      GameObject gameObject{GameObject::CreateGameObject()};
+      gameObject.transform.scale = {.5f, .5f, .5f};
+      gameObject.transform.translation = {0.f, -++y*7.f, 5.f};
+      gameObject.model = cube;
+      gameObject.imageBind = 0;
+      gameObject.reflection = 0.f;
+      gameObject.physics.isStatic = false;
+      gameObject.physics.bounciness = 1.f;
+      gameObjects.emplace(gameObject.GetId(), std::move(gameObject));
+    }
+
+    const std::shared_ptr<Model> noisePlane{Model::CreateModelFromFile(device, "model/statue.obj")};
+    GameObject gameObject2{GameObject::CreateGameObject()};
+    gameObject2.transform.scale = {5.f, 5.f, 5.f};
+    gameObject2.transform.translation = {0.f, -2.f, -10.f};
+    gameObject2.transform.rotation = {0.f,0.f,glm::pi<float>()};
+    gameObject2.model = noisePlane;
+    gameObject2.imageBind = 3;
+    gameObject2.reflection = 0.005f;
+    gameObject2.physics.isStatic = true;
+    gameObjects.emplace(gameObject2.GetId(), std::move(gameObject2));
 
     for (s32 x{-50}; x < 50; ++x) {
       for (s32 y{-50}; y < 50; ++y) {
@@ -356,17 +430,6 @@ namespace Enforcer {
       }
     }
 
-    /*GameObject gameObject2{GameObject::CreateGameObject()};
-
-    gameObject2.transform.scale = {100.f, 50.f, 100.f};
-    gameObject2.transform.translation = {.0f, 25.f, .0f};
-    gameObject2.model = smoothVase;
-    gameObject2.imageBind = 2;
-    gameObject2.reflection = 0.0f;
-    gameObject2.physics.isStatic = true;
-
-    gameObjects.emplace(gameObject2.GetId(), std::move(gameObject2));
-*/
     const std::vector<glm::vec3> lightColors{
     {1.f, .1f, .1f}, {.1f, .1f, 1.f}, {.1f, 1.f, .1f}, {1.f, 1.f, .1f}, {.1f, 1.f, 1.f}, {1.f, 1.f, 1.f} //
     };

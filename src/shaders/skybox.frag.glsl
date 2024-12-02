@@ -17,6 +17,7 @@ layout(set = 0, binding = 0) uniform GlobalUniformBufferObject{
   mat4 inverseView;
   vec4 ambientLightColor;
   PointLight pointLights[pointLightsAmount];
+  float time;
   int numLights;
 } uniformBufferObject;
 layout(set = 0, binding = 1) uniform sampler2D images[imagesAmount];
@@ -27,8 +28,51 @@ layout(push_constant) uniform Push {
   float fogEnd;
 } push;
 float LengthSquared(vec3 vector3){
-  return vector3.x * vector3.x + vector3.y * vector3.y + vector3.z * vector3.z
+  return dot(vector3,vector3);
 }
+
+vec3 CalculateVolumetricLight(vec3 fragPos, vec3 viewDir, vec3 lightPos, vec3 lightColor){
+  float lightDistance = length(lightPos - fragPos);
+  float attenuation = 1. / (lightDistance * lightDistance);
+  float fogFactor = smoothstep(push.fogStart, push.fogEnd, lightDistance);
+  
+  float samples = 10.;
+  float totalLight = 0.;
+  vec3 currentPos = fragPos;
+  float stepSize = lightDistance / samples;
+  for (int i = 0; i < int(samples); i++){
+    currentPos += viewDir * stepSize;
+    float dist = length(currentPos - fragPos);
+    float scatter = exp(-dist / lightDistance);
+    totalLight += attenuation * scatter;
+  }
+  
+  totalLight = min(totalLight, 1.);
+  
+  return lightColor * totalLight * fogFactor;
+}
+
+vec3 ReconstructWorldPosition(vec2 fragUV){
+  float depth = gl_FragCoord.z;
+  vec4 clipSpacePos = vec4(fragUV * 2. - 1., depth * 2. - 1., 1.);
+  vec4 viewSpacePos = uniformBufferObject.inverseView * clipSpacePos;
+  
+  vec3 fragPos = viewSpacePos.xyz / viewSpacePos.w;
+  return fragPos;
+}
+
+vec3 CalculateSun(vec3 fragPos, vec3 viewDir){
+  float sunAngle = uniformBufferObject.time / 2.;
+  vec3 sunPos = vec3(sin(sunAngle) * 2., cos(sunAngle) * 1.5, 2.);
+
+  vec3 sunDir = normalize(sunPos - fragPos);
+  float sunIntensity = max(dot(viewDir, sunDir), 0.);
+
+  vec3 sunColor = mix(vec3(1.,0.,.5), vec3(.1,.2,.5), .5 + .5 * cos(sunAngle));
+  sunColor *= sunIntensity;
+  return sunColor;
+}
+
 void main() {
   /*
   vec2 uv = fragUV * 2.0 - 1.0;
@@ -37,12 +81,21 @@ void main() {
   */
   
   vec4 textureColor = texture(images[4],fragUV);
+  vec3 fragPos = ReconstructWorldPosition(fragUV);
+  vec3 viewDir = normalize(fragPos);
+  vec3 finalColor = textureColor.rgb;
+  
+  for (int i = 0;i < pointLightsAmount; i++){
+    if (i >= uniformBufferObject.numLights) break;
+    
+    PointLight pointLight = uniformBufferObject.pointLights[i];
+    vec3 lightDir = normalize(pointLight.position.xyz - fragPos);
+    
+    finalColor += CalculateVolumetricLight(fragPos, lightDir, pointLight.position.xyz, pointLight.color.rgb);
+  }
 
-  /*const float density = .0005;
-  const float LOG2 = 1.442695;
-  float z = gl_FragCoord.z/gl_FragCoord.w;
-  float fogFactor= exp2(density*density*z*z*LOG2);
-  fogFactor=clamp(fogFactor,0.,1.);
-*/
-  outColor = textureColor;//vec4(z,z-.1,z,1.);//mix(vec4(.1,.1,.155,0.),textureColor*,fogFactor);
+  // NOT WORKING: finalColor += CalculateSun(fragPos, viewDir);
+  float fogFactor = smoothstep(push.fogStart, push.fogEnd, length(fragPos));
+  finalColor = mix(finalColor, push.fogColor, fogFactor);
+  outColor = vec4(finalColor * (sin(uniformBufferObject.time / 50. + .15)), 1.);//vec4(z,z-.1,z,1.);//mix(vec4(.1,.1,.155,0.),textureColor*,fogFactor);
 }
