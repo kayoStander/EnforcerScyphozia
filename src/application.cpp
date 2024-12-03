@@ -141,16 +141,17 @@ namespace Enforcer {
     LOG_DEBUG(Vulkan, "maxPushConstantsSize => {}, UBO size => {}", device.properties.limits.maxPushConstantsSize,
               sizeof(DefaultUniformBufferObject));
 
-    Game::Player player{window, cameraController, camera, viewerObject};
-    const u32 musicianID{Game::Perk::GetPerkId("Musician")};
-    const u32 rockAndStoneID{Game::Perk::GetPerkId("Rock and stone")};
-    Game::Perk::GivePerkToPlayer(player, musicianID);
-    Game::Perk::GivePerkToPlayer(player, rockAndStoneID);
+    std::shared_ptr<Game::Player> player{Game::Player::CreatePlayer(window, cameraController, camera, viewerObject)};
+    Game::Ability::SetPlayerAbility(*player, Game::Ability::GetAbilityId("Ability name"));
+    Game::Perk::GivePerkToPlayer(*player, Game::Perk::GetPerkId("Rock and stone"));
+    Game::Perk::GivePerkToPlayer(*player, Game::Perk::GetPerkId("Musician"));
 
-    LOG_CRITICAL(Common, "PerkID and PerkName from player perks => {} and {}", player.GetPerkId("Musician"),
-                 player.perks[player.GetPerkId("Musician")]->name);
-    LOG_CRITICAL(Common, "PerkID and PerkName from player perks => {} and {}", player.GetPerkId("Rock and stone"),
-                 player.perks[player.GetPerkId("Rock and stone")]->name);
+    LOG_CRITICAL(Common, "PerkID & PerkName : playerPerks => {} & {}", player->GetPerkId("Musician"),
+                 player->perks[player->GetPerkId("Musician")]->name); // => 1 & Musician
+    LOG_CRITICAL(Common, "PerkID & PerkName : playerPerks => {} & {}", player->GetPerkId("Rock and stone"),
+                 player->perks[player->GetPerkId("Rock and stone")]->name); // => 0 & Rock and stone
+
+    Game::Perk::RemovePerkFromPlayer(*player, player->GetPerkId("Musician"));
 
     server.Start();
 
@@ -237,11 +238,6 @@ namespace Enforcer {
             LOG_INFO(Client,"Ping: {}", std::chrono::duration<float>(now - then).count());
             break;
           }
-          case CustomMessageTypes::MessageClient: {break;}
-          case CustomMessageTypes::OnMessage: {break;}
-          case CustomMessageTypes::MessageAllClients: {break;}
-          case CustomMessageTypes::OnClientConnect: {break;}
-          case CustomMessageTypes::OnClientDisconnect: {break;}
           default: {break;}
         }
       }
@@ -288,7 +284,7 @@ namespace Enforcer {
         ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), commandBuffer);*/
 
         // player
-        player.Update(); // not sure if it is the best location for this call ill see later
+        player->Update(); // not sure if it is the best location for this call ill see later
         //LOG_CRITICAL(Common,"PlayerDefense,PlayerMoveSpeed => {},{}",player.GetScaling(Game::Defense),player.GetScaling(Game::MoveSpeed));
 
         UpdateUniformBufferObject(uniformBufferObjectBuffers, uniformBufferObject);
@@ -394,6 +390,7 @@ namespace Enforcer {
       gameObject.reflection = 0.f;
       gameObject.physics.isStatic = false;
       gameObject.physics.bounciness = 1.f;
+      gameObject.physics.velocity = {0.f,0.f,0.f};
       gameObjects.emplace(gameObject.GetId(), std::move(gameObject));
     }
 

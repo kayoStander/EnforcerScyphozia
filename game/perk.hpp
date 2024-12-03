@@ -20,6 +20,11 @@ namespace Game {
     //int perking;
     std::unordered_map<Scaling, bool> isScaleApplied{}; // REDO THAT LATER, WILL ONLY WORK ONE PER PLAYER FOR NOW
 
+    //Perk(const Perk &) = delete;
+    Perk &operator=(const Perk &) = delete;
+    //Perk(Perk &&) = delete;
+    Perk &operator=(const Perk &&) = delete;
+
     static void GivePerkToPlayer(Player &player, u32 id);
 
     static void RemovePerkFromPlayer(Player &player, u32 id);

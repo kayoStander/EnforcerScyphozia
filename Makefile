@@ -488,6 +488,30 @@ external/imgui/imgui_widgets.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_widgets.cpp.s
 .PHONY : external/imgui/imgui_widgets.cpp.s
 
+game/ability.o: game/ability.cpp.o
+.PHONY : game/ability.o
+
+# target to build an object file
+game/ability.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/ability.cpp.o
+.PHONY : game/ability.cpp.o
+
+game/ability.i: game/ability.cpp.i
+.PHONY : game/ability.i
+
+# target to preprocess a source file
+game/ability.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/ability.cpp.i
+.PHONY : game/ability.cpp.i
+
+game/ability.s: game/ability.cpp.s
+.PHONY : game/ability.s
+
+# target to generate assembly for a file
+game/ability.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/ability.cpp.s
+.PHONY : game/ability.cpp.s
+
 game/item.o: game/item.cpp.o
 .PHONY : game/item.o
 
@@ -1163,6 +1187,9 @@ help:
 	@echo "... external/imgui/imgui_widgets.o"
 	@echo "... external/imgui/imgui_widgets.i"
 	@echo "... external/imgui/imgui_widgets.s"
+	@echo "... game/ability.o"
+	@echo "... game/ability.i"
+	@echo "... game/ability.s"
 	@echo "... game/item.o"
 	@echo "... game/item.i"
 	@echo "... game/item.s"

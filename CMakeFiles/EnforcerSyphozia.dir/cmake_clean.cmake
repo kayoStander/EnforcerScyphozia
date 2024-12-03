@@ -23,6 +23,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_tables.cpp.o.d"
   "CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_widgets.cpp.o"
   "CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_widgets.cpp.o.d"
+  "CMakeFiles/EnforcerSyphozia.dir/game/ability.cpp.o"
+  "CMakeFiles/EnforcerSyphozia.dir/game/ability.cpp.o.d"
   "CMakeFiles/EnforcerSyphozia.dir/game/item.cpp.o"
   "CMakeFiles/EnforcerSyphozia.dir/game/item.cpp.o.d"
   "CMakeFiles/EnforcerSyphozia.dir/game/perk.cpp.o"

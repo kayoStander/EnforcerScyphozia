@@ -13,6 +13,7 @@
 #pragma GCC diagnostic pop
 #include <stdexcept>
 
+// if i want it to have an .mtl ill need to redo my current impl of textures in glsl
 namespace Enforcer {
   Texture::Texture(Device &device, const std::string &filepath, u32 layerCount) :
       device{device}, image{}, imageMemory{}, imageView{}, sampler{} {

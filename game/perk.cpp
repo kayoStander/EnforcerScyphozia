@@ -98,10 +98,17 @@ namespace Game {
       false)),
     DEFINE_PERK(std::make_shared<Perk>(
       "Deacon",
-      "Your heals have chance to be critical.",
+      "Chance to do critical heals",
       []([[maybe_unused]] Player &player) {},
       std::unordered_map<Scaling, f32>{{Scaling::Faith,10.f}},
       false)),
+    DEFINE_PERK(std::make_shared<Perk>(
+      "Silenced",
+      "Your perking is halved at the cost of multiplying your damage and defense.",
+      []([[maybe_unused]] Player &player) {},
+      std::unordered_map<Scaling, f32>{{Scaling::Perking, -50.f},{Scaling::Damage,44.f},{Scaling::Defense,44.f}},
+      false)),
+
 
 
     // PERKS //
@@ -205,6 +212,13 @@ namespace Game {
       "Increases your inventory capacity.",
       []([[maybe_unused]] Player &player) {},
       std::unordered_map<Scaling, f32>{{Scaling::Tech,15.f}},
+      true)),
+            DEFINE_PERK(std::make_shared<Perk>(
+      "Regalia",
+      "Enemies wont aggro if you dont attack them.",
+      []([[maybe_unused]] Player &player) {},
+      std::unordered_map<Scaling, f32>{{Scaling::Tech,15.f}},
       true))
+
     };
 } // namespace Game

@@ -7,9 +7,9 @@
 #include <vulkan/vulkan_core.h>
 
 namespace Enforcer {
-#define MAX_LIGHTS 10
-#define MAX_TEXTURE 5
-#define OBJECT_PIXELIZATION 10
+  constexpr int MAX_LIGHTS{10};
+  constexpr int MAX_TEXTURE{5};
+  constexpr int OBJECT_PIXELIZATION{10};
   struct PointLight {
     glm::vec4 position{};
     glm::vec4 color{};

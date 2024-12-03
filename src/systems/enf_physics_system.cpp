@@ -23,7 +23,6 @@ namespace Enforcer {
   }
 
   void PhysicsSystem::Update(const FrameInfo &frameInfo) const {
-    // more objs = mode speed, bad way to implement
     for (auto &[keyA, objA]: frameInfo.gameObjects) {
       if (objA.physics.isStatic or objA.model == nullptr)
         continue;
@@ -41,32 +40,31 @@ namespace Enforcer {
           continue;
 
         if (CheckCollision(objA, objB)) {
-          //objA.physics.ApplyBounce(objA, objB, frameInfo.frameTime);
+          // objA.physics.ApplyBounce(objA, objB, frameInfo.frameTime);
           objA.physics.isGrounded = true;
           objA.physics.velocity = glm::vec3{0.0f};
 
-          glm::vec3 contactPoint{.5f * (objA.transform.translation + objB.transform.translation)};
-          glm::vec3 offset{contactPoint - objA.transform.translation};
-          glm::vec3 collisionNormal{normalize(offset)};
-          const float torque{length(cross(offset,collisionNormal))};
+          const glm::vec3 contactPoint{.5f * (objA.transform.translation + objB.transform.translation)};
+          const glm::vec3 offset{contactPoint - objA.transform.translation};
+          const float torque{length(cross(offset,normalize(offset)))};
 
           objA.physics.torque += torque;
           lastCollidedObject = &objB;
 
-          LOG_INFO(Debug,"Torque => {}", objA.physics.torque);
-          LOG_INFO(Debug,"Angular Velocity => {}", objA.physics.angularVelocity);
-          LOG_INFO(Debug,"Rotation => ({},{},{})", objA.transform.rotation.x,objA.transform.rotation.y,objA.transform.rotation.z);
+          // LOG_INFO(Debug,"Torque => {}", objA.physics.torque);
+          // LOG_INFO(Debug,"Angular Velocity => {}", objA.physics.angularVelocity);
+          // LOG_INFO(Debug,"Rotation => ({},{},{})", objA.transform.rotation.x,objA.transform.rotation.y,objA.transform.rotation.z);
 
-          continue;
-        }
+        } else {
 
-        if (!objA.physics.isGrounded or lastCollidedObject == nullptr) {
-          continue;
-        }
+          if (!objA.physics.isGrounded or lastCollidedObject == nullptr) {
+            continue;
+          }
 
-        if (!CheckCollision(objA, *lastCollidedObject)) {
-          objA.physics.isGrounded = false;
-          lastCollidedObject = nullptr;
+          if (!CheckCollision(objA, *lastCollidedObject)) {
+            objA.physics.isGrounded = false;
+            lastCollidedObject = nullptr;
+          }
         }
 
         //objA.physics.angularVelocity *= 0.98f; // damping if I wish so

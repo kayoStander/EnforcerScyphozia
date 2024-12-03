@@ -22,6 +22,11 @@ namespace Game{
       const std::string description;
     };
 
+    //Armor(const Armor &) = delete;
+    Armor &operator=(const Armor &) = delete;
+    //Armor(Armor &&) = delete;
+    Armor &operator=(const Armor &&) = delete;
+
     u32 Perk;
   private:
     static std::unordered_map<u32, Armor> armors;

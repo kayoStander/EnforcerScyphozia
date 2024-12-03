@@ -462,9 +462,10 @@ CMakeFiles/EnforcerSyphozia.dir/src/main.cpp.o: \
  /usr/include/boost/detail/workaround.hpp \
  /usr/include/boost/config/workaround.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../game/../src/keyboard.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../game/ability.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../game/elements.hpp \
- /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../game/perk.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../game/item.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../game/perk.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/enf_server.hpp \
  /usr/include/c++/13/deque /usr/include/c++/13/bits/stl_deque.h \
  /usr/include/c++/13/bits/deque.tcc /usr/include/boost/asio.hpp \

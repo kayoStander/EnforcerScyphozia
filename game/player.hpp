@@ -13,23 +13,25 @@
 #include "../src/enf_camera.hpp"
 #include "../src/enf_game_object.hpp"
 #include "../src/keyboard.hpp"
+#include "ability.hpp"
 #include "elements.hpp"
-#include "perk.hpp"
 #include "item.hpp"
+#include "perk.hpp"
 
 namespace Game {
-  class Player {
+  class Player :
+   public std::enable_shared_from_this<Player> {
   public:
-    Player(Enforcer::Window &window, Enforcer::Keyboard &keyboard, Enforcer::Camera &camera,
-           Enforcer::GameObject &viewerObject) noexcept
-      : window{window}, keyboard{keyboard}, camera{camera}, viewerObject{viewerObject} {
-    };
+    static std::shared_ptr<Player> CreatePlayer(Enforcer::Window &window, Enforcer::Keyboard &keyboard,
+                                             Enforcer::Camera &camera, Enforcer::GameObject &viewerObject);
 
     ~Player() noexcept = default;
 
     Player(const Player &) = delete;
-
     Player &operator=(const Player &) = delete;
+    Player(Player &&) = delete;
+    Player &operator=(const Player &&) = delete;
+
 
     struct {
       /*void TakeDamage(const f32 damage) noexcept {
@@ -53,17 +55,22 @@ namespace Game {
       }
     }
 
-    u32 GetPerkId(const std::string &name);
+    [[nodiscard]] u32 GetPerkId(const std::string &name);
 
     void Update();
 
     [[nodiscard]] std::string_view GetName() const noexcept { return name; }
     [[nodiscard]] Enforcer::Keyboard &GetKeyboard() const noexcept { return keyboard; }
     [[nodiscard]] f32 GetScaling(const Scaling scale) const noexcept {return scalings.at(scale);}
+    [[nodiscard]] Enforcer::GameObject &GetViewerObject() const noexcept {
+      return viewerObject;
+    };
+    [[nodiscard]] u32 GetId() const noexcept { return id; }
 
     std::unordered_map<u32, std::shared_ptr<Perk> > perks{};
     std::unordered_map<u32, std::shared_ptr<Item> > inventory{127};
     std::unordered_map<std::string_view, s32> keybinds;
+    u32 ability{0};
 
     std::unordered_map<Scaling, f32> scalings={
       {Scaling::Damage,10.f},
@@ -91,11 +98,24 @@ namespace Game {
       Leggings leggings;
     };*/
 
+    static std::unordered_map<u32, std::shared_ptr<Player>> playerList;
+
+    constexpr bool operator==(const Player &other) const { return this->GetId() == other.GetId(); }
+    //constexpr bool operator==(const Player& player1, const Player& player2) const {return player1.GetId() == player2.GetId();}
+
+    [[deprecated("just dont use that.")]] Player(Enforcer::Window &window, Enforcer::Keyboard &keyboard, Enforcer::Camera &camera,
+       Enforcer::GameObject &viewerObject) noexcept
+  : window{window}, keyboard{keyboard}, camera{camera}, viewerObject{viewerObject} {
+      static u32 idAmount{0};
+      id = idAmount++;
+    }; // should be private but lets not talk about it
+
   private:
     Enforcer::Window &window;
     Enforcer::Keyboard &keyboard;
     Enforcer::Camera &camera;
     Enforcer::GameObject &viewerObject;
+    u32 id;
 
     std::unordered_map<Scaling, f32> flatScalings={
       {Scaling::Damage, 10.f},

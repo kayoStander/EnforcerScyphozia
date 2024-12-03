@@ -18,6 +18,11 @@ namespace Game {
     std::unordered_map<Scaling, f32> scalings;
     u8 maxAmount;
 
+    //Item(const Item &) = delete;
+    Item &operator=(const Item &) = delete;
+    //Item(Item &&) = delete;
+    Item &operator=(const Item &&) = delete;
+
     static void GiveItemToPlayer(Player &player, u32 id);
     static void RemoveItemFromPlayer(Player &player, u32 id);
 

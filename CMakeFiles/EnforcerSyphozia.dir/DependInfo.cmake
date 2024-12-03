@@ -20,6 +20,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/heck/prog/cpp/vulkan/EnforcerScyphozia/external/imgui/imgui_draw.cpp" "CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_draw.cpp.o" "gcc" "CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_draw.cpp.o.d"
   "/home/heck/prog/cpp/vulkan/EnforcerScyphozia/external/imgui/imgui_tables.cpp" "CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_tables.cpp.o" "gcc" "CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_tables.cpp.o.d"
   "/home/heck/prog/cpp/vulkan/EnforcerScyphozia/external/imgui/imgui_widgets.cpp" "CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_widgets.cpp.o" "gcc" "CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_widgets.cpp.o.d"
+  "/home/heck/prog/cpp/vulkan/EnforcerScyphozia/game/ability.cpp" "CMakeFiles/EnforcerSyphozia.dir/game/ability.cpp.o" "gcc" "CMakeFiles/EnforcerSyphozia.dir/game/ability.cpp.o.d"
   "/home/heck/prog/cpp/vulkan/EnforcerScyphozia/game/item.cpp" "CMakeFiles/EnforcerSyphozia.dir/game/item.cpp.o" "gcc" "CMakeFiles/EnforcerSyphozia.dir/game/item.cpp.o.d"
   "/home/heck/prog/cpp/vulkan/EnforcerScyphozia/game/perk.cpp" "CMakeFiles/EnforcerSyphozia.dir/game/perk.cpp.o" "gcc" "CMakeFiles/EnforcerSyphozia.dir/game/perk.cpp.o.d"
   "/home/heck/prog/cpp/vulkan/EnforcerScyphozia/game/player.cpp" "CMakeFiles/EnforcerSyphozia.dir/game/player.cpp.o" "gcc" "CMakeFiles/EnforcerSyphozia.dir/game/player.cpp.o.d"
