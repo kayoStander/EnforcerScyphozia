@@ -33,6 +33,7 @@ layout(push_constant) uniform Push {
   mat4 modelMatrix; 
   mat4 normalMatrix; 
   float reflection;
+  float imageBindRepeatFactor;
   // float resolution
   int imageBind;
 } push;

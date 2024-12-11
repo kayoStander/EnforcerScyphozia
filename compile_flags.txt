@@ -4,3 +4,4 @@
 -Wall 
 -Wextra
 -Wvla
+-fmodules-ts

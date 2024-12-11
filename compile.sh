@@ -18,3 +18,4 @@ find "$SHADERS_DIR" -type f -name "*.glsl" | while read shader_path; do
 done
 
 echo "Shader compilation done!"
+

@@ -77,7 +77,7 @@ namespace Enforcer {
 
       ASSERT_LOG(lightIndex < MAX_LIGHTS, "number of lights is bigger than the limit");
 
-      obj.transform.translation = glm::vec3(rotateLight * glm::vec4(obj.transform.translation, 1.f));
+      // obj.transform.translation = glm::vec3(rotateLight * glm::vec4(obj.transform.translation, 1.f));
 
       uniformBufferObject.pointLights[lightIndex].position = glm::vec4(obj.transform.translation, 1.f);
       uniformBufferObject.pointLights[lightIndex].color = glm::vec4(obj.color, obj.pointLight->lightIntensity);

@@ -418,7 +418,7 @@ CMakeFiles/EnforcerSyphozia.dir/src/application.cpp.o: \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../common/assert.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/enf_swap_chain.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/enf_texture.hpp \
- /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../game/player.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../game/game_player.hpp \
  /usr/include/c++/13/chrono /usr/include/c++/13/bits/chrono.h \
  /usr/include/c++/13/ratio /usr/include/c++/13/ctime \
  /usr/include/c++/13/bits/parse_numbers.h /usr/include/c++/13/sstream \
@@ -436,10 +436,10 @@ CMakeFiles/EnforcerSyphozia.dir/src/application.cpp.o: \
  /usr/include/c++/13/variant /usr/include/c++/13/functional \
  /usr/include/c++/13/bits/std_function.h \
  /usr/include/c++/13/bits/move_only_function.h \
- /usr/include/c++/13/bits/mofunc_impl.h /usr/include/c++/13/thread \
- /usr/include/c++/13/stop_token /usr/include/c++/13/atomic \
- /usr/include/c++/13/bits/std_thread.h /usr/include/c++/13/semaphore \
- /usr/include/c++/13/bits/semaphore_base.h \
+ /usr/include/c++/13/bits/mofunc_impl.h /usr/include/c++/13/ranges \
+ /usr/include/c++/13/thread /usr/include/c++/13/stop_token \
+ /usr/include/c++/13/atomic /usr/include/c++/13/bits/std_thread.h \
+ /usr/include/c++/13/semaphore /usr/include/c++/13/bits/semaphore_base.h \
  /usr/include/c++/13/bits/atomic_timed_wait.h \
  /usr/include/c++/13/bits/this_thread_sleep.h \
  /usr/include/x86_64-linux-gnu/sys/time.h /usr/include/semaphore.h \
@@ -465,10 +465,10 @@ CMakeFiles/EnforcerSyphozia.dir/src/application.cpp.o: \
  /usr/include/boost/detail/workaround.hpp \
  /usr/include/boost/config/workaround.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../game/../src/keyboard.hpp \
- /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../game/ability.hpp \
- /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../game/elements.hpp \
- /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../game/item.hpp \
- /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../game/perk.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../game/game_ability.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../game/game_elements.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../game/game_item.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../game/game_perk.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/enf_server.hpp \
  /usr/include/c++/13/deque /usr/include/c++/13/bits/stl_deque.h \
  /usr/include/c++/13/bits/deque.tcc /usr/include/boost/asio.hpp \

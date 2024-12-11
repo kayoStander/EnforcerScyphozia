@@ -1,6 +1,6 @@
-#include "player.hpp"
-#include "item.hpp"
-#include "perk.hpp"
+#include "game_player.hpp"
+#include "game_item.hpp"
+#include "game_perk.hpp"
 
 namespace Game{
   void Item::GiveItemToPlayer(Player &player, const u32 id) {

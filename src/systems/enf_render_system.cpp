@@ -20,15 +20,16 @@ namespace Enforcer {
     glm::mat4 modelMatrix{1.f};
     glm::mat4 normalMatrix{1.f};
     float reflection;
+    float imageBindRepeatFactor;
     int imageBind;
   };
 
   [[gnu::hot]] bool IsInFrustum(const Camera &camera, const GameObject &obj) {
-    const glm::vec3 halfSize{
-    obj.model->GetBoundingBoxSize() * obj.transform.scale};
+    const glm::vec3 halfSize{obj.model->GetBoundingBoxSize() * obj.transform.scale};
 
     for (const std::array frustumPlanes{camera.GetFrustumPlanes()}; const glm::vec4 &plane: frustumPlanes) {
-      if (const float distance{dot(glm::vec3(plane), obj.transform.translation) + plane.w}; distance < -halfSize.x && distance < -halfSize.y && distance < -halfSize.z) {
+      if (const float distance{dot(glm::vec3(plane), obj.transform.translation) + plane.w};
+          distance < -halfSize.x && distance < -halfSize.y && distance < -halfSize.z) {
         return false;
       }
     }
@@ -94,6 +95,7 @@ namespace Enforcer {
       push.modelMatrix = obj.transform.mat4();
       push.normalMatrix = obj.transform.normalMatrix();
       push.reflection = obj.reflection;
+      push.imageBindRepeatFactor = obj.imageBindRepeatFactor;
       push.imageBind = static_cast<s32>(obj.imageBind);
 
       vkCmdPushConstants(frameInfo.commandBuffer, pipelineLayout,
@@ -110,7 +112,7 @@ namespace Enforcer {
     y->Draw(frameInfo.commandBuffer);                                                                                  \
   }
       if (obj.imposters[0] == nullptr) {
-        DRAW_MODEL(100.f+obj.transform.scale.z,obj.model);
+        DRAW_MODEL(100.f + obj.transform.scale.z, obj.model);
       }
 
       DRAW_MODEL(17.5f, obj.model);

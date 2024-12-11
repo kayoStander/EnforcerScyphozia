@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <functional>
+#include <ranges>
 #include <memory>
 #include <string_view>
 #include <thread>
@@ -13,16 +14,19 @@
 #include "../src/enf_camera.hpp"
 #include "../src/enf_game_object.hpp"
 #include "../src/keyboard.hpp"
-#include "ability.hpp"
-#include "elements.hpp"
-#include "item.hpp"
-#include "perk.hpp"
+#include "game_ability.hpp"
+#include "game_elements.hpp"
+#include "game_item.hpp"
+#include "game_perk.hpp"
 
+namespace Enforcer {
+  struct FrameInfo;
+}
 namespace Game {
   class Player :
    public std::enable_shared_from_this<Player> {
   public:
-    static std::shared_ptr<Player> CreatePlayer(Enforcer::Window &window, Enforcer::Keyboard &keyboard,
+    static std::shared_ptr<Player> CreatePlayer(Enforcer::Window &window, Enforcer::Device& device, Enforcer::Keyboard &keyboard,
                                              Enforcer::Camera &camera, Enforcer::GameObject &viewerObject);
 
     ~Player() noexcept = default;
@@ -45,7 +49,7 @@ namespace Game {
 
     // O(N) possible to refactor
     void attackM1() {
-      for ([[maybe_unused]] auto &[id,perk]: perks) {
+      for (const std::shared_ptr<Perk> &perk: perks | std::views::values) {
         if (glfwGetMouseButton(window.GetGLFWWindow(),GLFW_MOUSE_BUTTON_LEFT) != GLFW_PRESS) {
           return;
         }
@@ -57,15 +61,20 @@ namespace Game {
 
     [[nodiscard]] u32 GetPerkId(const std::string &name);
 
-    void Update();
+    void Update(Enforcer::FrameInfo& frameInfo);
 
     [[nodiscard]] std::string_view GetName() const noexcept { return name; }
+    [[nodiscard]] Enforcer::Device& GetDevice() const noexcept { return device; }
     [[nodiscard]] Enforcer::Keyboard &GetKeyboard() const noexcept { return keyboard; }
-    [[nodiscard]] f32 GetScaling(const Scaling scale) const noexcept {return scalings.at(scale);}
-    [[nodiscard]] Enforcer::GameObject &GetViewerObject() const noexcept {
-      return viewerObject;
-    };
+    [[nodiscard]] Enforcer::GameObject &GetViewerObject() const noexcept {return viewerObject; };
+    [[nodiscard]] Enforcer::Camera &GetCamera() const noexcept { return camera; }
+
     [[nodiscard]] u32 GetId() const noexcept { return id; }
+    [[nodiscard]] f32 GetScaling(const Scaling scale) const noexcept {return scalings.at(scale);}
+
+    [[nodiscard]] glm::vec3 &GetPosition() const noexcept {return viewerObject.transform.translation;}
+    [[nodiscard]] glm::vec3 &GetRotation() const noexcept {return viewerObject.transform.rotation;}
+    [[nodiscard]] glm::vec3 &GetScale() const noexcept {return viewerObject.transform.scale;}
 
     std::unordered_map<u32, std::shared_ptr<Perk> > perks{};
     std::unordered_map<u32, std::shared_ptr<Item> > inventory{127};
@@ -103,19 +112,18 @@ namespace Game {
     constexpr bool operator==(const Player &other) const { return this->GetId() == other.GetId(); }
     //constexpr bool operator==(const Player& player1, const Player& player2) const {return player1.GetId() == player2.GetId();}
 
-    [[deprecated("just dont use that.")]] Player(Enforcer::Window &window, Enforcer::Keyboard &keyboard, Enforcer::Camera &camera,
-       Enforcer::GameObject &viewerObject) noexcept
-  : window{window}, keyboard{keyboard}, camera{camera}, viewerObject{viewerObject} {
-      static u32 idAmount{0};
-      id = idAmount++;
+    [[deprecated("just dont use that.")]] Player(Enforcer::Window &window, Enforcer::Device& device, Enforcer::Keyboard &keyboard, Enforcer::Camera &camera,
+       Enforcer::GameObject &viewerObject, const u32 id) noexcept
+  : window{window}, device{device}, keyboard{keyboard}, camera{camera}, viewerObject{viewerObject}, id{id} {
     }; // should be private but lets not talk about it
 
   private:
     Enforcer::Window &window;
+    Enforcer::Device &device;
     Enforcer::Keyboard &keyboard;
     Enforcer::Camera &camera;
     Enforcer::GameObject &viewerObject;
-    u32 id;
+    const u32 id;
 
     std::unordered_map<Scaling, f32> flatScalings={
       {Scaling::Damage, 10.f},

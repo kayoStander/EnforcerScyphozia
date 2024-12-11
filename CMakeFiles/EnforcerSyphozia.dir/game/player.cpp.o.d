@@ -458,4 +458,5 @@ CMakeFiles/EnforcerSyphozia.dir/game/player.cpp.o: \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/game/ability.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/game/elements.hpp \
  /home/heck/prog/cpp/vulkan/EnforcerScyphozia/game/item.hpp \
- /home/heck/prog/cpp/vulkan/EnforcerScyphozia/game/perk.hpp
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/game/perk.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/game/../src/enf_frame_info.hpp

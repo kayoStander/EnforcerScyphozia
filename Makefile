@@ -488,101 +488,125 @@ external/imgui/imgui_widgets.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_widgets.cpp.s
 .PHONY : external/imgui/imgui_widgets.cpp.s
 
-game/ability.o: game/ability.cpp.o
-.PHONY : game/ability.o
+game/game_ability.o: game/game_ability.cpp.o
+.PHONY : game/game_ability.o
 
 # target to build an object file
-game/ability.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/ability.cpp.o
-.PHONY : game/ability.cpp.o
+game/game_ability.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/game_ability.cpp.o
+.PHONY : game/game_ability.cpp.o
 
-game/ability.i: game/ability.cpp.i
-.PHONY : game/ability.i
+game/game_ability.i: game/game_ability.cpp.i
+.PHONY : game/game_ability.i
 
 # target to preprocess a source file
-game/ability.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/ability.cpp.i
-.PHONY : game/ability.cpp.i
+game/game_ability.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/game_ability.cpp.i
+.PHONY : game/game_ability.cpp.i
 
-game/ability.s: game/ability.cpp.s
-.PHONY : game/ability.s
+game/game_ability.s: game/game_ability.cpp.s
+.PHONY : game/game_ability.s
 
 # target to generate assembly for a file
-game/ability.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/ability.cpp.s
-.PHONY : game/ability.cpp.s
+game/game_ability.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/game_ability.cpp.s
+.PHONY : game/game_ability.cpp.s
 
-game/item.o: game/item.cpp.o
-.PHONY : game/item.o
+game/game_ai.o: game/game_ai.cpp.o
+.PHONY : game/game_ai.o
 
 # target to build an object file
-game/item.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/item.cpp.o
-.PHONY : game/item.cpp.o
+game/game_ai.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/game_ai.cpp.o
+.PHONY : game/game_ai.cpp.o
 
-game/item.i: game/item.cpp.i
-.PHONY : game/item.i
+game/game_ai.i: game/game_ai.cpp.i
+.PHONY : game/game_ai.i
 
 # target to preprocess a source file
-game/item.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/item.cpp.i
-.PHONY : game/item.cpp.i
+game/game_ai.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/game_ai.cpp.i
+.PHONY : game/game_ai.cpp.i
 
-game/item.s: game/item.cpp.s
-.PHONY : game/item.s
+game/game_ai.s: game/game_ai.cpp.s
+.PHONY : game/game_ai.s
 
 # target to generate assembly for a file
-game/item.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/item.cpp.s
-.PHONY : game/item.cpp.s
+game/game_ai.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/game_ai.cpp.s
+.PHONY : game/game_ai.cpp.s
 
-game/perk.o: game/perk.cpp.o
-.PHONY : game/perk.o
+game/game_item.o: game/game_item.cpp.o
+.PHONY : game/game_item.o
 
 # target to build an object file
-game/perk.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/perk.cpp.o
-.PHONY : game/perk.cpp.o
+game/game_item.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/game_item.cpp.o
+.PHONY : game/game_item.cpp.o
 
-game/perk.i: game/perk.cpp.i
-.PHONY : game/perk.i
+game/game_item.i: game/game_item.cpp.i
+.PHONY : game/game_item.i
 
 # target to preprocess a source file
-game/perk.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/perk.cpp.i
-.PHONY : game/perk.cpp.i
+game/game_item.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/game_item.cpp.i
+.PHONY : game/game_item.cpp.i
 
-game/perk.s: game/perk.cpp.s
-.PHONY : game/perk.s
+game/game_item.s: game/game_item.cpp.s
+.PHONY : game/game_item.s
 
 # target to generate assembly for a file
-game/perk.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/perk.cpp.s
-.PHONY : game/perk.cpp.s
+game/game_item.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/game_item.cpp.s
+.PHONY : game/game_item.cpp.s
 
-game/player.o: game/player.cpp.o
-.PHONY : game/player.o
+game/game_perk.o: game/game_perk.cpp.o
+.PHONY : game/game_perk.o
 
 # target to build an object file
-game/player.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/player.cpp.o
-.PHONY : game/player.cpp.o
+game/game_perk.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/game_perk.cpp.o
+.PHONY : game/game_perk.cpp.o
 
-game/player.i: game/player.cpp.i
-.PHONY : game/player.i
+game/game_perk.i: game/game_perk.cpp.i
+.PHONY : game/game_perk.i
 
 # target to preprocess a source file
-game/player.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/player.cpp.i
-.PHONY : game/player.cpp.i
+game/game_perk.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/game_perk.cpp.i
+.PHONY : game/game_perk.cpp.i
 
-game/player.s: game/player.cpp.s
-.PHONY : game/player.s
+game/game_perk.s: game/game_perk.cpp.s
+.PHONY : game/game_perk.s
 
 # target to generate assembly for a file
-game/player.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/player.cpp.s
-.PHONY : game/player.cpp.s
+game/game_perk.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/game_perk.cpp.s
+.PHONY : game/game_perk.cpp.s
+
+game/game_player.o: game/game_player.cpp.o
+.PHONY : game/game_player.o
+
+# target to build an object file
+game/game_player.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/game_player.cpp.o
+.PHONY : game/game_player.cpp.o
+
+game/game_player.i: game/game_player.cpp.i
+.PHONY : game/game_player.i
+
+# target to preprocess a source file
+game/game_player.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/game_player.cpp.i
+.PHONY : game/game_player.cpp.i
+
+game/game_player.s: game/game_player.cpp.s
+.PHONY : game/game_player.s
+
+# target to generate assembly for a file
+game/game_player.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/game/game_player.cpp.s
+.PHONY : game/game_player.cpp.s
 
 src/application.o: src/application.cpp.o
 .PHONY : src/application.o
@@ -1187,18 +1211,21 @@ help:
 	@echo "... external/imgui/imgui_widgets.o"
 	@echo "... external/imgui/imgui_widgets.i"
 	@echo "... external/imgui/imgui_widgets.s"
-	@echo "... game/ability.o"
-	@echo "... game/ability.i"
-	@echo "... game/ability.s"
-	@echo "... game/item.o"
-	@echo "... game/item.i"
-	@echo "... game/item.s"
-	@echo "... game/perk.o"
-	@echo "... game/perk.i"
-	@echo "... game/perk.s"
-	@echo "... game/player.o"
-	@echo "... game/player.i"
-	@echo "... game/player.s"
+	@echo "... game/game_ability.o"
+	@echo "... game/game_ability.i"
+	@echo "... game/game_ability.s"
+	@echo "... game/game_ai.o"
+	@echo "... game/game_ai.i"
+	@echo "... game/game_ai.s"
+	@echo "... game/game_item.o"
+	@echo "... game/game_item.i"
+	@echo "... game/game_item.s"
+	@echo "... game/game_perk.o"
+	@echo "... game/game_perk.i"
+	@echo "... game/game_perk.s"
+	@echo "... game/game_player.o"
+	@echo "... game/game_player.i"
+	@echo "... game/game_player.s"
 	@echo "... src/application.o"
 	@echo "... src/application.i"
 	@echo "... src/application.s"

@@ -7,7 +7,7 @@
 #include "enf_renderer.hpp"
 #include "enf_texture.hpp"
 #include "enf_window.hpp"
-#include "../game/player.hpp"
+#include "../game/game_player.hpp"
 #include "enf_server.hpp"
 
 #include <memory>
@@ -62,7 +62,7 @@ namespace Enforcer {
     };
 
 
-    class CustomServer : public ServerInterface<CustomMessageTypes> {
+    /*class CustomServer : public ServerInterface<CustomMessageTypes> {
     public:
       CustomServer(const u16 port):ServerInterface(port) {
 
@@ -84,7 +84,7 @@ namespace Enforcer {
           default: {break;}
         }
       }
-    } server{60000};
+    } server{60000};*/
 
     Window window{WIDTH, HEIGHT};
     Device device{window};

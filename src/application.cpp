@@ -1,4 +1,5 @@
 #include "application.hpp"
+#include "../common/discord.hpp"
 #include "enf_buffer.hpp"
 #include "enf_camera.hpp"
 #include "enf_descriptors.hpp"
@@ -7,7 +8,6 @@
 #include "enf_model.hpp"
 #include "enf_texture.hpp"
 #include "keyboard.hpp"
-#include "../common/discord.hpp"
 #include "systems/enf_ocean_system.hpp"
 #include "systems/enf_physics_system.hpp"
 #include "systems/enf_point_light_system.hpp"
@@ -25,9 +25,9 @@
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wsign-conversion"
-#include "../external/imgui/imgui.h"
 #include "../external/imgui/backends/imgui_impl_glfw.h"
 #include "../external/imgui/backends/imgui_impl_vulkan.h"
+#include "../external/imgui/imgui.h"
 #pragma GCC diagnostic pop
 
 #include <chrono>
@@ -40,25 +40,25 @@ namespace Enforcer {
   Application::Application() {
 
     defaultPool = DescriptorPool::Builder(device)
-    .setMaxSets(SwapChain::MAX_FRAMES_IN_FLIGHT)
-    .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, SwapChain::MAX_FRAMES_IN_FLIGHT)
-    .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                 MAX_TEXTURE * SwapChain::MAX_FRAMES_IN_FLIGHT)
-    .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, // cube
-                 6 * SwapChain::MAX_FRAMES_IN_FLIGHT)
-    .build();
+                  .setMaxSets(SwapChain::MAX_FRAMES_IN_FLIGHT)
+                  .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, SwapChain::MAX_FRAMES_IN_FLIGHT)
+                  .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                               MAX_TEXTURE * SwapChain::MAX_FRAMES_IN_FLIGHT)
+                  .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, // cube
+                               6 * SwapChain::MAX_FRAMES_IN_FLIGHT)
+                  .build();
 
     imGuiPool = DescriptorPool::Builder(device)
-    .setMaxSets(SwapChain::MAX_FRAMES_IN_FLIGHT)
-    .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1 * SwapChain::MAX_FRAMES_IN_FLIGHT)
-    .build();
+                .setMaxSets(SwapChain::MAX_FRAMES_IN_FLIGHT)
+                .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1 * SwapChain::MAX_FRAMES_IN_FLIGHT)
+                .build();
     LoadGameObjects();
   }
 
   void Application::Run() {
     RPC.Init();
 
-    std::vector<std::unique_ptr<Buffer> > uniformBufferObjectBuffers(SwapChain::MAX_FRAMES_IN_FLIGHT);
+    std::vector<std::unique_ptr<Buffer>> uniformBufferObjectBuffers(SwapChain::MAX_FRAMES_IN_FLIGHT);
     for (u32 i{0}; i < uniformBufferObjectBuffers.size(); ++i) {
       uniformBufferObjectBuffers[i] =
       std::make_unique<Buffer>(device, sizeof(DefaultUniformBufferObject), 1, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
@@ -74,7 +74,7 @@ namespace Enforcer {
     .build()};
 
     AddTexture("image.jpg");
-    AddTexture("image2.jpg");
+    AddTexture("tile.jpg");
     AddTexture("grass.jpg");
     AddTexture("yale.png");
     AddTexture("sky.jpg");
@@ -131,9 +131,15 @@ namespace Enforcer {
     // camera.SetViewTarget(glm::vec3(-1.f, -2.f, 20.f), glm::vec3(0.f,
     // 0.f, 2.5f));
 
+    const std::shared_ptr<Model> viewerModel{Model::CreateModelFromFile(device, "model/cube.obj")};
     GameObject viewerObject{GameObject::CreateGameObject()};
-    viewerObject.transform.translation = {.0f, -1.f, -2.5f};
+    // viewerObject.transform.translation = {.0f, -1.f, -2.5f};
+    viewerObject.transform.scale = {.05f, .05f, .05f};
+    viewerObject.model = viewerModel;
+    viewerObject.physics.isStatic = false;
     Keyboard cameraController{};
+
+    LOG_WARNING(Debug, "{} AAAA", viewerObject.GetId());
 
     std::chrono::time_point currentTime{std::chrono::high_resolution_clock::now()};
 
@@ -141,8 +147,10 @@ namespace Enforcer {
     LOG_DEBUG(Vulkan, "maxPushConstantsSize => {}, UBO size => {}", device.properties.limits.maxPushConstantsSize,
               sizeof(DefaultUniformBufferObject));
 
-    std::shared_ptr<Game::Player> player{Game::Player::CreatePlayer(window, cameraController, camera, viewerObject)};
-    Game::Ability::SetPlayerAbility(*player, Game::Ability::GetAbilityId("Ability name"));
+    std::shared_ptr<Game::Player> player{
+    Game::Player::CreatePlayer(window, device, cameraController, camera, viewerObject)};
+    gameObjects.emplace(viewerObject.GetId(), std::move(viewerObject));
+    Game::Ability::SetPlayerAbility(*player, Game::Ability::GetAbilityId("Link"));
     Game::Perk::GivePerkToPlayer(*player, Game::Perk::GetPerkId("Rock and stone"));
     Game::Perk::GivePerkToPlayer(*player, Game::Perk::GetPerkId("Musician"));
 
@@ -153,9 +161,9 @@ namespace Enforcer {
 
     Game::Perk::RemovePerkFromPlayer(*player, player->GetPerkId("Musician"));
 
-    server.Start();
+    // server.Start();
 
-    class CustomClient : public ClientInterface<CustomMessageTypes> {
+    /*class CustomClient : public ClientInterface<CustomMessageTypes> {
     public:
       void PingServer() {
         Message<CustomMessageTypes> message;
@@ -167,8 +175,8 @@ namespace Enforcer {
         Send(message);
       }
     } customClient;//,customClient2;
-    customClient.Connect("127.0.0.1",60000);
-    //customClient2.Connect("127.0.0.1",60000);
+    customClient.Connect("127.0.0.1",60000);*/
+    // customClient2.Connect("127.0.0.1",60000);
 
     std::chrono::time_point lastPingTime{std::chrono::high_resolution_clock::now()};
 
@@ -220,7 +228,7 @@ namespace Enforcer {
     while (!window.ShouldClose()) {
       glfwPollEvents();
 
-      server.Update();
+      /*server.Update();
 
       auto currentTimePing = std::chrono::high_resolution_clock::now();
       if (glfwGetKey(window.GetGLFWWindow(), GLFW_KEY_1) == GLFW_PRESS
@@ -240,7 +248,7 @@ namespace Enforcer {
           }
           default: {break;}
         }
-      }
+      }*/
 
       const std::chrono::time_point newTime{std::chrono::high_resolution_clock::now()};
       const float frameTime{
@@ -260,11 +268,13 @@ namespace Enforcer {
         frameIndex, frameTime, commandBuffer, camera, defaultDescriptorSets[static_cast<u32>(frameIndex)], gameObjects};
 
         // update
+        physicsSystem.Update(frameInfo);
+        player->Update(frameInfo); // not sure if it is the best location for this call ill see later
+
         uniformBufferObject.projection = camera.GetProjection();
         uniformBufferObject.view = camera.GetView();
         uniformBufferObject.inverseView = camera.GetInverseView();
 
-        physicsSystem.Update(frameInfo);
         pointLightSystem.Update(frameInfo, uniformBufferObject);
         // render
         renderer.BeginSwapChainRenderPass(commandBuffer);
@@ -283,9 +293,8 @@ namespace Enforcer {
         ImGui::Render();
         ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), commandBuffer);*/
 
-        // player
-        player->Update(); // not sure if it is the best location for this call ill see later
-        //LOG_CRITICAL(Common,"PlayerDefense,PlayerMoveSpeed => {},{}",player.GetScaling(Game::Defense),player.GetScaling(Game::MoveSpeed));
+        // LOG_CRITICAL(Common,"PlayerDefense,PlayerMoveSpeed =>
+        // {},{}",player.GetScaling(Game::Defense),player.GetScaling(Game::MoveSpeed));
 
         UpdateUniformBufferObject(uniformBufferObjectBuffers, uniformBufferObject);
 
@@ -301,24 +310,24 @@ namespace Enforcer {
 
       RPC.Update(Discord::RPCStatus::Playing);
 
-      //std::cout << "\r\033[FFps => " << 1.f / frameTime << std::flush;
+      // std::cout << "\r\033[FFps => " << 1.f / frameTime << std::flush;
     }
 
-    //server.Stop();
+    // server.Stop();
 
     vkDeviceWaitIdle(device.device());
 
-    //ImGui_ImplVulkan_DestroyFontsTexture();
+    // ImGui_ImplVulkan_DestroyFontsTexture();
     LOG_DEBUG(GLFW, "Loop ended");
   }
 
   void Application::LoadGameObjects() {
 
-    [[maybe_unused]] auto fade = [](const float t) noexcept-> float { return t * t * t * (t * (t * 6 - 15) + 10); };
-    [[maybe_unused]] auto lerp = [](const float a, const float b, const float t) noexcept-> float {
+    [[maybe_unused]] auto fade = [](const float t) noexcept -> float { return t * t * t * (t * (t * 6 - 15) + 10); };
+    [[maybe_unused]] auto lerp = [](const float a, const float b, const float t) noexcept -> float {
       return a + t * (b - a);
     };
-    [[maybe_unused]] auto grad = [](const int hash, const float x, const float y) noexcept-> float {
+    [[maybe_unused]] auto grad = [](const int hash, const float x, const float y) noexcept -> float {
       switch (hash & 3) {
         case 0:
           return x + y;
@@ -342,8 +351,7 @@ namespace Enforcer {
       perm[256u + i] = perm[i];
     }
     [[maybe_unused]] auto perlinNoise = [lerp, fade, grad](float x, float y, const std::vector<int> &perm,
-                                                           const int octaves,
-                                                           float frequency, float amplitude) {
+                                                           const int octaves, float frequency, float amplitude) {
       float noiseValue{.0f};
       float maxAmplitude{.0f};
 
@@ -379,9 +387,9 @@ namespace Enforcer {
     [[maybe_unused]] constexpr int octaves{4};
 
     const std::shared_ptr<Model> cube{Model::CreateModelFromFile(device, "model/cube.obj")};
-    const std::shared_ptr<Model> imposterCube0{Model::CreateModelFromFile(device, "model/colored_cube.obj")};
+    // const std::shared_ptr<Model> imposterCube0{Model::CreateModelFromFile(device, "model/colored_cube.obj")};
 
-    for (f32 y{0.f}; y < 10.f;) {
+    /*for (f32 y{0.f}; y < 10.f;) {
       GameObject gameObject{GameObject::CreateGameObject()};
       gameObject.transform.scale = {.5f, .5f, .5f};
       gameObject.transform.translation = {0.f, -++y*7.f, 5.f};
@@ -425,22 +433,62 @@ namespace Enforcer {
 
         gameObjects.emplace(gameObjectf.GetId(), std::move(gameObjectf));
       }
-    }
+    }*/
 
-    const std::vector<glm::vec3> lightColors{
+    GameObject gameObject1{GameObject::CreateGameObject()};
+    gameObject1.transform.scale = {3.3333f, 0.0667f, 3.3333f};
+    gameObject1.transform.translation = {0.f, 0.f, 0.f};
+    gameObject1.physics.isStatic = true;
+    gameObject1.model = cube;
+    gameObject1.imageBind = 1;
+    gameObject1.imageBindRepeatFactor = 20.f;
+    gameObject1.reflection = 0.f;
+    GameObject gameObject2{gameObject1.Clone()};
+    gameObject2.transform.translation = {0.f, -3.3333f, 0.f};
+    GameObject gameObject3{gameObject1.Clone()};
+    gameObject3.transform.scale = {1.6667f, 1.6667f, 1.6667f};
+    gameObject3.transform.translation = {1.6667f, -1.6667f, 1.6667f};
+    GameObject gameObject4{gameObject1.Clone()};
+    gameObject4.transform.scale = {3.3333f, 1.6667f, 0.6667f};
+    gameObject4.transform.translation = {0.f, -1.6667f, -3.3333f};
+
+    GameObject gameObject5{gameObject1.Clone()};
+    gameObject5.transform.translation = {6.6666f, 0.f, -3.3333f};
+
+    gameObjects.emplace(gameObject5.GetId(), std::move(gameObject5));
+    gameObjects.emplace(gameObject4.GetId(), std::move(gameObject4));
+    gameObjects.emplace(gameObject3.GetId(), std::move(gameObject3));
+    gameObjects.emplace(gameObject2.GetId(), std::move(gameObject2));
+    gameObjects.emplace(gameObject1.GetId(), std::move(gameObject1));
+
+    /*const std::vector<glm::vec3> lightColors{
     {1.f, .1f, .1f}, {.1f, .1f, 1.f}, {.1f, 1.f, .1f}, {1.f, 1.f, .1f}, {.1f, 1.f, 1.f}, {1.f, 1.f, 1.f} //
     };
 
     for (u32 i{0}; i < lightColors.size(); ++i) {
-      GameObject pointLight{GameObject::MakePointLight(.45f)};
+      GameObject pointLight{GameObject::MakePointLight(1.5f)};
       pointLight.color = lightColors[i];
-      glm::mat4 rotateLight{rotate(
-      glm::mat4{1.f}, (static_cast<float>(i) * glm::two_pi<float>()) / static_cast<float>(lightColors.size()),
-      {0.f, -1.f, 0.f})};
+      glm::mat4 rotateLight{
+      rotate(glm::mat4{1.f}, (static_cast<float>(i) * glm::two_pi<float>()) / static_cast<float>(lightColors.size()),
+             {0.f, -1.f, 0.f})};
       pointLight.transform.translation = glm::vec3(rotateLight * glm::vec4{-1.f, -2.f, -1.f, 1.f});
 
       gameObjects.emplace(pointLight.GetId(), std::move(pointLight));
-    }
+    }*/
+
+    GameObject pointLight1{GameObject::MakePointLight(1.8f)};
+    pointLight1.transform.translation = {-1.6667f, -1.6667f, -1.6667f};
+    pointLight1.color = {0.f, 0.f, 1.f};
+    GameObject pointLight2{pointLight1.Clone()};
+    pointLight2.transform.translation = {0.f, -1.6667f, -1.6667f};
+    pointLight2.color = {1.f, 0.f, 0.f};
+    GameObject pointLight3{pointLight1.Clone()};
+    pointLight3.transform.translation = {1.6667f, -1.6667f, -1.6667f};
+    pointLight3.color = {0.f, 1.f, 0.f};
+
+    gameObjects.emplace(pointLight3.GetId(), std::move(pointLight3));
+    gameObjects.emplace(pointLight2.GetId(), std::move(pointLight2));
+    gameObjects.emplace(pointLight1.GetId(), std::move(pointLight1));
   }
 
 } // namespace Enforcer

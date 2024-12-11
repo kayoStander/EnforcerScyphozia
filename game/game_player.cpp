@@ -1,4 +1,7 @@
-#include "player.hpp"
+#include "game_player.hpp"
+#include <ranges>
+
+#include "../src/enf_frame_info.hpp"
 
 namespace Game {
   u32 Player::GetPerkId(const std::string &name) {
@@ -12,16 +15,17 @@ namespace Game {
     return -1u;
   }
 
-  std::shared_ptr<Player> Player::CreatePlayer(Enforcer::Window &window, Enforcer::Keyboard &keyboard,
+  std::shared_ptr<Player> Player::CreatePlayer(Enforcer::Window &window, Enforcer::Device& device, Enforcer::Keyboard &keyboard,
                                            Enforcer::Camera &camera, Enforcer::GameObject &viewerObject) {
-      auto player{std::make_shared<Player>(window, keyboard, camera, viewerObject)};
+      static u32 idAmount{0};
+      auto player{std::make_shared<Player>(window, device, keyboard, camera, viewerObject, idAmount++)};
       playerList.emplace(player->id, player);
       return player;
     }
 
-  void Player::Update() {
+  void Player::Update(Enforcer::FrameInfo& frameInfo) {
     // thread-possible, just don't want to do it rn.
-    for (const auto &[id,perk]: perks) {
+    for (const std::shared_ptr<Perk> &perk : std::views::values(perks)) {
       if (!perk->affectsM1 and perk->action) {
         perk->action(*this);
       }
@@ -40,7 +44,7 @@ namespace Game {
       keyboard.moveSpeed = scalings.at(Scaling::MoveSpeed) * flatScalings.at(Scaling::MoveSpeed);
     }
 
-    Ability::Activate(*this, window);
+    Ability::Activate(*this, window, frameInfo);
   }
 
   std::unordered_map<u32, std::shared_ptr<Player>> Player::playerList = {};

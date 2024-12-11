@@ -1,6 +1,6 @@
-#include "perk.hpp"
-#include "elements.hpp"
-#include "player.hpp"
+#include "game_perk.hpp"
+#include "game_elements.hpp"
+#include "game_player.hpp"
 
 namespace Game {
   void Perk::GivePerkToPlayer(Player &player, const u32 id) {

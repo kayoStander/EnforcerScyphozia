@@ -131,7 +131,7 @@ namespace Enforcer {
   std::array<glm::vec4, 6> Camera::GetFrustumPlanes() const {
     glm::mat4 vpMatrix{projectionMatrix * viewMatrix};
 
-    std::array<glm::vec4, 6> planes;
+    std::array<glm::vec4, 6> planes{};
 
     // Left plane
     planes[0] = glm::vec4(vpMatrix[0][3] + vpMatrix[0][0], vpMatrix[1][3] + vpMatrix[1][0],

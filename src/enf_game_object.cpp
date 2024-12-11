@@ -28,6 +28,25 @@ namespace Enforcer {
                      {translation.x, translation.y, translation.z, 1.0f}};
   }
 
+  GameObject GameObject::Clone() const {
+    GameObject clone{CreateGameObject()};
+    clone.color = this->color;
+    clone.transform = this->transform;
+    clone.physics = this->physics;
+
+    clone.model = this->model;
+    clone.imposters = this->imposters;
+    if (this->pointLight) {
+      clone.pointLight = std::make_unique<PointLightComponent>(*this->pointLight);
+    }
+
+    clone.reflection = this->reflection;
+    clone.imageBindRepeatFactor = this->imageBindRepeatFactor;
+    clone.imageBind = this->imageBind;
+
+    return clone;
+  }
+
   glm::mat3 TransformComponent::normalMatrix() const noexcept {
     const float c3 = glm::cos(rotation.z);
     const float s3 = glm::sin(rotation.z);
@@ -73,10 +92,11 @@ namespace Enforcer {
     const glm::vec3 relativeVelocity{velocity - objB.physics.velocity};
     const float velocityAlongNormal{dot(relativeVelocity, normal)};
 
-    if (velocityAlongNormal > 0) {return;}
+    if (velocityAlongNormal > 0) {
+      return;
+    }
 
-    const float impulse{-(1 + bounciness) * velocityAlongNormal /
-                        (1 / mass + 1 / objB.physics.mass)};
+    const float impulse{-(1 + bounciness) * velocityAlongNormal / (1 / mass + 1 / objB.physics.mass)};
     const glm::vec3 impulseA{impulse * normal / mass};
     const glm::vec3 impulseB{impulse * normal / objB.physics.mass};
     objA.physics.velocity += impulseA;
@@ -84,7 +104,7 @@ namespace Enforcer {
 
     const float overlap{length(objA.transform.translation - objB.transform.translation)};
     const float minDistance{length(objA.model->GetBoundingBoxSize() * objA.transform.scale) / 2.0f +
-                              length(objB.model->GetBoundingBoxSize() * objB.transform.scale) / 2.0f};
+                            length(objB.model->GetBoundingBoxSize() * objB.transform.scale) / 2.0f};
 
     if (overlap < minDistance) {
       const float penetrationDepth{minDistance - overlap};

@@ -43,7 +43,7 @@ namespace Enforcer {
     bool isGrounded{false};
 
     void ApplyForce(glm::vec3 force) const noexcept;
-    void ApplyBounce(GameObject& objA, GameObject& objB, float deltaTime) const noexcept;
+    void ApplyBounce(GameObject &objA, GameObject &objB, float deltaTime) const noexcept;
 
     void Update(const float deltaTime, TransformComponent &transform) {
       if (isStatic)
@@ -73,21 +73,24 @@ namespace Enforcer {
       return GameObject{currentId++};
     }
 
+    GameObject Clone() const;
+
     GameObject(const GameObject &) = delete;
     GameObject &operator=(const GameObject &) = delete;
     GameObject(GameObject &&) = default;
 
-    u32 GetId() const noexcept { return id; };
+    [[nodiscard]] u32 GetId() const noexcept { return id; };
 
-    glm::vec3 color{1.f,1.f,1.f};
+    glm::vec3 color{1.f, 1.f, 1.f};
     TransformComponent transform{};
     PhysicsComponent physics{};
 
     std::shared_ptr<Model> model{nullptr};
-    std::array<std::shared_ptr<Model>, 4> imposters{};
+    std::array<std::shared_ptr<Model>, 4> imposters{nullptr, nullptr, nullptr, nullptr};
     std::unique_ptr<PointLightComponent> pointLight{nullptr};
 
     float reflection{.01f};
+    float imageBindRepeatFactor{5.f};
     u32 imageBind{0};
 
   private:
