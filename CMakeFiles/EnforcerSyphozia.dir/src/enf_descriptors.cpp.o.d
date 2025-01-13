@@ -385,4 +385,21 @@ CMakeFiles/EnforcerSyphozia.dir/src/enf_descriptors.cpp.o: \
  /usr/include/c++/13/bits/hashtable_policy.h \
  /usr/include/c++/13/bits/enable_special_members.h \
  /usr/include/c++/13/bits/node_handle.h \
- /usr/include/c++/13/bits/erase_if.h
+ /usr/include/c++/13/bits/erase_if.h \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../common/logging/log.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../common/logging/text_formatter.hpp \
+ /usr/include/assert.h \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../common/logging/entry.hpp \
+ /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/../common/logging/types.hpp \
+ /usr/include/c++/13/algorithm /usr/include/c++/13/bits/stl_algo.h \
+ /usr/include/c++/13/bits/algorithmfwd.h \
+ /usr/include/c++/13/bits/stl_heap.h \
+ /usr/include/c++/13/bits/uniform_int_dist.h \
+ /usr/include/c++/13/bits/ranges_algo.h /usr/include/c++/13/optional \
+ /usr/include/c++/13/pstl/glue_algorithm_defs.h \
+ /usr/include/c++/13/iostream /usr/include/c++/13/istream \
+ /usr/include/c++/13/bits/istream.tcc /usr/include/fmt/core.h \
+ /usr/include/c++/13/cstring /usr/include/string.h /usr/include/strings.h \
+ /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
+ /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
+ /usr/include/c++/13/iterator /usr/include/c++/13/bits/stream_iterator.h

@@ -1,4 +1,5 @@
 #include "application.hpp"
+#include <vulkan/vulkan_core.h>
 #include "../common/discord.hpp"
 #include "enf_buffer.hpp"
 #include "enf_camera.hpp"
@@ -12,6 +13,7 @@
 #include "systems/enf_physics_system.hpp"
 #include "systems/enf_point_light_system.hpp"
 #include "systems/enf_render_system.hpp"
+#include "systems/enf_shadow_map_system.hpp"
 #include "systems/enf_skybox_system.hpp"
 
 #if __has_include(<glm/glm.hpp>)
@@ -39,14 +41,15 @@ namespace Enforcer {
 
   Application::Application() {
 
-    defaultPool = DescriptorPool::Builder(device)
-                  .setMaxSets(SwapChain::MAX_FRAMES_IN_FLIGHT)
-                  .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, SwapChain::MAX_FRAMES_IN_FLIGHT)
-                  .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                               MAX_TEXTURE * SwapChain::MAX_FRAMES_IN_FLIGHT)
-                  .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, // cube
-                               6 * SwapChain::MAX_FRAMES_IN_FLIGHT)
-                  .build();
+    defaultPool =
+    DescriptorPool::Builder(device)
+    .setMaxSets(SwapChain::MAX_FRAMES_IN_FLIGHT)
+    .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, SwapChain::MAX_FRAMES_IN_FLIGHT)
+    .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, MAX_TEXTURE * SwapChain::MAX_FRAMES_IN_FLIGHT) // textures
+    .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1 * SwapChain::MAX_FRAMES_IN_FLIGHT) // shadow map
+    //.addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, // skybox cube (TODO)
+    //           6 * SwapChain::MAX_FRAMES_IN_FLIGHT)
+    .build();
 
     imGuiPool = DescriptorPool::Builder(device)
                 .setMaxSets(SwapChain::MAX_FRAMES_IN_FLIGHT)
@@ -70,7 +73,8 @@ namespace Enforcer {
     DescriptorSetLayout::Builder(device)
     .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
     .addBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, MAX_TEXTURE)
-    .addBinding(2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 6) // cube
+    .addBinding(2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 1)
+    //.addBinding(3, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 6) // cube
     .build()};
 
     AddTexture("image.jpg");
@@ -79,12 +83,12 @@ namespace Enforcer {
     AddTexture("yale.png");
     AddTexture("sky.jpg");
 
+    /*AddTextureCube("sky.jpg");
     AddTextureCube("sky.jpg");
     AddTextureCube("sky.jpg");
     AddTextureCube("sky.jpg");
     AddTextureCube("sky.jpg");
-    AddTextureCube("sky.jpg");
-    AddTextureCube("sky.jpg");
+    AddTextureCube("sky.jpg");*/
 
     std::vector<VkDescriptorImageInfo> imageInfos{textures.size()};
 
@@ -104,12 +108,19 @@ namespace Enforcer {
 
     std::vector<VkDescriptorSet> defaultDescriptorSets(SwapChain::MAX_FRAMES_IN_FLIGHT);
 
+    Texture shadowMap{device};
+    VkDescriptorImageInfo shadowMapDescriptorSet;
+    shadowMapDescriptorSet.sampler = shadowMap.GetSampler();
+    shadowMapDescriptorSet.imageView = shadowMap.GetImageView();
+    shadowMapDescriptorSet.imageLayout = shadowMap.GetImageLayout();
+
     for (u32 i{0}; i < defaultDescriptorSets.size(); ++i) {
       VkDescriptorBufferInfo bufferInfo{uniformBufferObjectBuffers[i]->descriptorInfo()};
       DescriptorWriter(*defaultSetLayout, *defaultPool)
       .writeBuffer(0, &bufferInfo)
       .writeImageArray(1, imageInfos.data(), imageInfos.size())
-      .writeImageCube(2, cubeImageInfos.data())
+      .writeImage(2, &shadowMapDescriptorSet)
+      //.writeImageCube(3, cubeImageInfos.data())
       .build(defaultDescriptorSets[i]);
     }
 
@@ -117,6 +128,8 @@ namespace Enforcer {
 
     PointLightSystem pointLightSystem{device, renderer.GetSwapChainRenderPass(),
                                       defaultSetLayout->getDescriptorSetLayout()};
+    ShadowMapSystem shadowMapSystem{device, renderer.GetSwapChainRenderPass(),
+                                    defaultSetLayout->getDescriptorSetLayout()};
 
     OceanSystem oceanSystem{device, renderer.GetSwapChainRenderPass(), defaultSetLayout->getDescriptorSetLayout()};
 
@@ -303,6 +316,7 @@ namespace Enforcer {
         renderSystem.RenderGameObjects(frameInfo);
         // oceanSystem.Render(frameInfo);
         pointLightSystem.Render(frameInfo);
+        shadowMapSystem.Update(frameInfo);
 
         renderer.EndSwapChainRenderPass(commandBuffer);
         renderer.EndFrame();
@@ -356,11 +370,11 @@ namespace Enforcer {
       float maxAmplitude{.0f};
 
       for (int octave{0}; octave < octaves; ++octave) {
-        auto freq = static_cast<float>(frequency * std::pow(2.0f, octave));
-        auto amp = static_cast<float>(amplitude * std::pow(0.5f, octave));
+        f32 freq = static_cast<float>(frequency * std::pow(2.0f, octave));
+        f32 amp = static_cast<float>(amplitude * std::pow(0.5f, octave));
 
-        auto xi = static_cast<u32>(std::floor(x * freq)) & 255;
-        auto yi = static_cast<u32>(std::floor(y * freq)) & 255;
+        u32 xi = static_cast<u32>(std::floor(x * freq)) & 255;
+        u32 yi = static_cast<u32>(std::floor(y * freq)) & 255;
 
         float xf = x * freq - std::floor(x * freq);
         float yf = y * freq - std::floor(y * freq);
@@ -449,12 +463,15 @@ namespace Enforcer {
     gameObject3.transform.scale = {1.6667f, 1.6667f, 1.6667f};
     gameObject3.transform.translation = {1.6667f, -1.6667f, 1.6667f};
     GameObject gameObject4{gameObject1.Clone()};
-    gameObject4.transform.scale = {3.3333f, 1.6667f, 0.6667f};
-    gameObject4.transform.translation = {0.f, -1.6667f, -3.3333f};
+    gameObject4.transform.scale = {3.3333f, 1.6667f, 3.3333f};
+    gameObject4.transform.translation = {0.f, -1.6667f, -6.6666f};
 
     GameObject gameObject5{gameObject1.Clone()};
     gameObject5.transform.translation = {6.6666f, 0.f, -3.3333f};
+    GameObject gameObject6{gameObject1.Clone()};
+    gameObject6.transform.translation = {6.6666f, -6.6666f, -3.3333f};
 
+    gameObjects.emplace(gameObject6.GetId(), std::move(gameObject6));
     gameObjects.emplace(gameObject5.GetId(), std::move(gameObject5));
     gameObjects.emplace(gameObject4.GetId(), std::move(gameObject4));
     gameObjects.emplace(gameObject3.GetId(), std::move(gameObject3));

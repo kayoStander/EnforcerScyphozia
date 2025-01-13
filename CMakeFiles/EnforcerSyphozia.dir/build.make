@@ -517,10 +517,24 @@ CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_render_system.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_render_system.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/systems/enf_render_system.cpp -o CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_render_system.cpp.s
 
+CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_shadow_map_system.cpp.o: CMakeFiles/EnforcerSyphozia.dir/flags.make
+CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_shadow_map_system.cpp.o: src/systems/enf_shadow_map_system.cpp
+CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_shadow_map_system.cpp.o: CMakeFiles/EnforcerSyphozia.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/heck/prog/cpp/vulkan/EnforcerScyphozia/CMakeFiles --progress-num=$(CMAKE_PROGRESS_33) "Building CXX object CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_shadow_map_system.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_shadow_map_system.cpp.o -MF CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_shadow_map_system.cpp.o.d -o CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_shadow_map_system.cpp.o -c /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/systems/enf_shadow_map_system.cpp
+
+CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_shadow_map_system.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_shadow_map_system.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/systems/enf_shadow_map_system.cpp > CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_shadow_map_system.cpp.i
+
+CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_shadow_map_system.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_shadow_map_system.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/systems/enf_shadow_map_system.cpp -o CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_shadow_map_system.cpp.s
+
 CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_skybox_system.cpp.o: CMakeFiles/EnforcerSyphozia.dir/flags.make
 CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_skybox_system.cpp.o: src/systems/enf_skybox_system.cpp
 CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_skybox_system.cpp.o: CMakeFiles/EnforcerSyphozia.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/heck/prog/cpp/vulkan/EnforcerScyphozia/CMakeFiles --progress-num=$(CMAKE_PROGRESS_33) "Building CXX object CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_skybox_system.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/heck/prog/cpp/vulkan/EnforcerScyphozia/CMakeFiles --progress-num=$(CMAKE_PROGRESS_34) "Building CXX object CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_skybox_system.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_skybox_system.cpp.o -MF CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_skybox_system.cpp.o.d -o CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_skybox_system.cpp.o -c /home/heck/prog/cpp/vulkan/EnforcerScyphozia/src/systems/enf_skybox_system.cpp
 
 CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_skybox_system.cpp.i: cmake_force
@@ -534,7 +548,7 @@ CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_skybox_system.cpp.s: cmake_force
 CMakeFiles/EnforcerSyphozia.dir/external/imgui/backends/imgui_impl_glfw.cpp.o: CMakeFiles/EnforcerSyphozia.dir/flags.make
 CMakeFiles/EnforcerSyphozia.dir/external/imgui/backends/imgui_impl_glfw.cpp.o: external/imgui/backends/imgui_impl_glfw.cpp
 CMakeFiles/EnforcerSyphozia.dir/external/imgui/backends/imgui_impl_glfw.cpp.o: CMakeFiles/EnforcerSyphozia.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/heck/prog/cpp/vulkan/EnforcerScyphozia/CMakeFiles --progress-num=$(CMAKE_PROGRESS_34) "Building CXX object CMakeFiles/EnforcerSyphozia.dir/external/imgui/backends/imgui_impl_glfw.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/heck/prog/cpp/vulkan/EnforcerScyphozia/CMakeFiles --progress-num=$(CMAKE_PROGRESS_35) "Building CXX object CMakeFiles/EnforcerSyphozia.dir/external/imgui/backends/imgui_impl_glfw.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/EnforcerSyphozia.dir/external/imgui/backends/imgui_impl_glfw.cpp.o -MF CMakeFiles/EnforcerSyphozia.dir/external/imgui/backends/imgui_impl_glfw.cpp.o.d -o CMakeFiles/EnforcerSyphozia.dir/external/imgui/backends/imgui_impl_glfw.cpp.o -c /home/heck/prog/cpp/vulkan/EnforcerScyphozia/external/imgui/backends/imgui_impl_glfw.cpp
 
 CMakeFiles/EnforcerSyphozia.dir/external/imgui/backends/imgui_impl_glfw.cpp.i: cmake_force
@@ -548,7 +562,7 @@ CMakeFiles/EnforcerSyphozia.dir/external/imgui/backends/imgui_impl_glfw.cpp.s: c
 CMakeFiles/EnforcerSyphozia.dir/external/imgui/backends/imgui_impl_vulkan.cpp.o: CMakeFiles/EnforcerSyphozia.dir/flags.make
 CMakeFiles/EnforcerSyphozia.dir/external/imgui/backends/imgui_impl_vulkan.cpp.o: external/imgui/backends/imgui_impl_vulkan.cpp
 CMakeFiles/EnforcerSyphozia.dir/external/imgui/backends/imgui_impl_vulkan.cpp.o: CMakeFiles/EnforcerSyphozia.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/heck/prog/cpp/vulkan/EnforcerScyphozia/CMakeFiles --progress-num=$(CMAKE_PROGRESS_35) "Building CXX object CMakeFiles/EnforcerSyphozia.dir/external/imgui/backends/imgui_impl_vulkan.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/heck/prog/cpp/vulkan/EnforcerScyphozia/CMakeFiles --progress-num=$(CMAKE_PROGRESS_36) "Building CXX object CMakeFiles/EnforcerSyphozia.dir/external/imgui/backends/imgui_impl_vulkan.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/EnforcerSyphozia.dir/external/imgui/backends/imgui_impl_vulkan.cpp.o -MF CMakeFiles/EnforcerSyphozia.dir/external/imgui/backends/imgui_impl_vulkan.cpp.o.d -o CMakeFiles/EnforcerSyphozia.dir/external/imgui/backends/imgui_impl_vulkan.cpp.o -c /home/heck/prog/cpp/vulkan/EnforcerScyphozia/external/imgui/backends/imgui_impl_vulkan.cpp
 
 CMakeFiles/EnforcerSyphozia.dir/external/imgui/backends/imgui_impl_vulkan.cpp.i: cmake_force
@@ -562,7 +576,7 @@ CMakeFiles/EnforcerSyphozia.dir/external/imgui/backends/imgui_impl_vulkan.cpp.s:
 CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui.cpp.o: CMakeFiles/EnforcerSyphozia.dir/flags.make
 CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui.cpp.o: external/imgui/imgui.cpp
 CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui.cpp.o: CMakeFiles/EnforcerSyphozia.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/heck/prog/cpp/vulkan/EnforcerScyphozia/CMakeFiles --progress-num=$(CMAKE_PROGRESS_36) "Building CXX object CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/heck/prog/cpp/vulkan/EnforcerScyphozia/CMakeFiles --progress-num=$(CMAKE_PROGRESS_37) "Building CXX object CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui.cpp.o -MF CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui.cpp.o.d -o CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui.cpp.o -c /home/heck/prog/cpp/vulkan/EnforcerScyphozia/external/imgui/imgui.cpp
 
 CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui.cpp.i: cmake_force
@@ -576,7 +590,7 @@ CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui.cpp.s: cmake_force
 CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_demo.cpp.o: CMakeFiles/EnforcerSyphozia.dir/flags.make
 CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_demo.cpp.o: external/imgui/imgui_demo.cpp
 CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_demo.cpp.o: CMakeFiles/EnforcerSyphozia.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/heck/prog/cpp/vulkan/EnforcerScyphozia/CMakeFiles --progress-num=$(CMAKE_PROGRESS_37) "Building CXX object CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_demo.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/heck/prog/cpp/vulkan/EnforcerScyphozia/CMakeFiles --progress-num=$(CMAKE_PROGRESS_38) "Building CXX object CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_demo.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_demo.cpp.o -MF CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_demo.cpp.o.d -o CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_demo.cpp.o -c /home/heck/prog/cpp/vulkan/EnforcerScyphozia/external/imgui/imgui_demo.cpp
 
 CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_demo.cpp.i: cmake_force
@@ -590,7 +604,7 @@ CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_demo.cpp.s: cmake_force
 CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_draw.cpp.o: CMakeFiles/EnforcerSyphozia.dir/flags.make
 CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_draw.cpp.o: external/imgui/imgui_draw.cpp
 CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_draw.cpp.o: CMakeFiles/EnforcerSyphozia.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/heck/prog/cpp/vulkan/EnforcerScyphozia/CMakeFiles --progress-num=$(CMAKE_PROGRESS_38) "Building CXX object CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_draw.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/heck/prog/cpp/vulkan/EnforcerScyphozia/CMakeFiles --progress-num=$(CMAKE_PROGRESS_39) "Building CXX object CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_draw.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_draw.cpp.o -MF CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_draw.cpp.o.d -o CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_draw.cpp.o -c /home/heck/prog/cpp/vulkan/EnforcerScyphozia/external/imgui/imgui_draw.cpp
 
 CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_draw.cpp.i: cmake_force
@@ -604,7 +618,7 @@ CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_draw.cpp.s: cmake_force
 CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_tables.cpp.o: CMakeFiles/EnforcerSyphozia.dir/flags.make
 CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_tables.cpp.o: external/imgui/imgui_tables.cpp
 CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_tables.cpp.o: CMakeFiles/EnforcerSyphozia.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/heck/prog/cpp/vulkan/EnforcerScyphozia/CMakeFiles --progress-num=$(CMAKE_PROGRESS_39) "Building CXX object CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_tables.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/heck/prog/cpp/vulkan/EnforcerScyphozia/CMakeFiles --progress-num=$(CMAKE_PROGRESS_40) "Building CXX object CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_tables.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_tables.cpp.o -MF CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_tables.cpp.o.d -o CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_tables.cpp.o -c /home/heck/prog/cpp/vulkan/EnforcerScyphozia/external/imgui/imgui_tables.cpp
 
 CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_tables.cpp.i: cmake_force
@@ -618,7 +632,7 @@ CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_tables.cpp.s: cmake_force
 CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_widgets.cpp.o: CMakeFiles/EnforcerSyphozia.dir/flags.make
 CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_widgets.cpp.o: external/imgui/imgui_widgets.cpp
 CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_widgets.cpp.o: CMakeFiles/EnforcerSyphozia.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/heck/prog/cpp/vulkan/EnforcerScyphozia/CMakeFiles --progress-num=$(CMAKE_PROGRESS_40) "Building CXX object CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_widgets.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/heck/prog/cpp/vulkan/EnforcerScyphozia/CMakeFiles --progress-num=$(CMAKE_PROGRESS_41) "Building CXX object CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_widgets.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_widgets.cpp.o -MF CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_widgets.cpp.o.d -o CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_widgets.cpp.o -c /home/heck/prog/cpp/vulkan/EnforcerScyphozia/external/imgui/imgui_widgets.cpp
 
 CMakeFiles/EnforcerSyphozia.dir/external/imgui/imgui_widgets.cpp.i: cmake_force
@@ -663,6 +677,7 @@ EnforcerSyphozia_OBJECTS = \
 "CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_physics_system.cpp.o" \
 "CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_point_light_system.cpp.o" \
 "CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_render_system.cpp.o" \
+"CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_shadow_map_system.cpp.o" \
 "CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_skybox_system.cpp.o" \
 "CMakeFiles/EnforcerSyphozia.dir/external/imgui/backends/imgui_impl_glfw.cpp.o" \
 "CMakeFiles/EnforcerSyphozia.dir/external/imgui/backends/imgui_impl_vulkan.cpp.o" \
@@ -707,6 +722,7 @@ EnforcerSyphozia: CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_ocean_system.c
 EnforcerSyphozia: CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_physics_system.cpp.o
 EnforcerSyphozia: CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_point_light_system.cpp.o
 EnforcerSyphozia: CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_render_system.cpp.o
+EnforcerSyphozia: CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_shadow_map_system.cpp.o
 EnforcerSyphozia: CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_skybox_system.cpp.o
 EnforcerSyphozia: CMakeFiles/EnforcerSyphozia.dir/external/imgui/backends/imgui_impl_glfw.cpp.o
 EnforcerSyphozia: CMakeFiles/EnforcerSyphozia.dir/external/imgui/backends/imgui_impl_vulkan.cpp.o
@@ -722,7 +738,7 @@ EnforcerSyphozia: /usr/lib/x86_64-linux-gnu/libfmt.so
 EnforcerSyphozia: /usr/local/lib/libdiscord-rpc.a
 EnforcerSyphozia: /usr/lib/x86_64-linux-gnu/libboost_system.so.1.83.0
 EnforcerSyphozia: CMakeFiles/EnforcerSyphozia.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/heck/prog/cpp/vulkan/EnforcerScyphozia/CMakeFiles --progress-num=$(CMAKE_PROGRESS_41) "Linking CXX executable EnforcerSyphozia"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/heck/prog/cpp/vulkan/EnforcerScyphozia/CMakeFiles --progress-num=$(CMAKE_PROGRESS_42) "Linking CXX executable EnforcerSyphozia"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/EnforcerSyphozia.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

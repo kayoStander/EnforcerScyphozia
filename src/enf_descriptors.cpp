@@ -1,4 +1,5 @@
 #include "enf_descriptors.hpp"
+#include "../common/logging/log.hpp"
 
 // std
 #include <cassert>
@@ -51,7 +52,8 @@ namespace Enforcer {
 
   // *************** Descriptor Pool Builder *********************
 
-  DescriptorPool::Builder &DescriptorPool::Builder::addPoolSize(const VkDescriptorType descriptorType, const u32 count) {
+  DescriptorPool::Builder &DescriptorPool::Builder::addPoolSize(const VkDescriptorType descriptorType,
+                                                                const u32 count) {
     poolSizes.push_back({descriptorType, count});
     return *this;
   }
@@ -72,7 +74,8 @@ namespace Enforcer {
   // *************** Descriptor Pool *********************
 
   DescriptorPool::DescriptorPool(Device &device, const u32 maxSets, const VkDescriptorPoolCreateFlags poolFlags,
-                                 const std::vector<VkDescriptorPoolSize> &poolSizes) : device{device}, descriptorPool{} {
+                                 const std::vector<VkDescriptorPoolSize> &poolSizes) :
+      device{device}, descriptorPool{} {
     VkDescriptorPoolCreateInfo descriptorPoolInfo{};
     descriptorPoolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
     descriptorPoolInfo.poolSizeCount = static_cast<u32>(poolSizes.size());
@@ -134,9 +137,14 @@ namespace Enforcer {
   }
 
   DescriptorWriter &DescriptorWriter::writeImage(const u32 binding, VkDescriptorImageInfo const *imageInfo) {
+    LOG_INFO(Vulkan, "Bindings => {}", setLayout.bindings.count(binding));
     assert(setLayout.bindings.count(binding) == 1 && "Layout does not contain specified binding");
 
+    LOG_INFO(Vulkan, "jayce");
+
     auto &bindingDescription = setLayout.bindings[binding];
+
+    LOG_INFO(Vulkan, "jaybe");
 
     assert(bindingDescription.descriptorCount == 1 && "Binding single descriptor info, but binding expects multiple");
 
@@ -156,8 +164,7 @@ namespace Enforcer {
 
     auto &bindingDescription = setLayout.bindings[binding];
 
-    // assert(bindingDescription.descriptorCount < 6 &&
-    //      "Binding single descriptor info, but binding expects multiple");
+    assert(bindingDescription.descriptorCount < 6 && "Binding single descriptor info, but binding expects multiple");
 
     VkWriteDescriptorSet write{};
     write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -170,7 +177,8 @@ namespace Enforcer {
     return *this;
   }
 
-  DescriptorWriter &DescriptorWriter::writeImageArray(const u32 binding, VkDescriptorImageInfo const *imageInfo, const u32 imageCount) {
+  DescriptorWriter &DescriptorWriter::writeImageArray(const u32 binding, VkDescriptorImageInfo const *imageInfo,
+                                                      const u32 imageCount) {
     assert(setLayout.bindings.count(binding) == 1 && "Layout does not contain specified binding");
 
     auto &bindingDescription = setLayout.bindings[binding];

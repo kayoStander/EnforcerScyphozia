@@ -7,6 +7,7 @@ namespace Enforcer {
   class Texture {
   public:
     Texture(Device &device, const std::string &filepath, u32 layerCount = 1);
+    Texture(Device &device); // shadow map
     ~Texture();
 
     VkSampler GetSampler() const noexcept { return sampler; }

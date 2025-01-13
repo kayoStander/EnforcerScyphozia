@@ -22,14 +22,6 @@
  * descriptor indexing and push descriptors. It's not always needed, but can be useful in complex systems.
  */
 
-/*
- * TODO: GOD RAYs
- * 
- *
- *
- *
- */
-
 #ifdef HAS_CEL_SHADING
 #define CEL_SHADING(x,y) floor(x * y) / y
 #else
@@ -61,46 +53,15 @@ layout(set = 0, binding = 0) uniform GlobalUniformBufferObject{
   int numLights;
 } uniformBufferObject;
 layout(set = 0, binding = 1) uniform sampler2D/*Array*/ image[imagesAmount];
-layout(set = 0, binding = 2) uniform samplerCube enviromentMap;
+layout(set = 0, binding = 2) uniform sampler2D shadowMap;
 layout(push_constant) uniform Push {
   mat4 modelMatrix;
   mat4 normalMatrix;
   float reflection;
-float imageBindRepeatFactor;
+  float imageBindRepeatFactor;
   int imageBind;
   //bool isImpostor;
 } push;
-
-/*vec4 PixelMain(vec2 texCoord){
-  const float decay = .97815;
-  const float exposure = .92;
-  const float density = .966;
-  const float weight = .58767;
-
-  const int samples = 100;
-
-  vec4 lightPositionWorld = uniformBufferObject.view * uniformBufferObject.pointLights[0].position; // can make it iterate later
-  vec4 lightPositionOnScreen = uniformBufferObject.projection * lightPositionWorld;
-  lightPositionOnScreen.xyz /= lightPositionOnScreen.w; // [-1, 1];
-  lightPositionOnScreen.xy = lightPositionOnScreen.xy * .5 + .5; // [0,1];
-
-  vec2 tc = texCoord;
-  vec2 deltaTexCoord = (tc - lightPositionOnScreen.xy);
-  deltaTexCoord *= 1. / samples * density;
-  float illuminationDecay = 1.;
-  
-  vec4 color = texture(image[push.imageBind], tc)*.4; 
-  
-  for (int i = 0; i < samples; i++){
-    tc -= deltaTexCoord;
-    vec4 sampler = texture(image[push.imageBind], tc)*.4; // ill have to fix this later lol
-    sampler *= illuminationDecay * weight;
-    color += sampler;
-    illuminationDecay *= decay;
-  }
-  vec4 realColor = texture(ColorMapSampler, texCoord.xy);
-  return vec4(vec3(color) * exposure, 1.) + realColor * 1.1;
-}*/
 
 void main(){
   vec3 diffuseLight = uniformBufferObject.ambientLightColor.xyz * uniformBufferObject.ambientLightColor.w;

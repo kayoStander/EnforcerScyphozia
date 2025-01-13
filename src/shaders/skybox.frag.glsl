@@ -21,7 +21,7 @@ layout(set = 0, binding = 0) uniform GlobalUniformBufferObject{
   int numLights;
 } uniformBufferObject;
 layout(set = 0, binding = 1) uniform sampler2D images[imagesAmount];
-layout(set = 0, binding = 2) uniform samplerCube environmentMap;
+//layout(set = 0, binding = 3) uniform samplerCube environmentMap;
 layout(push_constant) uniform Push {
   vec3 fogColor;
   float fogStart;
@@ -73,29 +73,42 @@ vec3 CalculateSun(vec3 fragPos, vec3 viewDir){
   return sunColor;
 }
 
+const float exposure = 0.3f;
+const float decay = 0.96815 ; // 0.96815 
+const float density  = 0.926;
+const float weight  = 0.1; // 0.587
+const int NUM_SAMPLES = 100;
+
 void main() {
-  /*
-  vec2 uv = fragUV * 2.0 - 1.0;
-  vec3 viewDirection = normalize(vec3(uv.x, uv.y, -1.0));
-  vec3 worldDirection = normalize((mat4(mat3(uniformBufferObject.inverseView)) * vec4(viewDirection,0.)).xyz);
-  */
-  
   vec4 textureColor = texture(images[4],fragUV);
   vec3 fragPos = ReconstructWorldPosition(fragUV);
   vec3 viewDir = normalize(fragPos);
   vec3 finalColor = textureColor.rgb;
   
   for (int i = 0;i < pointLightsAmount; i++){
-    if (i >= uniformBufferObject.numLights) break;
-    
     PointLight pointLight = uniformBufferObject.pointLights[i];
     vec3 lightDir = normalize(pointLight.position.xyz - fragPos);
     
     finalColor += CalculateVolumetricLight(fragPos, lightDir, pointLight.position.xyz, pointLight.color.rgb);
+
+    vec4 lightClipSpace = uniformBufferObject.projection * uniformBufferObject.view * pointLight.position;
+    vec2 lightPositionOnScreen = (lightClipSpace.xy / lightClipSpace.w) * 0.5 + 0.5; // Map to [0,1] range
+  
+    vec2 deltaTexCoord = vec2(fragUV.xy - lightPositionOnScreen.xy);
+    vec2 texCoord = fragUV;
+    deltaTexCoord *= 1. / NUM_SAMPLES * density;
+    float illuminationDecay = 1.;
+
+    for (int j = 0; j < NUM_SAMPLES; j++){
+      texCoord -= deltaTexCoord;
+      vec3 sampled = texture(images[4], texCoord).rgb;
+      sampled *= illuminationDecay * weight;
+      finalColor += sampled * .25;
+      illuminationDecay *= decay;
+    }
   }
 
-  // NOT WORKING: finalColor += CalculateSun(fragPos, viewDir);
   float fogFactor = smoothstep(push.fogStart, push.fogEnd, length(fragPos));
   finalColor = mix(finalColor, push.fogColor, fogFactor);
-  outColor = vec4(finalColor * (sin(uniformBufferObject.time / 50. + .15)), 1.);//vec4(z,z-.1,z,1.);//mix(vec4(.1,.1,.155,0.),textureColor*,fogFactor);
+  outColor = vec4(finalColor * exposure /* * (sin(uniformBufferObject.time / 50. + .15))*/, 1.);//vec4(z,z-.1,z,1.);//mix(vec4(.1,.1,.155,0.),textureColor*,fogFactor);
 }

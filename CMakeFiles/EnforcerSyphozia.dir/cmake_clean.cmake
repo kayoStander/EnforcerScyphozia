@@ -77,6 +77,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_point_light_system.cpp.o.d"
   "CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_render_system.cpp.o"
   "CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_render_system.cpp.o.d"
+  "CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_shadow_map_system.cpp.o"
+  "CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_shadow_map_system.cpp.o.d"
   "CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_skybox_system.cpp.o"
   "CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_skybox_system.cpp.o.d"
   "EnforcerSyphozia"

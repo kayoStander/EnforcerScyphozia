@@ -1136,6 +1136,30 @@ src/systems/enf_render_system.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_render_system.cpp.s
 .PHONY : src/systems/enf_render_system.cpp.s
 
+src/systems/enf_shadow_map_system.o: src/systems/enf_shadow_map_system.cpp.o
+.PHONY : src/systems/enf_shadow_map_system.o
+
+# target to build an object file
+src/systems/enf_shadow_map_system.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_shadow_map_system.cpp.o
+.PHONY : src/systems/enf_shadow_map_system.cpp.o
+
+src/systems/enf_shadow_map_system.i: src/systems/enf_shadow_map_system.cpp.i
+.PHONY : src/systems/enf_shadow_map_system.i
+
+# target to preprocess a source file
+src/systems/enf_shadow_map_system.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_shadow_map_system.cpp.i
+.PHONY : src/systems/enf_shadow_map_system.cpp.i
+
+src/systems/enf_shadow_map_system.s: src/systems/enf_shadow_map_system.cpp.s
+.PHONY : src/systems/enf_shadow_map_system.s
+
+# target to generate assembly for a file
+src/systems/enf_shadow_map_system.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EnforcerSyphozia.dir/build.make CMakeFiles/EnforcerSyphozia.dir/src/systems/enf_shadow_map_system.cpp.s
+.PHONY : src/systems/enf_shadow_map_system.cpp.s
+
 src/systems/enf_skybox_system.o: src/systems/enf_skybox_system.cpp.o
 .PHONY : src/systems/enf_skybox_system.o
 
@@ -1292,6 +1316,9 @@ help:
 	@echo "... src/systems/enf_render_system.o"
 	@echo "... src/systems/enf_render_system.i"
 	@echo "... src/systems/enf_render_system.s"
+	@echo "... src/systems/enf_shadow_map_system.o"
+	@echo "... src/systems/enf_shadow_map_system.i"
+	@echo "... src/systems/enf_shadow_map_system.s"
 	@echo "... src/systems/enf_skybox_system.o"
 	@echo "... src/systems/enf_skybox_system.i"
 	@echo "... src/systems/enf_skybox_system.s"
