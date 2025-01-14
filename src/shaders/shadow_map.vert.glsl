@@ -26,5 +26,5 @@ layout(location = 0) out vec4 fragPosLightSpace;
 void main(){
   vec4 worldPosition = vec4(position, 1.0);
   fragPosLightSpace = worldPosition;
-  gl_Position = fragPosLightSpace;
+  gl_Position = uniformBufferObject.projection * uniformBufferObject.view * worldPosition;
 }

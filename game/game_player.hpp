@@ -36,7 +36,6 @@ namespace Game {
     Player(Player &&) = delete;
     Player &operator=(const Player &&) = delete;
 
-
     struct {
       /*void TakeDamage(const f32 damage) noexcept {
         if (damage == 0) {
@@ -90,7 +89,7 @@ namespace Game {
     {Scaling::Penetration, 1.f}, {Scaling::Defense, 1.f},   {Scaling::Health, 1.f},  {Scaling::MaxHealth, 1.f},
     {Scaling::AttackSpeed, 1.f}, // %
     {Scaling::MoveSpeed, 1.f},   {Scaling::JumpPower, 1.f}, {Scaling::Perking, 1.f}, {Scaling::CooldownReduction, 1.f},
-    {Scaling::Reputation, 0.f}, // shouldn't exist
+    {Scaling::Reputation, 0.f}, {Scaling::Luck, 1.f}, // shouldn't exist
     }; // % based
 
     /*struct Set {
@@ -111,6 +110,13 @@ namespace Game {
         window{window}, device{device}, keyboard{keyboard}, camera{camera}, viewerObject{viewerObject},
         id{id} {}; // should be private but lets not talk about it
 
+    enum class Achievements : u8 {
+      Charismatic,
+      DoublePrice,
+      AchievementsCount
+    }; // temporary impl later make into .cpp
+    std::array<bool, static_cast<u8>(Achievements::AchievementsCount)> achievements{};
+
   private:
     Enforcer::Window &window;
     Enforcer::Device &device;
@@ -127,7 +133,7 @@ namespace Game {
     {Scaling::Penetration, 0.f}, {Scaling::Defense, 10.f},    {Scaling::Health, 100.f},
     {Scaling::MaxHealth, 100.f}, {Scaling::AttackSpeed, 1.f}, {Scaling::MoveSpeed, 5.f},
     {Scaling::JumpPower, 2.f},   {Scaling::Perking, 0.f},     {Scaling::CooldownReduction, 0.f}, // seconds based
-    {Scaling::Reputation, 0.f},
+    {Scaling::Reputation, 0.f}, {Scaling::Luck, 1.f}
     }; // flat based
 
     std::string_view name{"Nameless"};

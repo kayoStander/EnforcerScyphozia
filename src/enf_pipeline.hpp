@@ -40,7 +40,7 @@ namespace Enforcer {
     Pipeline(const Pipeline &) = delete;
     Pipeline &operator=(const Pipeline &) = delete;
 
-    void bind(VkCommandBuffer commandBuffer);
+    void bind(VkCommandBuffer commandBuffer) const;
     static void DefaultPipelineConfigInfo(PipelineConfigInfo &configInfo);
     static void SkyboxPipelineConfigInfo(PipelineConfigInfo &configInfo);
     static void ShadowMapPipelineConfigInfo(PipelineConfigInfo &configInfo);

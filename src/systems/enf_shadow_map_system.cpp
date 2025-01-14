@@ -58,7 +58,7 @@ namespace Enforcer {
     vkCmdBindDescriptorSets(frameInfo.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1,
                             &frameInfo.globalDescriptorSet, 0, nullptr);
 
-    vkCmdDraw(frameInfo.commandBuffer, 3, 1, 0, 0);
+    vkCmdDraw(frameInfo.commandBuffer, 24, 1, 0, 0);
   }
 
 } // namespace Enforcer

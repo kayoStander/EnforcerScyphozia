@@ -103,8 +103,8 @@ namespace Game {
            // ADVANTAGES - OBTAINABLE ONLY ON CHARACTER CREATION WITH AN RITUAL ITEM //
 
            DEFINE_PERK(std::make_shared<Perk>(
-           "Looter", "Enemies can drop their rarest item easier.", []([[maybe_unused]] Player &player) {},
-           std::unordered_map<Scaling, f32>{}, false)),
+           "Looter", "Enemies can drop their rarest item easier.", []([[maybe_unused]] Player &player) {/*Just gives luck*/},
+           std::unordered_map<Scaling, f32>{{Scaling::Luck, 1.5f}}, false)),
 
            // INFORMATION: THE BOON-FLAW FEATURE IS 1:1, SO YOU NEED A FLAW TO HAVE A BOON. LIMIT OF 3 BOONS.
            // BOONS - OBTAINABLE ONLY ON CHARACTER CREATION //
@@ -116,30 +116,40 @@ namespace Game {
            false)), // PRICE: 1 FLAW
 
            DEFINE_PERK(std::make_shared<Perk>(
-           "Charismatic", "Its harder to lose reputation.", []([[maybe_unused]] Player &player) {},
+           "Charismatic", "Its harder to lose reputation.", []( Player &player) {
+             player.achievements[static_cast<u8>(Player::Achievements::Charismatic)] = true;
+           },
            std::unordered_map<Scaling, f32>{},
            false)), // PRICE: 1 FLAW
 
            DEFINE_PERK(std::make_shared<Perk>(
-           "Experienced", "Gain 1 extra point per level.", []([[maybe_unused]] Player &player) {},
+           "Professor", "Gain 1 extra point per level.", []( Player &player) {
+             //player.points += 1u;
+           },
            std::unordered_map<Scaling, f32>{},
            false)), // PRICE: 1 FLAW
 
            // FLAWS - OBTAINABLE ONLY ON CHARACTER CREATION //
 
            DEFINE_PERK(std::make_shared<Perk>(
-           "Terrible trader", "Every buy-able item price is doubled.", []([[maybe_unused]] Player &player) {},
+           "Terrible trader", "Every buy-able item price is doubled.", [](Player &player) {
+             player.achievements[static_cast<u8>(Player::Achievements::DoublePrice)] = true;
+           },
            std::unordered_map<Scaling, f32>{},
            false)), // RECEIVE: 1 BOON
 
            DEFINE_PERK(std::make_shared<Perk>(
            "Bad pocket", "Your gold can randomly drop at the ground without warning.",
-           []([[maybe_unused]] Player &player) {}, std::unordered_map<Scaling, f32>{},
+           []([[maybe_unused]] Player &player) {
+             //while RNG(1, 1000 * ( 100 / player.scalings.at(Scaling::Luck))) == 1 {
+
+             //}
+           }, std::unordered_map<Scaling, f32>{},
            false)), // RECEIVE: 1 BOON
 
            DEFINE_PERK(std::make_shared<Perk>(
-           "Schizophrenic", // LOL I GOT TO CHANGE THIS LATER
-           "False monsters can appear in your vision.", []([[maybe_unused]] Player &player) {},
+           "Schizophrenic",
+           "False monsters may appear in your vision.", []([[maybe_unused]] Player &player) {},
            std::unordered_map<Scaling, f32>{},
            false)), // RECEIVE: 1 BOON
 
@@ -151,19 +161,21 @@ namespace Game {
            std::unordered_map<Scaling, f32>{}, false)),
 
            DEFINE_PERK(std::make_shared<Perk>(
-           "Unlucky", "Your luck is nullified.", []([[maybe_unused]] Player &player) {},
+           "Unlucky", "Your luck is nullified.", [](Player &player) {
+             player.scalings.at(Scaling::Luck) = 0.f;
+           },
            std::unordered_map<Scaling, f32>{}, false)),
 
 
            // PERKS - OBTAINABLE ON UPGRADING, ARMOR AND (INCLUDE ALL WAYS HERE) //
 
            DEFINE_PERK(std::make_shared<Perk>(
-           "Musician", "Your weapon becomes a lute and every tune that you play gives players a random buff!",
+           "Musician", "Your weapon becomes a lute and every tune that you play gives players a random buff.",
            []([[maybe_unused]] Player &player) {}, std::unordered_map<Scaling, f32>{{Scaling::AttackSpeed, -25.f}},
            true)),
            DEFINE_PERK(std::make_shared<Perk>(
            "Rock and stone",
-           "Your tunes now only give players tanky buffs; also change your lute into an awesome guitar! extra buffs to "
+           "Your tunes now only give players tanky buffs; also change your lute into an awesome guitar, extra buffs to "
            "dwarfs.",
            []([[maybe_unused]] Player &player) {},
            std::unordered_map<Scaling, f32>{
